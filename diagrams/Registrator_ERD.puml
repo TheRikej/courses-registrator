@@ -1,0 +1,89 @@
+@startuml
+hide circle
+skinparam Linetype ortho
+skinparam Ranksep 60
+skinparam Nodesep 100
+
+entity User {
+    * id: <<uuid>>
+    ---
+    * userName: string
+    * email: string
+    * createdAt: timestamp
+    * hashedPassword: string
+    * salt: string
+    deletedAt: timestamp
+}
+
+entity Course{
+    * id: <<uuid>>
+    ---
+    * teacher: <<FK>>
+    * faculty: <<FK>>
+    * description: string
+    * name: string
+    * registrationStart: timestamp
+    * capacity: int
+    deletedAt: timestamp
+}
+
+entity Group {
+    * id: <<uuid>>
+    ---
+    * teacher: <<FK>>
+    * course: <<FK>>
+    * registrationStart: timestamp
+    * capacity: int
+    deletedAt: timestamp
+}
+
+entity Semester {
+    * id: <<uuid>>
+    ---
+    * year: int
+    * description: string
+}
+
+entity Faculty {
+    * id: <<uuid>>
+    ---
+    * name: string
+}
+
+entity CourseSemester {
+    * id: <<uuid>>
+    ---
+    * course: <<FK>>
+    * semester: <<FK>>
+}
+
+entity CourseUser {
+    * id: <<uuid>>
+    ---
+    * course: <<FK>>
+    * semester: <<FK>>
+}
+
+entity GroupUser {
+    * id: <<uuid>>
+    ---
+    * course: <<FK>>
+    * semester: <<FK>>
+}
+
+User ||.r.o{ GroupUser: visits
+Group ||.r.o{ GroupUser
+
+User ||.u.o{ CourseUser: visits
+Course ||.r.o{ CourseUser
+
+Faculty ||.r.o{ Course
+Course||.l.o{ Group
+
+
+Course ||.d.o{ CourseSemester
+Semester||.u.o{ CourseSemester
+
+User }|..o{ Course: teaches
+User }|..o{ Group: teaches
+@enduml
