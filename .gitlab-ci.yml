@@ -16,11 +16,15 @@ lint:
   stage: lint
   script:
     - npm run lint
+  tags: 
+    - shared-fi
 
 build:
   stage: build
   script:
     - npm run build
+  tags: 
+    - shared-fi
 
 #test:
 #  stage: test
