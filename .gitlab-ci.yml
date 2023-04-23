@@ -21,6 +21,7 @@ build:
   stage: build
   script:
     - npm run build
+  runner: course-registration-runner
 
 #test:
 #  stage: test
