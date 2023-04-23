@@ -1,9 +1,7 @@
 image: node:18.15
 
 stages:
-  - lint
-  - build
-#  - test
+  - dev
 
 cache:
   paths:
@@ -14,20 +12,22 @@ before_script:
   - npm install
 
 lint:
-  stage: lint
+  stage: dev
   script:
     - npm run lint
   tags: 
     - shared-fi
 
 build:
-  stage: build
+  stage: dev
   script:
     - npm run build
   tags: 
     - shared-fi
 
-#test:
-#  stage: test
-#  script:
-#    - npm run test
+test:
+  stage: dev
+  script:
+    - npm run test
+  tags:
+    - shared-fi
