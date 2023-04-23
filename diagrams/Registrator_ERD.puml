@@ -27,7 +27,7 @@ entity Course{
     deletedAt: timestamp
 }
 
-entity Group {
+entity SeminarGroup {
     * id: <<uuid>>
     ---
     * teacher: <<FK>>
@@ -61,29 +61,29 @@ entity CourseUser {
     * id: <<uuid>>
     ---
     * course: <<FK>>
-    * semester: <<FK>>
+    * user: <<FK>>
 }
 
 entity GroupUser {
     * id: <<uuid>>
     ---
-    * course: <<FK>>
-    * semester: <<FK>>
+    * group: <<FK>>
+    * user: <<FK>>
 }
 
-User ||.r.o{ GroupUser: visits
-Group ||.r.o{ GroupUser
+User ||..o{ GroupUser: visits
+SeminarGroup ||.r.o{ GroupUser
 
 User ||.u.o{ CourseUser: visits
 Course ||.r.o{ CourseUser
 
 Faculty ||.r.o{ Course
-Course||.l.o{ Group
+CourseSemester||..o{ SeminarGroup
 
 
-Course ||.d.o{ CourseSemester
-Semester||.u.o{ CourseSemester
+Course ||..o{ CourseSemester
+Semester||.r.o{ CourseSemester
 
-User }|..o{ Course: teaches
-User }|..o{ Group: teaches
+User }|.l.o{ Course: teaches
+User }|..o{ SeminarGroup: teaches
 @enduml
