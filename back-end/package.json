@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node ./index.ts",
     "compile": "tsc",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": ""
   },
   "author": "xsvonav xkajan xjudiny xdrobny",
   "license": "ISC",
