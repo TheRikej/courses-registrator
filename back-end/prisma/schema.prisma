@@ -9,3 +9,89 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id             String @id @default(uuid())
+  userName       String
+  email          String
+  createdAt      DateTime @default(now())
+  hashedPassword String
+  salt           String
+  deletedAt      DateTime?
+  taughtCourses  Course[]
+  taughtGroups   SeminarGroup[]
+  studiedCourses CourseStudent[]
+  studiedGroups  GroupStudent[]
+}
+
+model Course {
+  id                String @id @default(uuid())
+  description       String
+  name              String
+  registrationStart DateTime
+  capacity          Int
+  deletedAt         DateTime?
+  teachers          User[]
+  students          CourseStudent[]
+  courseSemesters   CourseSemester[]
+}
+
+model SeminarGroup {
+  id                String @id @default(uuid())
+  registrationStart DateTime
+  capacity          Int
+  deletedAt         DateTime?
+  courseSemester    CourseSemester @relation(fields: [courseSemesterId], references: [id])
+  courseSemesterId  String
+  teachers          User[]
+  students          GroupStudent[]
+}
+
+model Faculty {
+  id        String @id @default(uuid())
+  name      String
+  deletedAt DateTime? 
+}
+
+model Semester {
+  id              String @id @default(uuid())
+  year            Int
+  season          SemesterSeason
+  semesterStart   DateTime
+  semesterEnd     DateTime
+  deletedAt       DateTime?
+  courseSemesters CourseSemester[]
+}
+
+model CourseStudent {
+    id        String @id @default(uuid())
+    deletedAt DateTime?
+    student   User @relation(fields: [studentId], references: [id])
+    studentId String
+    course    Course @relation(fields: [courseId], references: [id])
+    courseId  String
+}
+
+model GroupStudent {
+    id        String @id @default(uuid())
+    deletedAt DateTime?
+    student   User @relation(fields: [studentId], references: [id])
+    studentId String
+    group     SeminarGroup @relation(fields: [groupId], references: [id])
+    groupId   String
+}
+
+model CourseSemester {
+    id        String @id @default(uuid())
+    deletedAt DateTime?
+    course   Course @relation(fields: [courseId], references: [id])
+    courseId String
+    semester     Semester @relation(fields: [semesterId], references: [id])
+    semesterId   String
+    seminarGroups SeminarGroup[]
+}
+
+enum SemesterSeason {
+  SPRING
+  FALL
+}
