@@ -41,13 +41,17 @@ entity Semester {
     * id: <<uuid>>
     ---
     * year: int
-    * description: string
+    * season: enum
+    * semesterStart: timestamp
+    * semesterEnd: timestamp
+    deletedAt: timestamp
 }
 
 entity Faculty {
     * id: <<uuid>>
     ---
     * name: string
+    deletedAt: timestamp
 }
 
 entity CourseSemester {
@@ -55,6 +59,7 @@ entity CourseSemester {
     ---
     * course: <<FK>>
     * semester: <<FK>>
+    deletedAt: timestamp
 }
 
 entity CourseUser {
@@ -62,6 +67,7 @@ entity CourseUser {
     ---
     * course: <<FK>>
     * user: <<FK>>
+    deletedAt: timestamp
 }
 
 entity GroupUser {
@@ -69,7 +75,14 @@ entity GroupUser {
     ---
     * group: <<FK>>
     * user: <<FK>>
+    deletedAt: timestamp
 }
+
+Enum SemesterSeasonEnum {
+    SPRING
+    FALL
+}
+
 
 User ||..o{ GroupUser: visits
 SeminarGroup ||.r.o{ GroupUser
@@ -86,4 +99,6 @@ Semester||.r.o{ CourseSemester
 
 User }|.l.o{ Course: teaches
 User }|..o{ SeminarGroup: teaches
+
+Semester <|-u- SemesterSeasonEnum
 @enduml
