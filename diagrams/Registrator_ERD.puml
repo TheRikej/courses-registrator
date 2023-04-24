@@ -1,0 +1,104 @@
+@startuml
+hide circle
+skinparam Linetype ortho
+skinparam Ranksep 60
+skinparam Nodesep 100
+
+entity User {
+    * id: <<uuid>>
+    ---
+    * userName: string
+    * email: string
+    * createdAt: timestamp
+    * hashedPassword: string
+    * salt: string
+    deletedAt: timestamp
+}
+
+entity Course{
+    * id: <<uuid>>
+    ---
+    * teacher: <<FK>>
+    * faculty: <<FK>>
+    * description: string
+    * name: string
+    * registrationStart: timestamp
+    * capacity: int
+    deletedAt: timestamp
+}
+
+entity SeminarGroup {
+    * id: <<uuid>>
+    ---
+    * teacher: <<FK>>
+    * course: <<FK>>
+    * registrationStart: timestamp
+    * capacity: int
+    deletedAt: timestamp
+}
+
+entity Semester {
+    * id: <<uuid>>
+    ---
+    * year: int
+    * season: enum
+    * semesterStart: timestamp
+    * semesterEnd: timestamp
+    deletedAt: timestamp
+}
+
+entity Faculty {
+    * id: <<uuid>>
+    ---
+    * name: string
+    deletedAt: timestamp
+}
+
+entity CourseSemester {
+    * id: <<uuid>>
+    ---
+    * course: <<FK>>
+    * semester: <<FK>>
+    deletedAt: timestamp
+}
+
+entity CourseUser {
+    * id: <<uuid>>
+    ---
+    * course: <<FK>>
+    * user: <<FK>>
+    deletedAt: timestamp
+}
+
+entity GroupUser {
+    * id: <<uuid>>
+    ---
+    * group: <<FK>>
+    * user: <<FK>>
+    deletedAt: timestamp
+}
+
+Enum SemesterSeasonEnum {
+    SPRING
+    FALL
+}
+
+
+User ||..o{ GroupUser: visits
+SeminarGroup ||.r.o{ GroupUser
+
+User ||.u.o{ CourseUser: visits
+Course ||.r.o{ CourseUser
+
+Faculty ||.r.o{ Course
+CourseSemester||..o{ SeminarGroup
+
+
+Course ||..o{ CourseSemester
+Semester||.r.o{ CourseSemester
+
+User }|.l.o{ Course: teaches
+User }|..o{ SeminarGroup: teaches
+
+Semester <|-u- SemesterSeasonEnum
+@enduml
