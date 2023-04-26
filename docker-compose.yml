@@ -1,0 +1,17 @@
+version: '0.1'
+name: postgres-database
+services:
+  db:
+    image: postgres:15.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=courses_registrator
+      - POSTGRES_PASSWORD=courses_registrator
+      - POSTGRES_DB=courses_registrator
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+volumes:
+  db:
+    driver: local
