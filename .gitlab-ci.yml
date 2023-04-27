@@ -1,33 +1,57 @@
 image: node:18.15
 
 stages:
-  - dev
+  - backend-dev
+  - frontend-dev
 
 cache:
   paths:
     - node_modules/
 
-before_script:
-  - cd application
-  - npm install
-
-lint:
-  stage: dev
+backend-lint:
+  stage: backend-dev
   script:
+    - cd application
+    - npm run lint
+  tags:
+    - shared-fi
+
+backend-build:
+  stage: backend-dev
+  script:
+    - cd application
+    - npm run build
+  tags:
+    - shared-fi
+
+backend-test:
+  stage: backend-dev
+  script:
+    - cd application
+    - npm run test
+  tags:
+    - shared-fi
+
+frontend-lint:
+  stage: frontend-dev
+  script:
+    - cd application
     - npm run lint
   tags: 
     - shared-fi
 
-build:
-  stage: dev
+frontend-build:
+  stage: frontend-dev
   script:
+    - cd application
     - npm run build
   tags: 
     - shared-fi
 
-test:
-  stage: dev
+frontend-test:
+  stage: frontend-dev
   script:
+    - cd application
     - npm run test
   tags:
     - shared-fi
