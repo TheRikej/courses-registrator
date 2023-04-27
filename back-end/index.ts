@@ -1,4 +1,7 @@
 import createUser from "./src/repositories/user/createUser";
+import addCourseUser from "./src/repositories/user/addCourseUser";
+import readSpecificUser from "./src/repositories/user/readSpecificUser";
+import createCourse from "./src/repositories/course/createCourse";
 import prisma from './src/repositories/client';
 
 
@@ -7,13 +10,28 @@ const a= 5;
 console.log(a);
 
 async function main() {
-    const user = await createUser({
+    const user = await readSpecificUser({
         userName: 'the.mf.billy.butcher',
-        email: 'butcher.b@fbi.gov',
-        hashedPassword: 'f5e24c095c5f09e125ac80c54e06b1116d038836de9e48887813cf93f84df4ed',
-        salt: 'd59367KfG1wkK5HrFc5cmE37MMeu8YEMGf12W0nMV7R7c3aAw61eg8Lk3AGNk82bXl9o6m999bIc14iP0zCKb2LFcqbKEC4SythOUyggkieailM5USAL684b1v9L8ee9',
     });
     console.log(user)
+    const course = await createCourse({
+      name: "FBIO",
+      description: "ads", 
+      registrationStart: new Date(), 
+      capacity: 2
+    });
+    let id;
+    if (user.isOk && course.isOk) {
+      id = user.value.id
+      const eid = course.value.id
+      const courseStudent = await addCourseUser({
+        id,
+        enrollCourseId: eid
+      });
+      console.log(courseStudent)
+    }
+
+    console.log(course)
   }
 
 main()

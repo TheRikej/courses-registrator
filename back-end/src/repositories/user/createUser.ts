@@ -3,6 +3,12 @@ import prisma from '../client';
 import type { UserCreateData } from './types/data';
 import type { UserCreateResult } from './types/result';
 
+/**
+ * Creates new user.
+ * 
+ * @param data 
+ * @returns 
+ */
 const createUser = async (data: UserCreateData): UserCreateResult => {
   try {
     return Result.ok(
