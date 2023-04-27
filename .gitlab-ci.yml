@@ -7,20 +7,12 @@ cache:
   paths:
     - node_modules/
 
-.backend_template:
-  before_script:
-    - cd back-end/
-    - npm install
-
-.frontend_template:
-  before_script:
-    - cd application/
-    - npm install
-
 backend-lint:
   extends: .backend_template
   stage: dev
   script:
+    - cd back-end/
+    - npm install
     - cd application/
     - npm run lint
   tags:
@@ -30,6 +22,8 @@ backend-build:
   extends: .backend_template
   stage: dev
   script:
+    - cd back-end/
+    - npm install
     - cd application/
     - npm run build
   tags:
@@ -39,6 +33,8 @@ backend-test:
   extends: .backend_template
   stage: dev
   script:
+    - cd back-end/
+    - npm install
     - cd application/
     - npm run test
   tags:
@@ -48,6 +44,8 @@ frontend-lint:
   extends: .frontend_template
   stage: dev
   script:
+    - cd application/
+    - npm install
     - cd back-end/
     - npm run lint
   tags: 
@@ -57,6 +55,8 @@ frontend-build:
   extends: .frontend_template
   stage: dev
   script:
+    - cd application/
+    - npm install
     - cd back-end/
     - npm run build
   tags: 
@@ -66,6 +66,8 @@ frontend-test:
   extends: .frontend_template
   stage: dev
   script:
+    - cd application/
+    - npm install
     - cd back-end/
     - npm run test
   tags:
