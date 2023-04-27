@@ -1,68 +1,87 @@
 image: node:18.15
 
 stages:
-  - dev
+  - lint
+  - build
+  - test
 
 cache:
   paths:
-    - node_modules/
+    - back-end/node_modules/
+    - application/node_modules/
+
+.backend-before-script: &backend-before-script
+  - cd back-end/
+  - npm install
+
+.frontend-before-script: &frontend-before-script
+  - cd application/
+  - npm install
 
 backend-lint:
-  stage: dev
+  stage: lint
+  before_script:
+    - *backend-before-script
   script:
     - cd back-end/
-    - npm install
-    - cd application/
     - npm run lint
-  tags:
-    - shared-fi
-
-backend-build:
-  stage: dev
-  script:
-    - cd back-end/
-    - npm install
-    - cd application/
-    - npm run build
-  tags:
-    - shared-fi
-
-backend-test:
-  stage: dev
-  script:
-    - cd back-end/
-    - npm install
-    - cd application/
-    - npm run test
   tags:
     - shared-fi
 
 frontend-lint:
-  stage: dev
+  stage: lint
+  before_script:
+    - *frontend-before-script
   script:
     - cd application/
-    - npm install
-    - cd back-end/
     - npm run lint
   tags: 
     - shared-fi
 
+backend-build:
+  stage: build
+  needs:
+    - backend-lint
+  before_script:
+    - *backend-before-script
+  script:
+    - cd back-end/
+    - npm run build
+  tags:
+    - shared-fi
+
 frontend-build:
-  stage: dev
+  stage: build
+  needs:
+    - frontend-lint
+  before_script:
+    - *frontend-before-script
   script:
     - cd application/
-    - npm install
-    - cd back-end/
     - npm run build
   tags: 
     - shared-fi
 
+backend-test:
+  stage: test
+  needs:
+    - backend-build
+  before_script:
+    - *backend-before-script
+  script:
+    - cd back-end/
+    - npm run test
+  tags:
+    - shared-fi
+
 frontend-test:
-  stage: dev
+  stage: test
+  needs:
+    - frontend-build
+  before_script:
+    - *frontend-before-script
   script:
     - cd application/
-    - npm install
-    - cd back-end/
     - npm run test
   tags:
     - shared-fi
