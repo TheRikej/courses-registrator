@@ -1,15 +1,14 @@
 image: node:18.15
 
 stages:
-  - backend-dev
-  - frontend-dev
+  - dev
 
 cache:
   paths:
     - node_modules/
 
 backend-lint:
-  stage: backend-dev
+  stage: dev
   script:
     - cd application
     - npm run lint
@@ -17,7 +16,7 @@ backend-lint:
     - shared-fi
 
 backend-build:
-  stage: backend-dev
+  stage: dev
   script:
     - cd application
     - npm run build
@@ -25,7 +24,7 @@ backend-build:
     - shared-fi
 
 backend-test:
-  stage: backend-dev
+  stage: dev
   script:
     - cd application
     - npm run test
@@ -33,7 +32,7 @@ backend-test:
     - shared-fi
 
 frontend-lint:
-  stage: frontend-dev
+  stage: dev
   script:
     - cd application
     - npm run lint
@@ -41,7 +40,7 @@ frontend-lint:
     - shared-fi
 
 frontend-build:
-  stage: frontend-dev
+  stage: dev
   script:
     - cd application
     - npm run build
@@ -49,7 +48,7 @@ frontend-build:
     - shared-fi
 
 frontend-test:
-  stage: frontend-dev
+  stage: dev
   script:
     - cd application
     - npm run test
