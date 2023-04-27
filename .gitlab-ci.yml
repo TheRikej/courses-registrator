@@ -8,7 +8,6 @@ cache:
     - node_modules/
 
 backend-lint:
-  extends: .backend_template
   stage: dev
   script:
     - cd back-end/
@@ -19,7 +18,6 @@ backend-lint:
     - shared-fi
 
 backend-build:
-  extends: .backend_template
   stage: dev
   script:
     - cd back-end/
@@ -30,7 +28,6 @@ backend-build:
     - shared-fi
 
 backend-test:
-  extends: .backend_template
   stage: dev
   script:
     - cd back-end/
@@ -41,7 +38,6 @@ backend-test:
     - shared-fi
 
 frontend-lint:
-  extends: .frontend_template
   stage: dev
   script:
     - cd application/
@@ -52,7 +48,6 @@ frontend-lint:
     - shared-fi
 
 frontend-build:
-  extends: .frontend_template
   stage: dev
   script:
     - cd application/
@@ -63,7 +58,6 @@ frontend-build:
     - shared-fi
 
 frontend-test:
-  extends: .frontend_template
   stage: dev
   script:
     - cd application/
