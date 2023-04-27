@@ -7,11 +7,18 @@ cache:
   paths:
     - node_modules/
 
-before_script:
-  - cd application/ && npm install
-  - cd ../back-end && npm install
+.backend_template:
+  before_script:
+    - cd back-end/
+    - npm install
+
+.frontend_template:
+  before_script:
+    - cd application/
+    - npm install
 
 backend-lint:
+  extends: .backend_template
   stage: dev
   script:
     - cd application/
@@ -20,6 +27,7 @@ backend-lint:
     - shared-fi
 
 backend-build:
+  extends: .backend_template
   stage: dev
   script:
     - cd application/
@@ -28,6 +36,7 @@ backend-build:
     - shared-fi
 
 backend-test:
+  extends: .backend_template
   stage: dev
   script:
     - cd application/
@@ -36,6 +45,7 @@ backend-test:
     - shared-fi
 
 frontend-lint:
+  extends: .frontend_template
   stage: dev
   script:
     - cd back-end/
@@ -44,6 +54,7 @@ frontend-lint:
     - shared-fi
 
 frontend-build:
+  extends: .frontend_template
   stage: dev
   script:
     - cd back-end/
@@ -52,6 +63,7 @@ frontend-build:
     - shared-fi
 
 frontend-test:
+  extends: .frontend_template
   stage: dev
   script:
     - cd back-end/
