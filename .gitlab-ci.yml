@@ -10,7 +10,7 @@ cache:
 backend-lint:
   stage: dev
   script:
-    - cd application
+    - cd application/
     - npm run lint
   tags:
     - shared-fi
@@ -18,7 +18,7 @@ backend-lint:
 backend-build:
   stage: dev
   script:
-    - cd application
+    - cd application/
     - npm run build
   tags:
     - shared-fi
@@ -26,7 +26,7 @@ backend-build:
 backend-test:
   stage: dev
   script:
-    - cd application
+    - cd application/
     - npm run test
   tags:
     - shared-fi
@@ -34,7 +34,7 @@ backend-test:
 frontend-lint:
   stage: dev
   script:
-    - cd application
+    - cd back-end/
     - npm run lint
   tags: 
     - shared-fi
@@ -42,7 +42,7 @@ frontend-lint:
 frontend-build:
   stage: dev
   script:
-    - cd application
+    - cd back-end/
     - npm run build
   tags: 
     - shared-fi
@@ -50,7 +50,7 @@ frontend-build:
 frontend-test:
   stage: dev
   script:
-    - cd application
+    - cd back-end/
     - npm run test
   tags:
     - shared-fi
