@@ -35,6 +35,7 @@ model Course {
 model SeminarGroup {
   id                String @id @default(uuid())
   registrationStart DateTime
+  registrationEnd   DateTime
   capacity          Int
   deletedAt         DateTime?
   courseSemester    CourseSemester @relation(fields: [courseSemesterId], references: [id])
@@ -78,18 +79,18 @@ model GroupStudent {
 }
 
 model CourseSemester {
-    id        String @id @default(uuid())
+    id                String @id @default(uuid())
     registrationStart DateTime
+    registrationEnd   DateTime
     capacity          Int
     teachers          User[]
     students          CourseStudent[]
-
-    deletedAt DateTime?
-    course   Course @relation(fields: [courseId], references: [id])
-    courseId String
-    semester     Semester @relation(fields: [semesterId], references: [id])
-    semesterId   String
-    seminarGroups SeminarGroup[]
+    deletedAt         DateTime?
+    course            Course @relation(fields: [courseId], references: [id])
+    courseId          String
+    semester          Semester @relation(fields: [semesterId], references: [id])
+    semesterId        String
+    seminarGroups     SeminarGroup[]
 }
 
 enum SemesterSeason {
