@@ -15,14 +15,30 @@ const readSpecific = async (
     try {
       const user = await prisma.user.findFirstOrThrow({
         where: {
-          userName: data.userName,
+          id: data.id,
         },
         include: {
-            studiedCourses: true,
-            studiedGroups: true,
-            taughtCourses: true,
-            taughtGroups: true
-        }
+          studiedCourses: {
+            where: {
+              deletedAt: null,
+            }
+          },
+          studiedGroups: {
+            where: {
+              deletedAt: null,
+            }
+          },
+          taughtCourses:{
+            where: {
+              deletedAt: null,
+            }
+          },
+          taughtGroups: {
+            where: {
+              deletedAt: null,
+            }
+          },
+        },
       });
       if (user.deletedAt != null) {
         throw new Error('The user has been deleted!');

@@ -13,8 +13,13 @@
   export type addStudentCourseData = {
     id: string;
     enrollCourseId: string;
-    };
+  };
+
+  export type addStudentSeminarData = {
+    id: string;
+    enrollSeminarId: string;
+  };
 
   export type UserReadSpecificData = {
-    userName: string;
+    id: string;
   };

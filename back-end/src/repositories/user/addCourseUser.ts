@@ -28,20 +28,27 @@ const addCourseUser = async (data: addStudentCourseData): UserAddStudentCourseRe
         if (user?.deletedAt != null) {
           throw new Error('The user has already been deleted!');
         }
-        const course = await transaction.course.findUnique({
+        const course = await transaction.courseSemester.findUnique({
           where: {
             id: data.enrollCourseId,
           },
+          include: {
+            students: true
+          }
         });
         if (course == null) {
-          throw new Error('No Course found');
+          throw new Error('No CourseSemester found');
         }
         if (course?.deletedAt != null) {
-          throw new Error('The course has already been deleted!');
+          throw new Error('The CourseSemester has already been deleted!');
         }
         const studiedCoursesIds = user.studiedCourses.map(x => x.courseId);
         if (studiedCoursesIds.indexOf(data.enrollCourseId) !== -1){
           throw new Error('The user has already enrolled in this course!');
+        }
+        const amountOfUsers = course.students.length;
+        if (amountOfUsers >= course.capacity){
+          throw new Error('This CourseSemester group is full!');
         }
         const courseStudent = await transaction.courseStudent.create({
           data: {

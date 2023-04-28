@@ -3,7 +3,7 @@ import prisma from '../client';
 import type { UserDeleteData } from './types/data';
 import type { UserDeleteResult } from './types/result';
 
-// Not yet implemented, no need for test.
+// Still not implemented, no need for test.
 const deleteUser = async (data: UserDeleteData): UserDeleteResult => {
   try {
     const deletedAt = new Date();

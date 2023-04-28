@@ -14,10 +14,8 @@ const createCourse = async (data: CourseCreateData): CourseCreateResult => {
     return Result.ok(
       await prisma.course.create({
         data: {
-          capacity: data.capacity,
           description: data.description,
           name: data.name,
-          registrationStart: data.registrationStart
         },
       }),
     );
