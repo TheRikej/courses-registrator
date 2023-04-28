@@ -1,0 +1,12 @@
+{
+    "users": [
+        {
+            "id": "14c458ce-57be-433c-98b0-9888d14f41af",
+            "userName": "john",
+            "email": "j.hill@scada.org",
+            "createdAt": "2023-03-17T13:00:06.000Z",
+            "hashedPassword": "9f45cd50672132537264050cd666e6ae5dcc00de78361c2ecdbb6d1847cfe63e",
+            "salt": "JOA0c7xtMB7pV4oPCjnG1djDo7wbhn16zsreKt7wKnOd4o9mXSDg7q2hnX7858ONB2JPg6Y4WR4ambujo175Af6UCKVR3495AE92r47BL5q5nKl6DM802dwI5w85b4JJ"
+        }
+    ]
+}
