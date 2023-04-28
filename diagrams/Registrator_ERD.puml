@@ -22,8 +22,6 @@ entity Course{
     * faculty: <<FK>>
     * description: string
     * name: string
-    * registrationStart: timestamp
-    * capacity: int
     deletedAt: timestamp
 }
 
@@ -33,6 +31,7 @@ entity SeminarGroup {
     * teacher: <<FK>>
     * course: <<FK>>
     * registrationStart: timestamp
+    * registrationEnd: timestamp
     * capacity: int
     deletedAt: timestamp
 }
@@ -59,10 +58,13 @@ entity CourseSemester {
     ---
     * course: <<FK>>
     * semester: <<FK>>
+    * registrationStart: timestamp
+    * registrationEnd: timestamp
+    * capacity: int
     deletedAt: timestamp
 }
 
-entity CourseUser {
+entity CourseStudent {
     * id: <<uuid>>
     ---
     * course: <<FK>>
@@ -70,7 +72,7 @@ entity CourseUser {
     deletedAt: timestamp
 }
 
-entity GroupUser {
+entity GroupStudent {
     * id: <<uuid>>
     ---
     * group: <<FK>>
@@ -84,11 +86,11 @@ Enum SemesterSeasonEnum {
 }
 
 
-User ||..o{ GroupUser: visits
-SeminarGroup ||.r.o{ GroupUser
+User ||..o{ GroupStudent: visits
+SeminarGroup ||.r.o{ GroupStudent
 
-User ||.u.o{ CourseUser: visits
-Course ||.r.o{ CourseUser
+User ||.u.o{ CourseStudent: visits
+CourseSemester ||.r.o{ CourseStudent
 
 Faculty ||.r.o{ Course
 CourseSemester||..o{ SeminarGroup
@@ -98,7 +100,7 @@ Course ||..o{ CourseSemester
 Semester||.r.o{ CourseSemester
 
 User }|.l.o{ Course: teaches
-User }|..o{ SeminarGroup: teaches
+User }|.l.o{ SeminarGroup: teaches
 
 Semester <|-u- SemesterSeasonEnum
 @enduml
