@@ -18,7 +18,7 @@ model User {
   hashedPassword String
   salt           String
   deletedAt      DateTime?
-  taughtCourses  Course[]
+  taughtCourses  CourseSemester[]
   taughtGroups   SeminarGroup[]
   studiedCourses CourseStudent[]
   studiedGroups  GroupStudent[]
@@ -28,17 +28,14 @@ model Course {
   id                String @id @default(uuid())
   description       String
   name              String
-  registrationStart DateTime
-  capacity          Int
   deletedAt         DateTime?
-  teachers          User[]
-  students          CourseStudent[]
   courseSemesters   CourseSemester[]
 }
 
 model SeminarGroup {
   id                String @id @default(uuid())
   registrationStart DateTime
+  registrationEnd   DateTime
   capacity          Int
   deletedAt         DateTime?
   courseSemester    CourseSemester @relation(fields: [courseSemesterId], references: [id])
@@ -68,7 +65,7 @@ model CourseStudent {
     deletedAt DateTime?
     student   User @relation(fields: [studentId], references: [id])
     studentId String
-    course    Course @relation(fields: [courseId], references: [id])
+    course    CourseSemester @relation(fields: [courseId], references: [id])
     courseId  String
 }
 
@@ -82,13 +79,18 @@ model GroupStudent {
 }
 
 model CourseSemester {
-    id        String @id @default(uuid())
-    deletedAt DateTime?
-    course   Course @relation(fields: [courseId], references: [id])
-    courseId String
-    semester     Semester @relation(fields: [semesterId], references: [id])
-    semesterId   String
-    seminarGroups SeminarGroup[]
+    id                String @id @default(uuid())
+    registrationStart DateTime
+    registrationEnd   DateTime
+    capacity          Int
+    teachers          User[]
+    students          CourseStudent[]
+    deletedAt         DateTime?
+    course            Course @relation(fields: [courseId], references: [id])
+    courseId          String
+    semester          Semester @relation(fields: [semesterId], references: [id])
+    semesterId        String
+    seminarGroups     SeminarGroup[]
 }
 
 enum SemesterSeason {
