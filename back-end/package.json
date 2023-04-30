@@ -7,7 +7,7 @@
     "start": "ts-node ./index.ts",
     "compile": "tsc",
     "lint": "eslint .",
-    "test": "jest",
+    "test": "prisma migrate reset --force && ts-node src/seed/seed.ts && jest",
     "migrate": "prisma migrate dev",
     "seed": "prisma migrate reset --force && ts-node src/seed/seed.ts"
   },
