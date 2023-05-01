@@ -3,7 +3,7 @@ import type { Faculty } from '@prisma/client';
 export type CourseCreateData = {
     description: string,
     name: string
-    //faculty: Faculty,
+    facultyId: string;
   };
 
   export type AddCreateSemesterData = {

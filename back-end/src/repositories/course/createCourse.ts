@@ -16,7 +16,7 @@ const createCourse = async (data: CourseCreateData): CourseCreateResult => {
         data: {
           description: data.description,
           name: data.name,
-          //: { connect: { id: data.id } },
+          faculty: { connect: { id: data.facultyId } },
         },
       }),
     );

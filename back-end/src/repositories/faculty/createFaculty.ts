@@ -11,12 +11,22 @@ import type { FacultyCreateResult } from './types/result';
  */
 const createFaculty = async (data: FacultyCreateData): FacultyCreateResult => {
   try {
-    return Result.ok(
-      await prisma.faculty.create({
+    const faculty = await prisma.faculty.findFirst({
+      where: {
+          name: data.name,
+      },
+    });
+    if (faculty !== null) {
+      throw new Error("Faculty with this name already exists!");
+    }
+    return Result.ok(await prisma.$transaction(async (transaction) => {
+      const faculty = await transaction.faculty.create({
         data: {
           name: data.name,
         },
-      }),
+      })
+      return faculty;
+    }),
     );
   } catch (e) {
     return Result.err(e as Error);

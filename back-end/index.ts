@@ -7,6 +7,7 @@ import createSemester from "./src/repositories/semester/createSemester";
 import prisma from './src/repositories/client';
 import createFaculty from "./src/repositories/faculty/createFaculty";
 import addSeminarUser from "./src/repositories/user/addSeminarUser";
+import readSpecificFaculty from "./src/repositories/faculty/readSpecificFaculty";
 import { SemesterSeason } from '@prisma/client';
 
 
@@ -16,7 +17,10 @@ console.log(a);
 
 async function main() {
   const faculty = await createFaculty({
-    name: "fi"
+    name: "oko"
+  })
+  const faculty2 = await readSpecificFaculty({
+    name: faculty.isOk ? faculty.value.name : "a",
   })
   console.log(faculty)
   const user1 = await createUser({
@@ -30,6 +34,7 @@ async function main() {
   });
   console.log(user)
   const course = await createCourse({
+    facultyId: faculty.isOk ? faculty.value.id : "a",
     name: "FBIO",
     description: "ads",
   });
