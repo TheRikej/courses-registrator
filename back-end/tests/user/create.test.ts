@@ -1,7 +1,7 @@
 import createUser from '../../src/repositories/user/createUser';
 import prisma from '../../src/repositories/client';
 
-describe('user.comment test suite', () => {
+describe('user.create test suite', () => {
   beforeEach(async () => {
     await prisma.$disconnect();
   });

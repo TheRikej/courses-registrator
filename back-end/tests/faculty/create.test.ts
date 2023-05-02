@@ -6,14 +6,14 @@ describe('faculty.create test suite', () => {
     await prisma.$disconnect();
   });
 
-  test('[Success]: Create faculty.', async () => {
+  test('[Success]: Create an non-existing faculty.', async () => {
     const expected = {
-        name: 'FI',
+        name: 'PF',
         deletedAt: null,
     }
     
     const actual = await createFaculty({
-        name: 'FI',
+        name: 'PF',
     });
 
     if (actual.isErr) {
@@ -21,6 +21,18 @@ describe('faculty.create test suite', () => {
     }
 
     expect(actual.value).toStrictEqual(expect.objectContaining({...expected}));
+  });
+
+  test('[Failure]: Create an existing faculty.', async () => {
+    const actual = await createFaculty({
+        name: 'FI',
+    });
+
+    if (actual.isOk) {
+      throw new Error('Repository call should failed!');
+    }
+
+    expect(actual.error.message).toEqual("Faculty with this name already exists!");
   });
 
 });
