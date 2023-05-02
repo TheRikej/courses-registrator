@@ -15,6 +15,17 @@ const seed = async () => {
       )),
     ]);
 
+    console.log(`[${new Date().toISOString()}] Seeding Faculties`);
+    await client.$transaction([
+      ...data.facultyData.map((faculty) => (
+        client.faculty.create({
+          data: {
+            ...faculty,
+          },
+        })
+      )),
+    ]);
+
     console.log(`[${new Date().toISOString()}] Seeding Semesters`);
     await client.$transaction([
       ...data.semestersData.map((semester) => (

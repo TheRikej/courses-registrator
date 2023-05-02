@@ -1,4 +1,4 @@
-import type { User, Course, Semester, CourseSemester } from '@prisma/client';
+import type { User, Course, Semester, CourseSemester, Faculty } from '@prisma/client';
 
 const usersData: User[] = [
     {
@@ -39,24 +39,45 @@ const usersData: User[] = [
     }
 ]
 
+const facultyData: Faculty[] = [
+    {
+        "id": "aaa",
+        "name": "FI",
+        "deletedAt": null,
+    },
+    {
+        "id": "bbb",
+        "name": "FSS",
+        "deletedAt": null,
+    },
+    {
+        "id": "ccc",
+        "name": "FF",
+        "deletedAt": null,
+    },
+]
+
 const coursesData: Course[] = [
     {
         "id": "92d2defd-49e9-401e-ae14-6e10c986d3d1",
         "description": "Moderni Znackovaci Jazyky",
         "name": "PB138",
-        "deletedAt": null
+        "deletedAt": null,
+        "facultyId": "aaa"
     },
     {
         "id": "a8b45ee3-f110-4265-a527-6fba4447d2c8",
         "description": "Algoritmy",
         "name": "IB001",
-        "deletedAt": null
+        "deletedAt": null,
+        "facultyId": "bbb"
     },
     {
         "id": "49c1af40-35d9-48a4-9695-d7f164071f30",
         "description": "Matematika 1",
         "name": "MB144",
-        "deletedAt": null
+        "deletedAt": null,
+        "facultyId": "ccc"
     }
 ]
 
@@ -104,5 +125,6 @@ export default {
     usersData,
     semestersData,
     coursesData,
-    courseSemesterData
+    courseSemesterData,
+    facultyData
 };
