@@ -24,3 +24,7 @@ export type AddStudentSeminarReturnType = GroupStudent & { student: User, group:
 export type UserAddStudentSeminarReturnType = AsyncResult<AddStudentSeminarReturnType>;
 
 export type UserAddStudentCourseResult = AsyncResult<AddStudentCourseReturnType>;
+
+export type UserRemoveStudentCourseResult = AsyncResult<number>;
+
+export type UserReadAllResult = AsyncResult<Required<User[]>>;

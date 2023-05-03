@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { addStudentCourseData } from './types/data';
 import type { UserAddStudentCourseResult } from './types/result';
+import { id } from 'date-fns/locale';
 
 /**
  * Enrolls existing student to existing course, that he is not already enrolled in.
@@ -19,7 +20,11 @@ const addCourseUser = async (data: addStudentCourseData): UserAddStudentCourseRe
             id: data.id,
           },
           include: {
-            studiedCourses: true,
+            studiedCourses: {
+              where: {
+                courseId: data.enrollCourseId,
+              },
+            }
         }
         });
         if (user == null) {
@@ -33,7 +38,11 @@ const addCourseUser = async (data: addStudentCourseData): UserAddStudentCourseRe
             id: data.enrollCourseId,
           },
           include: {
-            students: true
+            students: {
+              where: {
+                deletedAt: null
+              }
+            }
           }
         });
         if (course == null) {
@@ -42,7 +51,30 @@ const addCourseUser = async (data: addStudentCourseData): UserAddStudentCourseRe
         if (course?.deletedAt != null) {
           throw new Error('The CourseSemester has already been deleted!');
         }
+        const currentDate = new Date();
+        if (course.registrationStart > currentDate) {
+          throw new Error('Registration for this subject has not begun yet!');
+        }
+        if (course.registrationEnd < currentDate) {
+          throw new Error('Registration for this subject has already ended yet!');
+        }
         const studiedCoursesIds = user.studiedCourses.map(x => x.courseId);
+        const studiedCoursesDeleted = user.studiedCourses.map(x => x.deletedAt);
+        if (studiedCoursesDeleted.some(x => x !== null)) {
+          const courseStudent = await transaction.courseStudent.update({
+            where: {
+              id: user.studiedCourses[0].id,
+            },
+            data: {
+              deletedAt: null,
+            },
+            include: {
+              student: true,
+              course: true
+            },
+          });
+          return courseStudent;
+        }
         if (studiedCoursesIds.indexOf(data.enrollCourseId) !== -1){
           throw new Error('The user has already enrolled in this course!');
         }

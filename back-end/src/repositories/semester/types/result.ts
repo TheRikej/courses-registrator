@@ -2,3 +2,7 @@ import type { CourseStudent, GroupStudent, User, Course, SeminarGroup, CourseSem
 import type { AsyncResult } from '../../types';
 
 export type SemesterCreateResult = AsyncResult<Semester>;
+
+export type SemesterReadResult = AsyncResult<Semester>;
+
+export type SemesterReadAllResult = AsyncResult<Required<Semester[]>>;

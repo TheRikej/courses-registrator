@@ -6,3 +6,12 @@ export type SemseterCreateData = {
   semesterStart: Date,
   semesterEnd: Date,
 };
+
+export type ReadSemesterData = {
+  id: string;
+}
+
+export type ReadAllSemesterData = {
+  year?: number;
+  season?: SemesterSeason;
+}
