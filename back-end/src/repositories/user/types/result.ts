@@ -19,11 +19,15 @@ export type UserReadSpecificType = AsyncResult<User & {
 
 export type AddStudentCourseReturnType = CourseStudent & { student: User, course: CourseSemester };
 
+export type AddTeacherCourseReturnType = User;
+
 export type AddStudentSeminarReturnType = GroupStudent & { student: User, group: SeminarGroup };
 
 export type UserAddStudentSeminarReturnType = AsyncResult<AddStudentSeminarReturnType>;
 
 export type UserAddStudentCourseResult = AsyncResult<AddStudentCourseReturnType>;
+
+export type UserAddTeacherCourseResult = AsyncResult<AddTeacherCourseReturnType>;
 
 export type UserRemoveStudentCourseResult = AsyncResult<number>;
 

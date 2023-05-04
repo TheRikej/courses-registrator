@@ -15,6 +15,11 @@
     enrollCourseId: string;
   };
 
+  export type addTeacherCourseData = {
+    id: string;
+    enrollCourseId: string;
+  };
+
   export type removeStudentCourseData = {
     id: string;
     enrollCourseId: string;

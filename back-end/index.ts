@@ -14,6 +14,7 @@ import readSpecificSemester from "./src/repositories/semester/readSpecificSemest
 import readAllSemester from "./src/repositories/semester/readAllSemester";
 import readAllFaculty from "./src/repositories/faculty/readAllFaculty";
 import readAllUser from "./src/repositories/user/readAllUser";
+import addCourseTeacher from "./src/repositories/user/addCourseTeacher";
 
 
 const a= 5;
@@ -68,7 +69,7 @@ async function main() {
     id: "1c6eb40c-d104-4893-9cf3-97bcca877001",
     enrollCourseId: "c83f6214-aa2e-43a7-94e8-007e4ce40c20"
   })
-  console.log(removedCourseUser)*/
+  console.log(removedCourseUser)
   const semester = await createSemester({
     year: 2005,
     season: SemesterSeason.SPRING,
@@ -101,7 +102,16 @@ async function main() {
   })
   console.log(courseSemester)
   console.log(courseStudent)
-  // new Date("2019-01-16"); 
+  // new Date("2019-01-16");*/
+  /*const courseSemester = await addCourseTeacher({
+    enrollCourseId: "86adeee3-90e9-4d00-89f3-96038b41a5b8",
+    id: "14c458ce-57be-433c-98b0-9888d14f41af",
+  });
+  console.log(courseSemester);*/
+  const user = await readSpecificUser({
+    id: "14c458ce-57be-433c-98b0-9888d14f41af",
+  });
+  console.log(user)
 }
 
 main()
