@@ -16,6 +16,7 @@ describe('course.create test suite', () => {
     const actual = await createCourse({
         name: 'PB138',
         description: 'Moderni znackovaci jazyky',
+        facultyId: 'aaa'
     });
 
     if (actual.isErr) {
@@ -23,6 +24,32 @@ describe('course.create test suite', () => {
     }
 
     expect(actual.value).toStrictEqual(expect.objectContaining({...expected}));
+  });
+
+  test('[Failure]: Create course with an non-existing faculty.', async () => {
+
+    const actual = await createCourse({
+        name: 'PB138',
+        description: 'Moderni znackovaci jazyky',
+        facultyId: 'xxxxxxxx'
+    });
+
+    if (actual.isOk) {
+      throw new Error('Repository call should failed!');
+    }
+  });
+
+  test('[Failure]: Create existing course.', async () => {
+
+    const actual = await createCourse({
+        name: 'PB138',
+        description: 'Moderni znackovaci jazyky',
+        facultyId: 'aaa'
+    });
+
+    if (actual.isOk) {
+      throw new Error('Repository call should failed!');
+    }
   });
 
 });

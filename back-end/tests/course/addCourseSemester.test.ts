@@ -6,7 +6,7 @@ describe('course.create test suite', () => {
     await prisma.$disconnect();
   });
 
-  test('[Success]: Create course.', async () => {
+  test('[Success]: Add course semester.', async () => {
     
     const expected = {
         name: 'PB138',
