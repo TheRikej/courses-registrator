@@ -4,7 +4,7 @@ import type { ReadFacultyData } from './types/data';
 import type { FacultyReadResult } from './types/result';
 
 /**
- * Returns user and all his courses and seminar groups.
+ * Returns faculty and all his courses.
  * 
  * @param data 
  * @returns 

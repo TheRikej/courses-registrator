@@ -21,6 +21,8 @@ export type AddStudentCourseReturnType = CourseStudent & { student: User, course
 
 export type AddTeacherCourseReturnType = User;
 
+export type AddTeacherSeminarReturnType = User;
+
 export type AddStudentSeminarReturnType = GroupStudent & { student: User, group: SeminarGroup };
 
 export type UserAddStudentSeminarReturnType = AsyncResult<AddStudentSeminarReturnType>;
@@ -28,6 +30,8 @@ export type UserAddStudentSeminarReturnType = AsyncResult<AddStudentSeminarRetur
 export type UserAddStudentCourseResult = AsyncResult<AddStudentCourseReturnType>;
 
 export type UserAddTeacherCourseResult = AsyncResult<AddTeacherCourseReturnType>;
+
+export type UserAddTeacherSeminarResult = AsyncResult<AddTeacherSeminarReturnType>;
 
 export type UserRemoveStudentCourseResult = AsyncResult<number>;
 

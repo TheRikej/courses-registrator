@@ -1,4 +1,4 @@
-import addCourseUser from '../../src/repositories/user/addCourseUser';
+import addCourseUser from '../../src/repositories/user/courseUser/addCourseUser';
 import prisma from '../../src/repositories/client';
 
 describe('user.addCourse test suite', () => {

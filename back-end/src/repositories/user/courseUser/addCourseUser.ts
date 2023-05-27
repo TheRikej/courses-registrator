@@ -1,7 +1,7 @@
 import { Result } from '@badrap/result';
-import prisma from '../client';
-import type { addStudentCourseData } from './types/data';
-import type { UserAddStudentCourseResult } from './types/result';
+import prisma from '../../client';
+import type { addStudentCourseData } from '../types/data';
+import type { UserAddStudentCourseResult } from '../types/result';
 import { id } from 'date-fns/locale';
 
 /**

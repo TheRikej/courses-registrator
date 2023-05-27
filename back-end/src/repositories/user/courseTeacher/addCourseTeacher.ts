@@ -1,7 +1,7 @@
 import { Result } from '@badrap/result';
-import prisma from '../client';
-import type { addTeacherCourseData } from './types/data';
-import type { UserAddTeacherCourseResult } from './types/result';
+import prisma from '../../client';
+import type { addTeacherCourseData } from '../types/data';
+import type { UserAddTeacherCourseResult } from '../types/result';
 
 /**
  * Enrolls existing student to existing course, that he is not already enrolled in.

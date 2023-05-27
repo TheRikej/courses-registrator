@@ -4,7 +4,7 @@ import type { FacultyCreateData } from './types/data';
 import type { FacultyCreateResult } from './types/result';
 
 /**
- * Creates new semseter.
+ * Creates new faculty.
  * 
  * @param data 
  * @returns 

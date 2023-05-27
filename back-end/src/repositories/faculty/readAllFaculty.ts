@@ -3,7 +3,7 @@ import prisma from '../client';
 import type { FacultyReadAllResult } from './types/result';
 
 /**
- * Returns user and all his courses and seminar groups.
+ * Returns all faculties.
  * 
  * @param data 
  * @returns 

@@ -20,6 +20,11 @@
     enrollCourseId: string;
   };
 
+  export type addTeacherSeminarData = {
+    id: string;
+    enrollSeminarId: string;
+  };
+
   export type removeStudentCourseData = {
     id: string;
     enrollCourseId: string;

@@ -13,3 +13,5 @@ export type CourseCreateData = {
     registrationStart: Date,
     capacity: number,
   };
+
+  

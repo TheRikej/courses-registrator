@@ -1,8 +1,7 @@
 import { Result } from '@badrap/result';
-import prisma from '../client';
-import type { removeStudentCourseData } from './types/data';
-import type { UserRemoveStudentCourseResult } from './types/result';
-import { id } from 'date-fns/locale';
+import prisma from '../../client';
+import type { removeStudentCourseData } from '../types/data';
+import type { UserRemoveStudentCourseResult } from '../types/result';
 
 /**
  * Enrolls existing student to existing course, that he is not already enrolled in.
