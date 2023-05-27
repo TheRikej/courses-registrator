@@ -4,7 +4,7 @@ import type { ReadCourseSemesterData } from './types/data';
 import type { CourseSemesterResult } from './types/result';
 
 /**
- * Returns Course and all its CourseSemesters.
+ * Returns SemesterCourse and all its seminar groups.
  * 
  * @param data 
  * @returns 

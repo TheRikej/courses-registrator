@@ -2,10 +2,9 @@ import { Result } from '@badrap/result';
 import prisma from '../../client';
 import type { addStudentCourseData } from '../types/data';
 import type { UserAddStudentCourseResult } from '../types/result';
-import { id } from 'date-fns/locale';
 
 /**
- * Enrolls existing student to existing course, that he is not already enrolled in.
+ * Enrolls existing student to existing course, that he/she is not already enrolled in.
  * 
  * @param data 
  * @returns 

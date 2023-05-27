@@ -4,7 +4,7 @@ import type { ReadAllCourseSemesterData } from './types/data';
 import type { AllCourseSemesterResult } from './types/result';
 
 /**
- * Returns faculty and all his courses.
+ * Returns all SemesterCourses that fit the given conditions.
  * 
  * @param data 
  * @returns 

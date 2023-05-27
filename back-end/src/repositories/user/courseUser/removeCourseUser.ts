@@ -4,7 +4,7 @@ import type { removeStudentCourseData } from '../types/data';
 import type { UserRemoveStudentCourseResult } from '../types/result';
 
 /**
- * Enrolls existing student to existing course, that he is not already enrolled in.
+ * Removes existing student from course that he/she is enrolled in.
  * 
  * @param data 
  * @returns 

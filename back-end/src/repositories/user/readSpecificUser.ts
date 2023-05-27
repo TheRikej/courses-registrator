@@ -4,7 +4,7 @@ import type { UserReadSpecificData } from './types/data';
 import type { UserReadSpecificType } from './types/result';
 
 /**
- * Returns user and all his courses and seminar groups.
+ * Returns user and all their courses and seminar groups.
  * 
  * @param data 
  * @returns 

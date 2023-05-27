@@ -4,7 +4,7 @@ import type { AddCreateSemesterData } from './types/data';
 import type { AddCourseSemesterResult } from './types/result';
 
 /**
- * Enrolls existing student to existing course, that he is not already enrolled in.
+ * Creates CourseSemester for semester and course
  * 
  * @param data 
  * @returns 
@@ -25,6 +25,19 @@ const addCourseSemester = async (data: AddCreateSemesterData): AddCourseSemester
         }
         if (course?.deletedAt != null) {
           throw new Error('The course has already been deleted!');
+        }
+
+        const semseter = await transaction.semester.findUnique({
+          where: {
+            id: data.semesterId,
+          },
+        });
+        
+        if (semseter == null) {
+          throw new Error('No semester found');
+        }
+        if (semseter?.deletedAt != null) {
+          throw new Error('The semester has already been deleted!');
         }
         
         const courseSemester = await transaction.courseSemester.create({

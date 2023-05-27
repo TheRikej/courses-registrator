@@ -172,5 +172,3 @@ main()
     await prisma.$disconnect()
     process.exit(1)
   })
-
-//console.log(showcaseRepositories())

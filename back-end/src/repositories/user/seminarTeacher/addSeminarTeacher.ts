@@ -4,7 +4,7 @@ import type { addTeacherSeminarData } from '../types/data';
 import type { UserAddTeacherSeminarResult } from '../types/result';
 
 /**
- * Enrolls existing student to existing course, that he is not already enrolled in.
+ * Adds taught course to teacher.
  * 
  * @param data 
  * @returns 

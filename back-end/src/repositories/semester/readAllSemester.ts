@@ -4,7 +4,7 @@ import type { SemesterReadAllResult } from './types/result';
 import type { ReadAllSemesterData } from './types/data';
 
 /**
- * Returns user and all his courses and seminar groups.
+ * Returns all semesters that fit given conditions.
  * 
  * @param data 
  * @returns 
