@@ -1,5 +1,3 @@
-import type { Faculty } from '@prisma/client';
-
 export type CourseCreateData = {
     description: string,
     name: string
@@ -14,4 +12,11 @@ export type CourseCreateData = {
     capacity: number,
   };
 
-  
+  export type ReadCourseData = {
+    id?: string;
+    name?: string;
+  }
+
+  export type ReadAllCourseData = {
+    facultyId?: string;
+  }

@@ -17,6 +17,13 @@ import readAllUser from "./src/repositories/user/readAllUser";
 import addCourseTeacher from "./src/repositories/user/courseTeacher/addCourseTeacher";
 import createSeminarGroup from "./src/repositories/seminar/createSeminarGroup";
 import addSeminarTeacher from "./src/repositories/user/seminarTeacher/addSeminarTeacher";
+import removeCourseTeacher from "./src/repositories/user/courseTeacher/removeCourseTeacher";
+import readAllSemesterCourses from "./src/repositories/courseSemester/readAllSemesterCourses";
+import readAllCourse from "./src/repositories/course/readAllCourses";
+import readSpecificSemesterCourse from "./src/repositories/courseSemester/readSpecificSemesterCourse";
+import readSpecificCourse from "./src/repositories/course/readSpecificCourse";
+
+// Here you can try prisma functions.
 
 async function main() {
   /* const faculty = await createFaculty({
@@ -109,7 +116,7 @@ async function main() {
     enrollCourseId: "86adeee3-90e9-4d00-89f3-96038b41a5b8",
     id: "14c458ce-57be-433c-98b0-9888d14f41af",
   });*/
-  const newCourseSemester = await addCourseSemester({
+  /*const newCourseSemester = await addCourseSemester({
     semesterId: "99e68201-76a5-4b02-9379-4277deda8a70",
     id: "a8b45ee3-f110-4265-a527-6fba4447d2c8",
     registrationEnd: new Date("2025-01-16"),
@@ -135,12 +142,25 @@ async function main() {
   })
   const user3 = await readSpecificUser({
     id: "14c458ce-57be-433c-98b0-9888d14f41af",
-  })
-  console.log(courseSemester);
+  })*/
+  /*console.log(courseSemester);
   console.log(seminar);
   console.log(user);
   console.log(user2);
-  console.log(user3);
+  console.log(user3);*/
+  /*const courseSemester2 = await removeCourseTeacher({
+    courseId: "452c3db3-d6c9-45db-b0b9-f7baa86455cb",
+    id: "14c458ce-57be-433c-98b0-9888d14f41af",
+  });
+  const user4 = await readSpecificUser({
+    id: "14c458ce-57be-433c-98b0-9888d14f41af",
+  })
+  console.log(courseSemester2);
+  console.log(user4);*/
+  //console.log(await readAllCourse({ facultyId: "aaa" }));
+  //console.log(await readAllSemesterCourses({}));
+  //console.log(await readSpecificCourse({ id: "92d2defd-49e9-401e-ae14-6e10c986d3d1" }));
+  console.log(await readSpecificSemesterCourse({ id: "13a930a0-4486-4dd4-b821-3e11e2d9aee6" }));
 }
 
 main()

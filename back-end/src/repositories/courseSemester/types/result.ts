@@ -1,8 +1,8 @@
 import type { CourseStudent, GroupStudent, User, Course, SeminarGroup, CourseSemester } from '@prisma/client';
 import type { AsyncResult } from '../../types';
 
-export type CourseResult = AsyncResult<Course>;
+export type CourseSemesterResult = AsyncResult<CourseSemester>;
 
-export type AllCourseResult = AsyncResult<Course[]>;
+export type AllCourseSemesterResult = AsyncResult<CourseSemester[]>;
 
 export type AddCourseSemesterResult = AsyncResult<CourseSemester>;

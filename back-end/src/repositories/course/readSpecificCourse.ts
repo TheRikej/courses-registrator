@@ -1,0 +1,41 @@
+import { Result } from '@badrap/result';
+import prisma from '../client';
+import type { ReadCourseData } from './types/data';
+import type { CourseResult } from './types/result';
+
+/**
+ * Returns Course and all its CourseSemesters.
+ * 
+ * @param data 
+ * @returns 
+ */
+const readSpecificCourse = async (
+    data: ReadCourseData,
+  ): CourseResult => {
+    try {
+      if (data.id === undefined && data.name === undefined) {
+        throw new Error('Must provide ID or Name for course!');
+      }
+      const course = await prisma.course.findFirstOrThrow({
+        where: {
+            ...(data?.id !== undefined ? { id: data.id} : {}),
+            ...(data?.name !== undefined ? { name: data.name} : {}),
+        },
+        include: {
+          courseSemesters: {
+            where: {
+                deletedAt: null,
+            }
+          }
+        },
+      });
+      if (course.deletedAt != null) {
+        throw new Error('The course has been deleted!');
+      }
+      return Result.ok(course);
+    } catch (e) {
+      return Result.err(e as Error);
+    }
+  };
+
+  export default readSpecificCourse;

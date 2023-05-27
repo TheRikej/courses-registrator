@@ -1,7 +1,7 @@
 import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { CourseCreateData } from './types/data';
-import type { CourseCreateResult } from './types/result';
+import type { CourseResult } from './types/result';
 
 /**
  * Creates new course.
@@ -9,7 +9,7 @@ import type { CourseCreateResult } from './types/result';
  * @param data 
  * @returns 
  */
-const createCourse = async (data: CourseCreateData): CourseCreateResult => {
+const createCourse = async (data: CourseCreateData): CourseResult => {
   try {
     return Result.ok(
       await prisma.course.create({

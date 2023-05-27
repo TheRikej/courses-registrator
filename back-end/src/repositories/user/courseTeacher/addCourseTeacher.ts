@@ -54,6 +54,16 @@ const addCourseTeacher = async (data: addTeacherCourseData): UserAddTeacherCours
                 }
             }
           });
+          await transaction.courseSemester.update({
+            where: {
+              id: data.enrollCourseId,
+            },
+            data: {
+              teachers: {
+                connect: [{ id: data.id }],
+              }
+            }
+          });
         return userUpdate;
       }),
     );

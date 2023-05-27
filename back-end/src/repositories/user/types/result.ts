@@ -19,7 +19,7 @@ export type UserReadSpecificType = AsyncResult<User & {
 
 export type AddStudentCourseReturnType = CourseStudent & { student: User, course: CourseSemester };
 
-export type AddTeacherCourseReturnType = User;
+export type TeacherCourseReturnType = User;
 
 export type AddTeacherSeminarReturnType = User;
 
@@ -29,7 +29,9 @@ export type UserAddStudentSeminarReturnType = AsyncResult<AddStudentSeminarRetur
 
 export type UserAddStudentCourseResult = AsyncResult<AddStudentCourseReturnType>;
 
-export type UserAddTeacherCourseResult = AsyncResult<AddTeacherCourseReturnType>;
+export type UserAddTeacherCourseResult = AsyncResult<TeacherCourseReturnType>;
+
+export type UserRemoveTeacherCourseResult = AsyncResult<TeacherCourseReturnType>;
 
 export type UserAddTeacherSeminarResult = AsyncResult<AddTeacherSeminarReturnType>;
 
