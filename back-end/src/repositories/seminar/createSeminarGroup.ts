@@ -4,7 +4,6 @@ import type { CreateSeminar } from './types/data';
 import type { CourseCreateResult } from './types/result';
 
 /**
- * NOT FINISHED
  * 
  * Enrolls existing student to existing course, that he is not already enrolled in.
  * 

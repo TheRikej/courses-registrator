@@ -1,27 +1,12 @@
-import createUser from "./src/repositories/user/createUser";
-import addCourseUser from "./src/repositories/user/courseUser/addCourseUser";
-import readSpecificUser from "./src/repositories/user/readSpecificUser";
-import createCourse from "./src/repositories/course/createCourse";
-import addCourseSemester from "./src/repositories/course/addCourseSemester";
-import createSemester from "./src/repositories/semester/createSemester";
 import prisma from './src/repositories/client';
-import createFaculty from "./src/repositories/faculty/createFaculty";
-import addSeminarUser from "./src/repositories/user/seminarUser/addSeminarUser";
-import readSpecificFaculty from "./src/repositories/faculty/readSpecificFaculty";
-import { SemesterSeason } from '@prisma/client';
-import removeCourseUser from "./src/repositories/user/courseUser/removeCourseUser";
-import readSpecificSemester from "./src/repositories/semester/readSpecificSemester";
-import readAllSemester from "./src/repositories/semester/readAllSemester";
-import readAllFaculty from "./src/repositories/faculty/readAllFaculty";
-import readAllUser from "./src/repositories/user/readAllUser";
-import addCourseTeacher from "./src/repositories/user/courseTeacher/addCourseTeacher";
-import createSeminarGroup from "./src/repositories/seminar/createSeminarGroup";
-import addSeminarTeacher from "./src/repositories/user/seminarTeacher/addSeminarTeacher";
-import removeCourseTeacher from "./src/repositories/user/courseTeacher/removeCourseTeacher";
-import readAllSemesterCourses from "./src/repositories/courseSemester/readAllSemesterCourses";
 import readAllCourse from "./src/repositories/course/readAllCourses";
 import readSpecificSemesterCourse from "./src/repositories/courseSemester/readSpecificSemesterCourse";
 import readSpecificCourse from "./src/repositories/course/readSpecificCourse";
+import addSeminarUser from './src/repositories/user/seminarUser/addSeminarUser';
+import removeSeminarUser from './src/repositories/user/seminarUser/removeSeminarUser';
+import createSeminarGroup from './src/repositories/seminar/createSeminarGroup';
+import addCourseUser from './src/repositories/user/courseUser/addCourseUser';
+import addCourseSemester from './src/repositories/course/addCourseSemester';
 
 // Here you can try prisma functions.
 
@@ -160,7 +145,45 @@ async function main() {
   //console.log(await readAllCourse({ facultyId: "aaa" }));
   //console.log(await readAllSemesterCourses({}));
   //console.log(await readSpecificCourse({ id: "92d2defd-49e9-401e-ae14-6e10c986d3d1" }));
-  console.log(await readSpecificSemesterCourse({ id: "13a930a0-4486-4dd4-b821-3e11e2d9aee6" }));
+  //console.log(await readSpecificSemesterCourse({ id: "13a930a0-4486-4dd4-b821-3e11e2d9aee6" }));
+  /*const seminar = await createSeminarGroup({
+    courseSemesterId: "86adeee3-90e9-4d00-89f3-96038b41a5b8",
+    registrationEnd: new Date("2025-01-16"),
+    registrationStart: new Date("2019-01-16"),
+    capacity: 5,
+  });
+  console.log(seminar);*/
+  /*const courseSemester = await addCourseSemester({
+    semesterId: "ba0839d3-eee0-494e-b271-2fac92497d73",
+    id: "b1b10604-3564-4115-b05d-c0db7f30d5f2",
+    registrationEnd: new Date("2025-01-16"),
+    registrationStart: new Date("2019-01-16"),
+    capacity: 5,
+  });
+  console.log(courseSemester);
+  const courseStudent = await addCourseUser({
+    id: "3a9ff983-2b24-496a-a82e-aa7458a9227f",
+    enrollCourseId: "bbfa9529-be79-4a9c-b960-46623ee9a2e5",
+  })*/
+  /*const seminar = await createSeminarGroup({
+    courseSemesterId: "bbfa9529-be79-4a9c-b960-46623ee9a2e5",
+    registrationEnd: new Date("2025-01-16"),
+    registrationStart: new Date("2019-01-16"),
+    capacity: 5,
+  });*/
+  //console.log(seminar);
+  const user2 = await addSeminarUser({
+    id: "3a9ff983-2b24-496a-a82e-aa7458a9227f",
+    enrollSeminarId: "0a84fff1-36c7-4d39-be85-a31b1de383c8",
+  })
+  //console.log(seminar);
+  console.log(user2);
+  /*const removedCourseUser = await removeSeminarUser({
+    id: "3a9ff983-2b24-496a-a82e-aa7458a9227f",
+    seminarId: "0a84fff1-36c7-4d39-be85-a31b1de383c8"
+  })
+  console.log(removedCourseUser)*/
+
 }
 
 main()

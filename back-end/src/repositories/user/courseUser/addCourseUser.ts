@@ -55,7 +55,7 @@ const addCourseUser = async (data: addStudentCourseData): UserAddStudentCourseRe
           throw new Error('Registration for this subject has not begun yet!');
         }
         if (course.registrationEnd < currentDate) {
-          throw new Error('Registration for this subject has already ended yet!');
+          throw new Error('Registration for this subject has already ended!');
         }
         const studiedCoursesIds = user.studiedCourses.map(x => x.courseId);
         const studiedCoursesDeleted = user.studiedCourses.map(x => x.deletedAt);

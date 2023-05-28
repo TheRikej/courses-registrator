@@ -21,7 +21,10 @@ const addSeminarUser = async (data: addStudentSeminarData): UserAddStudentSemina
           include: {
             studiedCourses: true,
             studiedGroups: {
-                include: {
+              where: {
+                deletedAt: null
+              },
+              include: {
                     group: {
                         select: {
                             courseSemesterId: true,
@@ -54,6 +57,13 @@ const addSeminarUser = async (data: addStudentSeminarData): UserAddStudentSemina
         const amountOfUsers = seminarGroup.students.length;
         if (amountOfUsers >= seminarGroup.capacity){
           throw new Error('This seminar group is full!');
+        }
+        const currentDate = new Date();
+        if (seminarGroup.registrationStart > currentDate) {
+          throw new Error('Registration for this group has not begun yet!');
+        }
+        if (seminarGroup.registrationEnd < currentDate) {
+          throw new Error('Registration for this group has already ended yet!');
         }
         const studiedCoursesIds = user.studiedCourses.map(x => x.courseId);
         if (studiedCoursesIds.indexOf(seminarGroup.courseSemesterId) == -1){
