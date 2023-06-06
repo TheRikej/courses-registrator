@@ -13,16 +13,29 @@ const readAllSemesterCourses = async (
     data: ReadAllCourseSemesterData,
   ): AllCourseSemesterResult => {
     try {
-      const course = await prisma.courseSemester.findMany({
-        where: {
-          ...(data?.courseId !== undefined ? { courseId: data.courseId} : {}),
-          ...(data?.semesterId !== undefined ? { semesterId: data.semesterId} : {}),
-        },
-        include: {
-          course: true
-        }
-      });
-      return Result.ok(course);
+      return Result.ok(
+        await prisma.$transaction(async (transaction) => {
+          const courses = await transaction.course.findMany({
+            where: {
+              ...(data.facultyId !== undefined ? { facultyId: data.facultyId } : {}),
+            },
+          });
+          const courseIds = courses.map(x => x.id);
+          const course = await transaction.courseSemester.findMany({
+            where: {
+              ...(data?.courseId !== undefined ? { courseId: data.courseId} : {}),
+              ...(data?.semesterId !== undefined ? { semesterId: data.semesterId} : {}),
+              courseId: { in: courseIds },
+            },
+            include: {
+              course: true
+            }
+          });
+          return course;
+        }),
+      );
+      
+      //return Result.ok(course);
     } catch (e) {
       return Result.err(e as Error);
     }

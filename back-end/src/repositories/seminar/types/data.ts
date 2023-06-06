@@ -4,3 +4,7 @@ export type CreateSeminar = {
     capacity:          number,
     courseSemesterId:  string,
   };
+
+  export type DeleteData = {
+    id: string;
+  };

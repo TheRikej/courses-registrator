@@ -7,6 +7,10 @@ import removeSeminarUser from './src/repositories/user/seminarUser/removeSeminar
 import createSeminarGroup from './src/repositories/seminar/createSeminarGroup';
 import addCourseUser from './src/repositories/user/courseUser/addCourseUser';
 import addCourseSemester from './src/repositories/course/addCourseSemester';
+import deleteSeminarGroup from './src/repositories/seminar/deleteSeminarGroup';
+import deleteCourse from './src/repositories/course/deleteCourse';
+import deleteFaculty from './src/repositories/faculty/deleteFaculty';
+import readAllSemesterCourses from './src/repositories/courseSemester/readAllSemesterCourses';
 
 // Here you can try prisma functions.
 
@@ -143,7 +147,9 @@ async function main() {
   console.log(courseSemester2);
   console.log(user4);*/
   //console.log(await readAllCourse({ facultyId: "aaa" }));
-  //console.log(await readAllSemesterCourses({}));
+  console.log(await readAllSemesterCourses({ 
+    facultyId: "aaa"
+  }));
   //console.log(await readSpecificCourse({ id: "92d2defd-49e9-401e-ae14-6e10c986d3d1" }));
   //console.log(await readSpecificSemesterCourse({ id: "13a930a0-4486-4dd4-b821-3e11e2d9aee6" }));
   /*const seminar = await createSeminarGroup({
@@ -172,12 +178,11 @@ async function main() {
     capacity: 5,
   });*/
   //console.log(seminar);
-  const user2 = await addSeminarUser({
-    id: "3a9ff983-2b24-496a-a82e-aa7458a9227f",
-    enrollSeminarId: "0a84fff1-36c7-4d39-be85-a31b1de383c8",
-  })
+  /*const user2 = await deleteFaculty({
+    id: "aaa",
+  })*/
   //console.log(seminar);
-  console.log(user2);
+  //console.log(user2);
   /*const removedCourseUser = await removeSeminarUser({
     id: "3a9ff983-2b24-496a-a82e-aa7458a9227f",
     seminarId: "0a84fff1-36c7-4d39-be85-a31b1de383c8"

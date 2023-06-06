@@ -5,4 +5,9 @@
   export type ReadAllCourseSemesterData = {
     courseId?: string;
     semesterId?: string;
+    facultyId?: string;
   }
+
+  export type DeleteData = {
+    id: string;
+  };

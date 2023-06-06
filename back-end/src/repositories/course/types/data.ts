@@ -20,3 +20,7 @@ export type CourseCreateData = {
   export type ReadAllCourseData = {
     facultyId?: string;
   }
+
+  export type DeleteData = {
+    id: string;
+  };

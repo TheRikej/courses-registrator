@@ -6,3 +6,5 @@ export type FacultyCreateResult = AsyncResult<Faculty>;
 export type FacultyReadResult = AsyncResult<Faculty>;
 
 export type FacultyReadAllResult = AsyncResult<Required<Faculty[]>>;
+
+export type FacultyDeleteResult = AsyncResult<Faculty>;
