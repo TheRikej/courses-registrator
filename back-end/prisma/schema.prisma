@@ -25,12 +25,13 @@ model User {
 }
 
 model Course {
-  id                String @id @default(uuid())
+  id                String @id
   description       String
   name              String
   deletedAt         DateTime?
   faculty           Faculty @relation(fields: [facultyId], references: [id])
   facultyId         String
+  credits           Int
   courseSemesters   CourseSemester[]
 }
 
@@ -44,6 +45,10 @@ model SeminarGroup {
   courseSemesterId  String
   teachers          User[]
   students          GroupStudent[]
+  groupNumber       Int
+  timeSlot          TimeSlot @relation(fields: [timeSlotId], references: [id])
+  timeSlotId        String @unique
+  room              String
 }
 
 model Faculty {
@@ -94,6 +99,31 @@ model CourseSemester {
     semester          Semester @relation(fields: [semesterId], references: [id])
     semesterId        String
     seminarGroups     SeminarGroup[]
+    timeSlot          TimeSlot? @relation(fields: [timeSlotId], references: [id])
+    timeSlotId        String? @unique
+    room              String?
+}
+
+model TimeSlot {
+    id           String @id @default(uuid())
+    day          Day
+    startHour    Int
+    startMinute  Int
+    endHour      Int
+    endMinute    Int
+    seminarGroup SeminarGroup?
+    course       CourseSemester?
+
+}
+
+enum Day {
+    MONDAY
+    TUESDAY
+    WEDNESDAY
+    THURSDAY
+    FRIDAY
+    SATURDAY
+    SUNDAY
 }
 
 enum SemesterSeason {

@@ -16,12 +16,13 @@ entity User {
 }
 
 entity Course{
-    * id: <<uuid>>
+    * id: string
     ---
     * teacher: <<FK>>
     * faculty: <<FK>>
     * description: string
     * name: string
+    * credits: int
     deletedAt: timestamp
 }
 
@@ -33,6 +34,9 @@ entity SeminarGroup {
     * registrationStart: timestamp
     * registrationEnd: timestamp
     * capacity: int
+    * groupNumber: int
+    * room: string
+    * timeSlot: <<FK>>
     deletedAt: timestamp
 }
 
@@ -61,6 +65,8 @@ entity CourseSemester {
     * registrationStart: timestamp
     * registrationEnd: timestamp
     * capacity: int
+    room: string
+    timeSlot: <<FK>>
     deletedAt: timestamp
 }
 
@@ -85,6 +91,26 @@ Enum SemesterSeasonEnum {
     FALL
 }
 
+entity TimeSlot {
+    * id: <<uuid>>
+    ---
+    * day: enum
+    * startHour: int
+    * startMinute: int
+    * endHour: int
+    * endMinute: int
+}
+
+Enum DayEnum {
+    MONDAY
+    TUESDAY
+    WEDNESDAY
+    THURSDAY
+    FRIDAY
+    SATURDAY
+    SUNDAY
+}
+
 
 User ||..o{ GroupStudent: visits
 SeminarGroup ||.r.o{ GroupStudent
@@ -101,6 +127,11 @@ Semester||.r.o{ CourseSemester
 
 User }|.l.o{ Course: teaches
 User }|.l.o{ SeminarGroup: teaches
+
+CourseSemester |o..o| TimeSlot
+SeminarGroup |o.l.|| TimeSlot
+
+TimeSlot <|-l- DayEnum
 
 Semester <|-u- SemesterSeasonEnum
 @enduml
