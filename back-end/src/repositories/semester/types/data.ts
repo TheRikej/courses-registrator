@@ -1,4 +1,4 @@
-import type { SemesterSeason } from '@prisma/client';
+import type { SemesterSeason, Day } from '@prisma/client';
 
 export type SemseterCreateData = {
   year: number

@@ -1,4 +1,5 @@
 import type { Day } from '@prisma/client';
+import { number } from 'zod';
 
 export type CourseCreateData = {
     description: string,
@@ -36,3 +37,11 @@ export type CourseCreateData = {
   export type DeleteData = {
     id: string;
   };
+
+  export type UpdateData = {
+    id: string,
+    description?:      string,
+    name?:             string,
+    faculty?:          string,
+    credits?:          number,
+  }

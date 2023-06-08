@@ -4,7 +4,7 @@ import type { AsyncResult } from '../../types';
 export type UserCreateResult = AsyncResult<User>;
   
 export type UserDeleteResult = AsyncResult<User & {
-    taughtCourses: Course[],
+    taughtCourses: CourseSemester[],
     studiedCourses: CourseStudent[],
     taughtGroups: SeminarGroup[],
     studiedGroups: GroupStudent[],

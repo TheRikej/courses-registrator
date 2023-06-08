@@ -8,3 +8,5 @@ export type AllCourseResult = AsyncResult<Course[]>;
 export type AddCourseSemesterResult = AsyncResult<CourseSemester>;
 
 export type CourseDeleteResult = AsyncResult<Course>;
+
+export type CourseUpdateResult = AsyncResult<Course>;

@@ -3,7 +3,13 @@ import prisma from '../client';
 import type { UserDeleteData } from './types/data';
 import type { UserDeleteResult } from './types/result';
 
-// Still not implemented, no need for test.
+/**
+ * Deletes an user.
+ * 
+ * @param data 
+ * @returns 
+ */
+
 const deleteUser = async (data: UserDeleteData): UserDeleteResult => {
   try {
     const deletedAt = new Date();
@@ -47,20 +53,22 @@ const deleteUser = async (data: UserDeleteData): UserDeleteResult => {
                 }
               }
             },
+            taughtCourses: {
+              set: [],
+            },
+            taughtGroups: {
+              set: [],
+            },
           },
           include:{
-            taughtCourses: {
-              include: {
-                teachers: true
-              }
-            },
+            taughtCourses: true,
             studiedGroups: true,
             taughtGroups: true,
             studiedCourses: true
           }
         });
 
-        const taughtCoursesId = deleted.taughtCourses.map(x => { return {id: x.id, teachers: x.teachers}});
+        //const taughtCoursesId = deleted.taughtCourses.map(x => { return {id: x.id, teachers: x.teachers}});
         return deleted;
       }),
     );

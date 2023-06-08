@@ -20,6 +20,10 @@ import { SemesterSeason } from '@prisma/client';
 import createSemester from './src/repositories/semester/createSemester';
 import deleteSemester from './src/repositories/semester/deleteSemester';
 import { Day } from '@prisma/client'; 
+import updateCourse from './src/repositories/course/updateCourse';
+import updateCourseSemester from './src/repositories/courseSemester/updateSemesterCourse';
+import updateSeminar from './src/repositories/seminar/updateSeminarGroup';
+import deleteUser from './src/repositories/user/deleteUser';
 
 // Here you can try prisma functions.
 
@@ -188,7 +192,7 @@ async function main() {
     capacity: 5,
   });*/
   //console.log(seminar);
-  const seminar = await createSeminarGroup({
+  /*const seminar = await createSeminarGroup({
     courseSemesterId: "74951a79-e4e3-4e0c-ba4f-4d7254dec222",
     registrationEnd: new Date("2025-01-16"),
     registrationStart: new Date("2019-01-16"),
@@ -205,14 +209,24 @@ async function main() {
     });
     console.log(seminar)
 
-  //console.log(seminar);
+  //console.log(seminar);*/
   //console.log(user2);
   /*const removedCourseUser = await removeSeminarUser({
     id: "3a9ff983-2b24-496a-a82e-aa7458a9227f",
     seminarId: "0a84fff1-36c7-4d39-be85-a31b1de383c8"
   })
   console.log(removedCourseUser)*/
-
+  const upd = await updateSeminar({
+    id: "b43f977e-c5c5-4568-837c-be880c141abe",
+    room: "dsad",
+    capacity: 545,
+    registrationEnd: new Date("2028-01-16"),
+  })
+  console.log(upd)
+  const usr = await deleteUser({
+    id: "62905279-56ac-4c3a-a22d-6da9e1ae508a",
+  })
+  console.log(usr)
 }
 
 main()

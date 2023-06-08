@@ -7,6 +7,8 @@ export type AllCourseSemesterResult = AsyncResult<CourseSemester[]>;
 
 export type AddCourseSemesterResult = AsyncResult<CourseSemester>;
 
+export type UpdateCourseSemesterResult = AsyncResult<CourseSemester>;
+
 export type SemesterDeleteResult = AsyncResult<CourseSemester & {
     seminarGroups: SeminarGroup[],
  }>;

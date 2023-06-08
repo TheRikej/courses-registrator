@@ -1,0 +1,44 @@
+import { Result } from '@badrap/result';
+import prisma from '../client';
+import type { UpdateData } from './types/data';
+import type { CourseUpdateResult } from './types/result';
+
+
+const updateCourse = async (data: UpdateData): CourseUpdateResult => {
+  try {
+    return Result.ok(
+      await prisma.$transaction(async (transaction) => {
+        const course = await transaction.course.findUnique({
+          where: {
+            id: data.id,
+          },
+        });
+        if (course === null) {
+          throw new Error('No course found');
+        }
+        if (course.deletedAt !== null) {
+          throw new Error('The course has been deleted!');
+        }
+        const update = await transaction.course.update({
+          where: {
+            id: data.id,
+          },
+          data: {
+            ...(data.credits !== undefined ? { credits: data.credits } : {}),
+            ...(data.description !== undefined ? { description: data.description } : {}),
+            ...(data.name !== undefined ? { name: data.name } : {}),
+            ...(data.faculty !== undefined ? { faculty: { connect: { id: data.faculty } } } : {}),
+          },
+          include: {
+            courseSemesters: true,
+          },
+        });
+        return update;
+      }),
+    );
+  } catch (e) {
+    return Result.err(e as Error);
+  }
+};
+
+export default updateCourse;
