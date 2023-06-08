@@ -2,6 +2,8 @@ export type CourseCreateData = {
     description: string,
     name: string
     facultyId: string;
+    credits: number;
+    id: string;
   };
 
   export type AddCreateSemesterData = {

@@ -11,6 +11,7 @@ import deleteSeminarGroup from './src/repositories/seminar/deleteSeminarGroup';
 import deleteCourse from './src/repositories/course/deleteCourse';
 import deleteFaculty from './src/repositories/faculty/deleteFaculty';
 import readAllSemesterCourses from './src/repositories/courseSemester/readAllSemesterCourses';
+import createCourse from './src/repositories/course/createCourse';
 
 // Here you can try prisma functions.
 
@@ -150,6 +151,11 @@ async function main() {
   console.log(await readAllSemesterCourses({ 
     facultyId: "aaa"
   }));
+  const course = await createCourse({
+    facultyId: "aaa",
+    name: "FBIO",
+    description: "ads",
+  });
   //console.log(await readSpecificCourse({ id: "92d2defd-49e9-401e-ae14-6e10c986d3d1" }));
   //console.log(await readSpecificSemesterCourse({ id: "13a930a0-4486-4dd4-b821-3e11e2d9aee6" }));
   /*const seminar = await createSeminarGroup({

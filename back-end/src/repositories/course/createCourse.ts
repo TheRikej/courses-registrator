@@ -14,7 +14,9 @@ const createCourse = async (data: CourseCreateData): CourseResult => {
     return Result.ok(
       await prisma.course.create({
         data: {
+          id: data.id,
           description: data.description,
+          credits: data.credits,
           name: data.name,
           faculty: { connect: { id: data.facultyId } },
         },
