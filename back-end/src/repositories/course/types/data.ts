@@ -1,3 +1,5 @@
+import type { Day } from '@prisma/client';
+
 export type CourseCreateData = {
     description: string,
     name: string
@@ -12,6 +14,14 @@ export type CourseCreateData = {
     registrationEnd: Date,
     registrationStart: Date,
     capacity: number,
+    room?: string;
+    timeslot?: {
+      day:          Day,
+      startHour:    number,
+      startMinute:  number,
+      endHour:      number,
+      endMinute:    number,
+    }
   };
 
   export type ReadCourseData = {

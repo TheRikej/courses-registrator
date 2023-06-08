@@ -12,17 +12,26 @@ import deleteCourse from './src/repositories/course/deleteCourse';
 import deleteFaculty from './src/repositories/faculty/deleteFaculty';
 import readAllSemesterCourses from './src/repositories/courseSemester/readAllSemesterCourses';
 import createCourse from './src/repositories/course/createCourse';
+import createFaculty from './src/repositories/faculty/createFaculty';
+import createUser from './src/repositories/user/createUser';
+import readSpecificFaculty from './src/repositories/faculty/readSpecificFaculty';
+import readSpecificUser from './src/repositories/user/readSpecificUser';
+import { SemesterSeason } from '@prisma/client';
+import createSemester from './src/repositories/semester/createSemester';
+import deleteSemester from './src/repositories/semester/deleteSemester';
+import { Day } from '@prisma/client'; 
 
 // Here you can try prisma functions.
 
 async function main() {
-  /* const faculty = await createFaculty({
+
+  /*const facultys = await createFaculty({
     name: "okoa"
-  })
-  const faculty2 = await readSpecificFaculty({
+  })*/
+
+  /*const faculty2 = await readSpecificFaculty({
     name: "okoa",
   })
-  console.log(faculty)
   const user1 = await createUser({
     userName: 'thehomelander',
     email: 'homelander@vought.com',
@@ -30,17 +39,19 @@ async function main() {
     salt: 'uK13jaM1Yn5324SGbOWd6w1juIVu29H2mq3Yl3gVlab7zONjrJooL74suvL0shUQR1f9MBwc38E5n3yk2xGeXasZo3NSP7XbO8Zf3mp0ar9v7n52uuJ00ig6P2ZFT0lj',
   });
   const user = await readSpecificUser({
-      id: "1c6eb40c-d104-4893-9cf3-97bcca877001",
+      id: user1.isOk ? user1.value.id : "fail",
   });
   console.log(user)
-  const course = await createCourse({
-    facultyId: faculty2.isOk ? faculty2.value.id : "a",
-    name: "FBIO",
-    description: "ads",
+  const d = await createCourse({
+    facultyId: faculty2.isOk ? faculty2.value.id : "fail",
+    name: "FsBIO",
+    description: "adsss",
+    id: "dasdasddddasaadsssd",
+    credits: 5,
   });
-  console.log(course);
+  console.log(d);
   const semester = await createSemester({
-    year: 2001,
+    year: 2022,
     season: SemesterSeason.SPRING,
     semesterEnd: new Date(),
     semesterStart: new Date()
@@ -48,29 +59,29 @@ async function main() {
   console.log(semester);
   const courseSemester = await addCourseSemester({
     semesterId: semester.isOk ? semester.value.id : "fail",
-    id: course.isOk ? course.value.id : "fail",
-    registrationEnd: new Date(),
-    registrationStart: new Date(),
+    id: d.isOk ? d.value.id : "fail",
+    registrationEnd: new Date("2025-01-16"),
+    registrationStart: new Date("2019-01-16"),
     capacity: 5,
   });
   console.log(courseSemester);
   const courseStudent = await addCourseUser({
-    id: "1c6eb40c-d104-4893-9cf3-97bcca877001",
-    enrollCourseId: "c83f6214-aa2e-43a7-94e8-007e4ce40c20",
+    id: user.isOk ? user.value.id : "fail",
+    enrollCourseId: courseSemester.isOk ? courseSemester.value.id : "fail",
   })
-  console.log(courseStudent)
-  const removedCourseUser = await removeCourseUser({
+  console.log(courseStudent)*/
+  /*const removedCourseUser = await removeCourseUser({
     id: "1c6eb40c-d104-4893-9cf3-97bcca877001",
     enrollCourseId: "c83f6214-aa2e-43a7-94e8-007e4ce40c20"
   })
-  console.log(removedCourseUser)
-  const semester = await createSemester({
+  console.log(removedCourseUser)*/
+  /*const semester = await createSemester({
     year: 2005,
     season: SemesterSeason.SPRING,
     semesterEnd: new Date(),
     semesterStart: new Date()
-  })
-  console.log(semester);
+  })*/
+  /*console.log(semester);
   const semesters = await readAllFaculty();
   console.log(semesters);
   const semesters2 = await readAllSemester({
@@ -95,7 +106,7 @@ async function main() {
     enrollCourseId: courseSemester.isOk ? courseSemester.value.id : "fail",
   })
   console.log(courseSemester)
-  console.log(courseStudent)
+  console.log(courseStudent)*/
   // new Date("2019-01-16");*/
   /*const courseSemester = await addCourseTeacher({
     enrollCourseId: "86adeee3-90e9-4d00-89f3-96038b41a5b8",
@@ -113,12 +124,7 @@ async function main() {
     registrationStart: new Date("2019-01-16"),
     capacity: 5,
   });
-  const seminar = await createSeminarGroup({
-    courseSemesterId: newCourseSemester.isOk ? newCourseSemester.value.id : "fail",
-    registrationEnd: new Date("2025-01-16"),
-    registrationStart: new Date("2019-01-16"),
-    capacity: 5,
-  });
+  
   const courseSemester = await addCourseTeacher({
     enrollCourseId: newCourseSemester.isOk ? newCourseSemester.value.id : "fail",
     id: "14c458ce-57be-433c-98b0-9888d14f41af",
@@ -148,14 +154,12 @@ async function main() {
   console.log(courseSemester2);
   console.log(user4);*/
   //console.log(await readAllCourse({ facultyId: "aaa" }));
-  console.log(await readAllSemesterCourses({ 
+  /*console.log(await readAllSemesterCourses({ 
     facultyId: "aaa"
   }));
-  const course = await createCourse({
-    facultyId: "aaa",
-    name: "FBIO",
-    description: "ads",
-  });
+  const faculty = await createFaculty({
+    name: "okoa"
+  })/*
   //console.log(await readSpecificCourse({ id: "92d2defd-49e9-401e-ae14-6e10c986d3d1" }));
   //console.log(await readSpecificSemesterCourse({ id: "13a930a0-4486-4dd4-b821-3e11e2d9aee6" }));
   /*const seminar = await createSeminarGroup({
@@ -184,9 +188,23 @@ async function main() {
     capacity: 5,
   });*/
   //console.log(seminar);
-  /*const user2 = await deleteFaculty({
-    id: "aaa",
-  })*/
+  const seminar = await createSeminarGroup({
+    courseSemesterId: "74951a79-e4e3-4e0c-ba4f-4d7254dec222",
+    registrationEnd: new Date("2025-01-16"),
+    registrationStart: new Date("2019-01-16"),
+    capacity: 5,
+    room: "ss",
+    groupNumber: 2,
+    timeslot: {
+      day: Day.MONDAY,
+      endHour: 2,
+      endMinute: 1,
+      startHour: 2,
+      startMinute: 4,
+    }
+    });
+    console.log(seminar)
+
   //console.log(seminar);
   //console.log(user2);
   /*const removedCourseUser = await removeSeminarUser({

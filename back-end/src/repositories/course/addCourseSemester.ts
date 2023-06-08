@@ -26,7 +26,14 @@ const addCourseSemester = async (data: AddCreateSemesterData): AddCourseSemester
         if (course?.deletedAt != null) {
           throw new Error('The course has already been deleted!');
         }
-
+        let timeslot = undefined;
+        if (data.timeslot !== undefined){
+          timeslot = await transaction.timeSlot.create({
+            data: {
+              ...data.timeslot
+            },
+          });
+        }
         const semseter = await transaction.semester.findUnique({
           where: {
             id: data.semesterId,
@@ -42,6 +49,8 @@ const addCourseSemester = async (data: AddCreateSemesterData): AddCourseSemester
         
         const courseSemester = await transaction.courseSemester.create({
           data: {
+            ...(data?.room !== undefined ? { room: data.room} : {}),
+            ...(timeslot !== undefined ? { timeSlot: { connect: { id: timeslot.id } } } : {}),
             capacity: data.capacity,
             registrationEnd: data.registrationEnd,
             registrationStart: data.registrationStart,

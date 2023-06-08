@@ -15,3 +15,7 @@ export type ReadAllSemesterData = {
   year?: number;
   season?: SemesterSeason;
 }
+
+export type DeleteData = {
+  id: string;
+};

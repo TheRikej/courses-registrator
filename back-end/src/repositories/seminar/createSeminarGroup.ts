@@ -20,23 +20,41 @@ const createSeminarGroup = async (data: CreateSeminar): CourseCreateResult => {
             id: data.courseSemesterId,
           },
         });
-        
-        if (course == null) {
+
+        const seminarGroup = await transaction.seminarGroup.findFirst({
+          where: {
+            groupNumber: data.groupNumber,
+            deletedAt: null,
+            courseSemesterId: data.courseSemesterId,
+          },
+        });
+        if (seminarGroup !== null) {
+          throw new Error('Seminar group with this number already exists!');
+        }
+        if (course === null) {
           throw new Error('No course found');
         }
-        if (course?.deletedAt != null) {
+        if (course?.deletedAt !== null) {
           throw new Error('The semaster course has already been deleted!');
         }
-        
+        const timeslot = await transaction.timeSlot.create({
+          data: {
+            ...data.timeslot,
+          },
+        });
         const seminar = await transaction.seminarGroup.create({
           data: {
+            groupNumber: data.groupNumber,
+            room: data.room,
             capacity: data.capacity,
             registrationEnd: data.registrationEnd,
             registrationStart: data.registrationStart,
             courseSemester: { connect: { id: data.courseSemesterId } },
+            timeSlot: { connect: { id: timeslot.id } },
           },
           include: {
-            courseSemester: true
+            courseSemester: true,
+            timeSlot: true
           }
         });
         return seminar;
