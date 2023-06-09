@@ -6,6 +6,7 @@ import { z } from 'zod';
 import formatSemester from "../utils/semester";
 import {DateTimePicker, TimePicker} from "@mui/x-date-pickers";
 import workDays from "../utils/days";
+import {useParams} from "react-router-dom";
 
 const schema = z.object({
   semester: z.string().nonempty('Semester is required.'),
@@ -26,7 +27,7 @@ const schema = z.object({
   path: ["timeHourTo"],
 });
 
-interface CourseForm {
+interface CourseSemesterForm {
   semester: string,
   registrationFrom: Date,
   registrationTo: Date,
@@ -37,16 +38,17 @@ interface CourseForm {
   timeHourTo: Date | null,
 }
 
-const CourseForm = () => {
+const CourseSemesterForm = () => {
   const {
     register,
     handleSubmit,
     control,
     getValues,
     formState: { errors },
-  } = useForm<CourseForm>({
+  } = useForm<CourseSemesterForm>({
     resolver: zodResolver(schema),
   });
+  const { code } = useParams();
 
   //TODO: fetch semester API
   const semesters = [
@@ -85,7 +87,7 @@ const CourseForm = () => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <h1 className="font-poppins text-2xl m-6 font-bold text-blue-950">
-        List the course in a new semester
+        List course {code} in a new semester
       </h1>
       <div className="mx-4 my-1 w-64">
         <TextField
@@ -274,4 +276,4 @@ const CourseForm = () => {
   );
 };
 
-export default CourseForm;
+export default CourseSemesterForm;
