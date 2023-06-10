@@ -9,6 +9,7 @@ import NotFound from "./components/NotFound";
 function App() {
   return (
       <>
+          <Header/>
           <div className="flex justify-center m-auto h-screen">
               <Routes>
                   <Route path="/courses/:code/list" element={<CourseSemesterForm />} />
