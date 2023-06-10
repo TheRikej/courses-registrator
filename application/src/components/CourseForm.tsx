@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Controller, useForm} from 'react-hook-form';
-import { TextField, Button, MenuItem } from '@mui/material';
+import {TextField, Button, MenuItem, FormHelperText} from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Select from 'react-select';
@@ -12,7 +12,7 @@ const schema = z.object({
   faculty: z.string().nonempty('Faculty is required.'),
   credits: z.number().min(0, "Number of credits must be at least 0.")
       .max(30, "Number of credits cannot be greater than 30."),
-  guarantor: z.number(),
+  guarantor: z.number({required_error: "Guarantor is required."}),
 });
 
 interface CourseForm {
@@ -156,7 +156,7 @@ const CourseForm = () => {
             }}
         />
 
-        <label htmlFor={errors.guarantor?.message} className="mx-4 text-sm">Guarantor</label>
+        <label htmlFor={"guarantor"} className="mx-4 text-sm">Guarantor *</label>
         <Controller
             control={control}
             name="guarantor"
@@ -165,7 +165,7 @@ const CourseForm = () => {
                     ref={field.ref}
                     value={users.find(c => c.value === field.value)}
                     onChange={val => field.onChange(val?.value)}
-                    className="w-auto lg:w-96 mx-4 mb-2"
+                    className="w-auto lg:w-96 mx-4 mb-1"
                     isClearable={true}
                     isSearchable={true}
                     id="guarantor"
@@ -174,9 +174,12 @@ const CourseForm = () => {
                 />
             )}
         />
+        <FormHelperText error sx={{ margin: '0rem 1.5rem' }}>
+          {errors.guarantor?.message}
+        </FormHelperText>
 
         <div className="flex content-center justify-center">
-          <Button type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
+          <Button type="submit" variant="outlined" sx={{ margin: '1.5rem 2rem' }}>
             Submit
           </Button>
         </div>
