@@ -3,6 +3,8 @@ import {Route, Routes} from "react-router-dom";
 import CourseForm from './components/CourseForm';
 import CourseSemesterForm from './components/CourseSemesterForm';
 import SeminarGroupForm from "./components/SeminarGroupForm";
+import Header from "./components/Header";
+import NotFound from "./components/NotFound";
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
                   <Route path="/courses/:code/edit" element={<CourseForm />} />
                   <Route path="/courses/:code/:semester/seminars/create" element={<SeminarGroupForm />} />
                   <Route path="/courses/:code/:semester/seminars/:group/edit" element={<SeminarGroupForm />} />
+
+                  <Route path='*' element={<NotFound />}/>
               </Routes>
           </div>
       </>
