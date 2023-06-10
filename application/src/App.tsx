@@ -1,10 +1,11 @@
 import React from 'react'
 import {Route, Routes} from "react-router-dom";
-import CourseForm from './components/CourseForm';
-import CourseSemesterForm from './components/CourseSemesterForm';
-import SeminarGroupForm from "./components/SeminarGroupForm";
+import CourseForm from './pages/CourseForm';
+import CourseSemesterForm from './pages/CourseSemesterForm';
+import SeminarGroupForm from "./pages/SeminarGroupForm";
 import Header from "./components/Header";
 import NotFound from "./components/NotFound";
+import SemesterForm from "./pages/SemesterForm";
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
                   <Route path="/courses/:code/edit" element={<CourseForm />} />
                   <Route path="/courses/:code/:semester/seminars/create" element={<SeminarGroupForm />} />
                   <Route path="/courses/:code/:semester/seminars/:group/edit" element={<SeminarGroupForm />} />
+
+                  <Route path="/semesters/create" element={<SemesterForm />} />
 
                   <Route path='*' element={<NotFound />}/>
               </Routes>
