@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node ./index.ts",
+    "dev": "nodemon src/index.ts",
     "compile": "tsc",
     "lint": "eslint .",
     "test": "prisma migrate reset --force && ts-node src/seed/seed.ts && jest",
@@ -26,7 +27,8 @@
     "typescript": "^5.0.4",
     "jest": "^29.4.3",
     "ts-jest": "^29.0.5",
-    "@types/jest": "^29.4.0"
+    "@types/jest": "^29.4.0",
+    "nodemon": "^2.0.22"
   },
   "dependencies": {
     "@badrap/result": "^0.2.13",
