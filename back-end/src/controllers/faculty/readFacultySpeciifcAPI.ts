@@ -1,0 +1,39 @@
+import type { Request, Response } from 'express';
+import readSpecificFaculty from '../../repositories/faculty/readSpecificFaculty';
+import {z} from "zod";
+
+const idSchema = z.object({
+    id: z
+      .string({
+        required_error: 'Id is required',
+      })
+    })
+
+const readFacultySpecificAPI = async (req: Request, res: Response) => {
+    try {
+      const data = await idSchema.parseAsync(req.params)
+      const faculty = await readSpecificFaculty(data);
+      if (faculty.isOk) {
+        return res.status(200).send({
+          status: 'success',
+          data: faculty.unwrap(),
+        });
+      }
+  
+      throw faculty.error;
+    } catch (e) {
+        if (e instanceof z.ZodError) {
+            return res.status(404).send({
+                status: 'error',
+                error: e.errors,
+            });
+        }        
+  
+      return res.status(500).send({
+        status: 'error',
+        error: 'Internal Server Error',
+      });
+    }
+  };
+
+export default readFacultySpecificAPI;
