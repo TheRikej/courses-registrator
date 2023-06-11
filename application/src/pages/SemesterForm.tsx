@@ -1,9 +1,9 @@
 import * as React from 'react';
 import {Controller, useForm} from 'react-hook-form';
-import {TextField, Button, MenuItem, FormHelperText} from '@mui/material';
+import {TextField, Button, MenuItem} from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import {DateTimePicker, TimePicker} from "@mui/x-date-pickers";
+import {DateTimePicker} from "@mui/x-date-pickers";
 import {Link} from "react-router-dom";
 
 const schema = z.object({
@@ -134,11 +134,11 @@ const SemesterForm = () => {
       </div>
 
       <div className="flex flex-col content-center justify-center">
-        <Button className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
+        <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
           Create
         </Button>
         <Link to="/semesters/">
-            <Button className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem' }}>
+            <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem' }}>
               Back to semesters
             </Button>
         </Link>

@@ -258,11 +258,11 @@ const CourseSemesterForm = () => {
       </FormHelperText>
 
         <div className="flex flex-col content-center justify-center m-auto">
-            <Button className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
+            <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
                 Create
             </Button>
             <Link to={"/courses/" + code}>
-                <Button className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 1rem' }}>
+                <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 2rem' }}>
                     Back to {code}
                 </Button>
             </Link>

@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 import formatSemester from "../utils/semester";
 
 const Semesters = () => {
+    //TODO: fetch semesters
     const sems = [{
             year: 2025,
             season: "SPRING",
@@ -42,6 +43,7 @@ const Semesters = () => {
             semesterEnd: new Date(2026, 11, 29),
         }];
 
+    //TODO: make remove working
     return (
         <div className="flex flex-col flex-start m-2">
             <h1 className="font-poppins text-2xl mx-6 my-3 font-bold text-blue-950">
