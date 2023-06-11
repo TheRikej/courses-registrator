@@ -23,9 +23,9 @@ export default function Header() {
                         </button>
                     </div>
                     <div className="dropdown-content">
-                        <Link to="/users">Users</Link>
-                        <Link to="/semesters">Semesters</Link>
-                        <Link to="/faculties">Faculties</Link>
+                        <Link to="/users/">Users</Link>
+                        <Link to="/semesters/">Semesters</Link>
+                        <Link to="/faculties/">Faculties</Link>
                     </div>
                 </div>
             </Toolbar>
