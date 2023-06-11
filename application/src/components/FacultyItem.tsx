@@ -11,7 +11,7 @@ const FacultyItemCard = (props: {name: string}) => {
       <p className="m-0 lg:ml-4 float-left text-xl">
         <b>{props.name}</b>
       </p>
-      <div className="mr-0 ml-auto">
+      <div className="mr-0 lg:ml-auto">
         <Button onClick={edit} type="button" variant="outlined" sx={{ margin: '0.5rem 0.5rem' }}>
           Edit
         </Button>

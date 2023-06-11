@@ -69,7 +69,7 @@ const Faculties = () => {
                 </ul>
             </div>
             <form onSubmit={handleSubmit(create)} className="block mx-auto">
-                <p className="ml-4 mt-4 font-bold">New faculty:</p>
+                <h2 className="ml-4 mt-4 font-bold text-lg">New faculty:</h2>
                 <TextField
                     id="name"
                     label="Name *"
