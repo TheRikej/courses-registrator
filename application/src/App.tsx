@@ -7,6 +7,7 @@ import Header from "./components/Header";
 import NotFound from "./components/NotFound";
 import SemesterForm from "./pages/SemesterForm";
 import Semesters from "./pages/Semesters";
+import Faculties from "./pages/Faculties";
 
 function App() {
   return (
@@ -24,6 +25,8 @@ function App() {
                   <Route path="/semesters/create" element={<SemesterForm />} />
                   <Route path="/semesters/:semester/edit" element={<SemesterForm />} />
                   <Route path="/semesters/" element={<Semesters />} />
+
+                  <Route path="/faculties/" element={<Faculties />} />
 
                   <Route path='*' element={<NotFound />}/>
               </Routes>
