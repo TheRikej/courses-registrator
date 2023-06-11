@@ -1,13 +1,13 @@
-import createSemester from "./createCourseSemesterAPI"
-import readSemesterAll from "./readCourseSemesterAllAPI"
-import readSemesterSpecific from "./readCourseSemesterSpeciifcAPI"
-import deleteSemester from "./deleteCourseSemesterAPI"
-import updateSemester from "./updateCourseSemesterAPI"
+import createCourseSemester from "./createCourseSemesterAPI"
+import readCourseSemesterAll from "./readCourseSemesterAllAPI"
+import readCourseSemesterSpecific from "./readCourseSemesterSpeciifcAPI"
+import deleteCourseSemester from "./deleteCourseSemesterAPI"
+import updateCourseSemester from "./updateCourseSemesterAPI"
 
 export default {
-    createSemester,
-    readSemesterAll,
-    readSemesterSpecific,
-    deleteSemester,
-    updateSemester,
+    createCourseSemester,
+    readCourseSemesterAll,
+    readCourseSemesterSpecific,
+    deleteCourseSemester,
+    updateCourseSemester,
 }
