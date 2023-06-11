@@ -11,10 +11,11 @@ import type { CourseResult } from './types/result';
  */
 const createCourse = async (data: CourseCreateData): CourseResult => {
   try {
+    const code = data.id.toUpperCase();
     return Result.ok(
       await prisma.course.create({
         data: {
-          id: data.id,
+          id: code,
           description: data.description,
           credits: data.credits,
           name: data.name,

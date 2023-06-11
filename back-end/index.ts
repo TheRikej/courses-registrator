@@ -216,7 +216,7 @@ async function main() {
     seminarId: "0a84fff1-36c7-4d39-be85-a31b1de383c8"
   })
   console.log(removedCourseUser)*/
-  const upd = await updateSeminar({
+  /*const upd = await updateSeminar({
     id: "b43f977e-c5c5-4568-837c-be880c141abe",
     room: "dsad",
     capacity: 545,
@@ -225,6 +225,14 @@ async function main() {
   console.log(upd)
   const usr = await deleteUser({
     id: "62905279-56ac-4c3a-a22d-6da9e1ae508a",
+  })
+  console.log(usr)*/
+  const usr = await createCourse({
+    id: "pL777",
+    name: "ss",
+    description: "s",
+    facultyId: "e1368111-ca0c-4d14-809c-cd105e1e7d0a",
+    credits: 7,
   })
   console.log(usr)
 }
