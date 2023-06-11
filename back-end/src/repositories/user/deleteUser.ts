@@ -67,8 +67,6 @@ const deleteUser = async (data: UserDeleteData): UserDeleteResult => {
             studiedCourses: true
           }
         });
-
-        //const taughtCoursesId = deleted.taughtCourses.map(x => { return {id: x.id, teachers: x.teachers}});
         return deleted;
       }),
     );

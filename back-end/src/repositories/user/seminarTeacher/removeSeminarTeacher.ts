@@ -1,16 +1,16 @@
 import { Result } from '@badrap/result';
 import prisma from '../../client';
-import type { removeTeacherCourseData } from '../types/data';
-import type { UserRemoveTeacherCourseResult } from '../types/result';
+import type { removeTeacherData } from '../types/data';
+import type { UserRemoveTeacherResult } from '../types/result';
 
 /**
- * Removes existing student from course that they teach.
+ * Removes existing teacher from course that they teach.
  * 
  * @param data 
  * @returns 
  */ 
 
-const removeCourseTeacher = async (data: removeTeacherCourseData): UserRemoveTeacherCourseResult => {
+const removeSeminarTeacher = async (data: removeTeacherData): UserRemoveTeacherResult => {
   try {
     return Result.ok(
       await prisma.$transaction(async (transaction) => {
@@ -68,4 +68,4 @@ const removeCourseTeacher = async (data: removeTeacherCourseData): UserRemoveTea
   }
 };
 
-export default removeCourseTeacher;
+export default removeSeminarTeacher;

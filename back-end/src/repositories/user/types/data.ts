@@ -35,7 +35,7 @@
     seminarId: string;
   };
 
-  export type removeTeacherCourseData = {
+  export type removeTeacherData = {
     id: string;
     courseId: string;
   };
