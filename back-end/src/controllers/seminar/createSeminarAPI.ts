@@ -4,7 +4,7 @@ import {z} from "zod";
 import { TimeSlotSchema } from '../types';
 import { Prisma } from '@prisma/client';
 
-const UserSchema = z.object({
+const SeminarSchema = z.object({
     registrationStart: z
       .date({
         required_error: 'registrationStart is required',
@@ -36,16 +36,16 @@ const UserSchema = z.object({
 
 const createUserAPI = async (req: Request, res: Response) => {
     try {
-      const seminarData = await UserSchema.parseAsync(req.body);
-      const user = await createSeminar(seminarData);
-      if (user.isOk) {
+      const seminarData = await SeminarSchema.parseAsync(req.body);
+      const seminar = await createSeminar(seminarData);
+      if (seminar.isOk) {
         return res.status(201).send({
           status: 'success',
-          data: user.unwrap(),
+          data: seminar.unwrap(),
         });
       }
   
-      throw user.error;
+      throw seminar.error;
     } catch (e) {
       if (e instanceof z.ZodError) {
         return res.status(400).send({
@@ -53,12 +53,6 @@ const createUserAPI = async (req: Request, res: Response) => {
           error: e.errors,
         });
       }
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        return res.status(409).send({
-            status: 'error',
-            error: "Email already in use",
-          });
-        }
   
       return res.status(500).send({
         status: 'error',

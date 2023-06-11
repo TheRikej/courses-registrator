@@ -12,7 +12,7 @@ const readSemesterSchema = z.object({
       .optional(),
 })
 
-const readUserAllAPI = async (req: Request, res: Response) => {
+const readSemesterAllAPI = async (req: Request, res: Response) => {
     try {
       const data = await readSemesterSchema.parseAsync(req.body)
       const semesters = await readAllSemester(data);
@@ -39,4 +39,4 @@ const readUserAllAPI = async (req: Request, res: Response) => {
     }
   };
 
-export default readUserAllAPI;
+export default readSemesterAllAPI;

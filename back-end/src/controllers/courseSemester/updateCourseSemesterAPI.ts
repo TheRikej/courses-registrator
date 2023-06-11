@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import updateSeminar from '../../repositories/seminar/updateSeminarGroup';
+import updateCourseSemester from '../../repositories/courseSemester/updateSemesterCourse';
 import {z} from "zod";
 import { TimeSlotSchema } from '../types';
 
@@ -9,44 +9,38 @@ const idSchema = z.object({
         required_error: 'Id is required',
       })
     })
-
-const SeminarSchema = z.object({
-    registrationStart: z
+const courseSemesterSchema = z.object({
+    registrationStart : z
         .date()
         .optional(),
-    registrationEnd: z
+    registrationEnd : z
         .date()
+        .optional(),
+    capacity : z
+        .number()
         .optional(),
     room: z
         .string()
-        .trim()
-        .min(1, 'Room cannot be empty string')
         .optional(),
-    capacity: z
-        .number()
-        .optional(),
-    groupNumber: z
-        .number()
-        .optional(),
-    timeslot: TimeSlotSchema.optional(),
+    timeSlot: TimeSlotSchema.optional(),
     });
 
-const updateSeminarAPI = async (req: Request, res: Response) => {
+const updateCourseSemesterAPI = async (req: Request, res: Response) => {
     try {
         const id = await idSchema.parseAsync(req.params)
-        const seminarData = await SeminarSchema.parseAsync(req.body)
-        const seminar = await updateSeminar({
+        const courseSemesterData = await courseSemesterSchema.parseAsync(req.body)
+        const courseSemester = await updateCourseSemester({
             ...id,
-            ...seminarData,
+            ...courseSemesterData
         });
-        if (seminar.isOk) {
+        if (courseSemester.isOk) {
           return res.status(200).send({
             status: 'success',
-            data: seminar.unwrap(),
+            data: courseSemester.unwrap(),
           });
         }
     
-        throw seminar.error;
+        throw courseSemester.error;
       } catch (e) {
           if (e instanceof z.ZodError) {
               return res.status(404).send({
@@ -62,4 +56,4 @@ const updateSeminarAPI = async (req: Request, res: Response) => {
       }
     };
 
-export default updateSeminarAPI;
+export default updateCourseSemesterAPI;
