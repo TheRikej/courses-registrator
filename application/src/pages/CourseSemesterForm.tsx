@@ -6,7 +6,7 @@ import { z } from 'zod';
 import formatSemester from "../utils/semester";
 import {DateTimePicker, TimePicker} from "@mui/x-date-pickers";
 import workDays from "../utils/days";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import Select from "react-select";
 
 const schema = z.object({
@@ -303,10 +303,15 @@ const CourseSemesterForm = () => {
         {errors.teachers?.message}
       </FormHelperText>
 
-      <div className="flex content-center justify-center">
-        <Button type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
+      <div className="flex flex-col content-center justify-center m-auto">
+        <Button className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
           Submit
         </Button>
+        <Link to={"/courses/" + code}>
+          <Button className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 1rem' }}>
+            Back to {code}
+          </Button>
+        </Link>
       </div>
     </form>
   );

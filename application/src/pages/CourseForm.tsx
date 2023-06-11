@@ -4,6 +4,7 @@ import {TextField, Button, MenuItem, FormHelperText} from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Select from 'react-select';
+import {Link} from "react-router-dom";
 
 const schema = z.object({
   name: z.string().nonempty('Name is required.').max(40, "Name cannot be longer than 40 characters."),
@@ -178,10 +179,15 @@ const CourseForm = () => {
           {errors.guarantor?.message}
         </FormHelperText>
 
-        <div className="flex content-center justify-center">
-          <Button type="submit" variant="outlined" sx={{ margin: '1.5rem 2rem' }}>
-            Submit
+        <div className="flex flex-col content-center justify-center m-auto">
+          <Button className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
+            Create
           </Button>
+          <Link to="/courses/">
+            <Button className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 1rem' }}>
+              Back to courses
+            </Button>
+          </Link>
         </div>
       </form>
   );

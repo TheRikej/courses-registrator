@@ -4,6 +4,7 @@ import {TextField, Button, MenuItem, FormHelperText} from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {DateTimePicker, TimePicker} from "@mui/x-date-pickers";
+import {Link} from "react-router-dom";
 
 const schema = z.object({
   year: z.number().min(2000, "Year must be greater than 2000."),
@@ -53,7 +54,7 @@ const SemesterForm = () => {
         <TextField
             id="season"
             label="Season *"
-            className="w-48"
+            className="w-60"
             select
             size="small"
             defaultValue = "SPRING"
@@ -68,10 +69,10 @@ const SemesterForm = () => {
 
       <TextField
           id="year"
-          className="w-auto lg:w-48"
+          className="w-auto w-60"
           label="Year *"
           variant="outlined"
-          sx={{ margin: '1rem 1rem' }}
+          sx={{ margin: '1rem 2rem 1rem 1rem' }}
           {...register('year', { valueAsNumber: true })}
           error={errors.year !== undefined}
           size="small"
@@ -95,7 +96,7 @@ const SemesterForm = () => {
                   label="Semester start *"
                   {...field}
                   inputRef={field.ref}
-                  className="w-48 mr-4"
+                  className="w-60"
                   ampm={false}
                   slotProps={{
                       textField: {
@@ -117,7 +118,7 @@ const SemesterForm = () => {
                     label="Semester end *"
                     {...field}
                     inputRef={field.ref}
-                    className="w-48"
+                    className="w-60"
                     ampm={false}
                     slotProps={{
                       textField: {
@@ -132,10 +133,15 @@ const SemesterForm = () => {
             )} />
       </div>
 
-      <div className="flex content-center justify-center">
-        <Button type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
+      <div className="flex flex-col content-center justify-center">
+        <Button className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
           Create
         </Button>
+        <Link to="/semesters/">
+            <Button className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem' }}>
+              Back to semesters
+            </Button>
+        </Link>
       </div>
     </form>
   );
