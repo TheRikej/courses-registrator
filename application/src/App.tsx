@@ -1,11 +1,11 @@
 import React from 'react'
 import {Route, Routes} from "react-router-dom";
-import CourseForm from './pages/CourseForm';
-import CourseSemesterForm from './pages/CourseSemesterForm';
-import SeminarGroupForm from "./pages/SeminarGroupForm";
+import CourseForm from './forms/CourseForm';
+import CourseSemesterForm from './forms/CourseSemesterForm';
+import SeminarGroupForm from "./forms/SeminarGroupForm";
 import Header from "./components/Header";
 import NotFound from "./components/NotFound";
-import SemesterForm from "./pages/SemesterForm";
+import SemesterForm from "./forms/SemesterForm";
 import Semesters from "./pages/Semesters";
 import Faculties from "./pages/Faculties";
 

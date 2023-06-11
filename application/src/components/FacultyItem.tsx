@@ -12,7 +12,7 @@ const FacultyItemCard = (props: {name: string}) => {
         <b>{props.name}</b>
       </p>
       <div className="mr-0 ml-auto">
-        <Button color="success" onClick={edit} type="button" variant="outlined" sx={{ margin: '0.5rem 0.5rem' }}>
+        <Button onClick={edit} type="button" variant="outlined" sx={{ margin: '0.5rem 0.5rem' }}>
           Edit
         </Button>
         <Button color="error" type="button" variant="outlined" sx={{ margin: '0.5rem 0.5rem' }}>
