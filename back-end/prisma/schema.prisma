@@ -11,17 +11,18 @@ datasource db {
 }
 
 model User {
-  id             String @id @default(uuid())
-  userName       String
-  email          String
-  createdAt      DateTime @default(now())
-  hashedPassword String
-  salt           String
-  deletedAt      DateTime?
-  taughtCourses  CourseSemester[]
-  taughtGroups   SeminarGroup[]
-  studiedCourses CourseStudent[]
-  studiedGroups  GroupStudent[]
+  id                String @id @default(uuid())
+  userName          String
+  email             String @unique
+  createdAt         DateTime @default(now())
+  hashedPassword    String
+  role              Role
+  deletedAt         DateTime?
+  taughtCourses     CourseSemester[]
+  taughtGroups      SeminarGroup[]
+  studiedCourses    CourseStudent[]
+  studiedGroups     GroupStudent[]
+  guarantedCourses  Course[]
 }
 
 model Course {
@@ -29,6 +30,8 @@ model Course {
   description       String
   name              String
   deletedAt         DateTime?
+  guarantor         User @relation(fields: [guarantorId], references: [id])
+  guarantorId       String
   faculty           Faculty @relation(fields: [facultyId], references: [id])
   facultyId         String
   credits           Int
@@ -129,4 +132,10 @@ enum Day {
 enum SemesterSeason {
   SPRING
   FALL
+}
+
+enum Role {
+  ADMINISTRATOR
+  TEACHER
+  STUDENT
 }

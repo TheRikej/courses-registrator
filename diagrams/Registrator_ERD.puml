@@ -10,15 +10,15 @@ entity User {
     * userName: string
     * email: string
     * createdAt: timestamp
+    * role: enum
     * hashedPassword: string
-    * salt: string
     deletedAt: timestamp
 }
 
 entity Course{
     * id: string
     ---
-    * teacher: <<FK>>
+    * guarantor: <<FK>>
     * faculty: <<FK>>
     * description: string
     * name: string
@@ -111,6 +111,12 @@ Enum DayEnum {
     SUNDAY
 }
 
+Enum RoleEnum {
+    ADMINISTRATOR
+    TEACHER
+    STUDENT
+}
+
 
 User ||..o{ GroupStudent: visits
 SeminarGroup ||.r.o{ GroupStudent
@@ -125,13 +131,16 @@ CourseSemester||..o{ SeminarGroup
 Course ||..o{ CourseSemester
 Semester||.r.o{ CourseSemester
 
-User }|.l.o{ Course: teaches
+User }|.l.o{ CourseSemester: teaches
+User ||.l.o{ Course: guarantees
 User }|.l.o{ SeminarGroup: teaches
 
 CourseSemester |o..o| TimeSlot
 SeminarGroup |o.l.|| TimeSlot
 
 TimeSlot <|-l- DayEnum
+
+User <|-l- RoleEnum
 
 Semester <|-u- SemesterSeasonEnum
 @enduml
