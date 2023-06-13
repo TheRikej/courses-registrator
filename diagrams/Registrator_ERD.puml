@@ -10,7 +10,9 @@ entity User {
     * userName: string
     * email: string
     * createdAt: timestamp
-    * role: enum
+    * teacher: boolean
+    * student: boolean
+    * administrator: boolean
     * hashedPassword: string
     deletedAt: timestamp
 }
@@ -111,13 +113,6 @@ Enum DayEnum {
     SUNDAY
 }
 
-Enum RoleEnum {
-    ADMINISTRATOR
-    TEACHER
-    STUDENT
-}
-
-
 User ||..o{ GroupStudent: visits
 SeminarGroup ||.r.o{ GroupStudent
 
@@ -139,8 +134,6 @@ CourseSemester |o..o| TimeSlot
 SeminarGroup |o.l.|| TimeSlot
 
 TimeSlot <|-l- DayEnum
-
-User <|-l- RoleEnum
 
 Semester <|-u- SemesterSeasonEnum
 @enduml
