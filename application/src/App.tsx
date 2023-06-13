@@ -8,6 +8,8 @@ import NotFound from "./components/NotFound";
 import SemesterForm from "./forms/SemesterForm";
 import Semesters from "./pages/Semesters";
 import Faculties from "./pages/Faculties";
+import DeleteFaculty from './forms/DeleteFaculty';
+import DeleteSemester from "./forms/DeleteSemester";
 
 function App() {
   return (
@@ -24,9 +26,11 @@ function App() {
 
                   <Route path="/semesters/create" element={<SemesterForm isEdit={false}/>} />
                   <Route path="/semesters/:semester/edit" element={<SemesterForm isEdit={true}/>} />
+                  <Route path="/semesters/:semester/delete" element={<DeleteSemester/>} />
                   <Route path="/semesters/" element={<Semesters />} />
 
                   <Route path="/faculties/" element={<Faculties />} />
+                  <Route path="/faculties/:faculty/delete" element={<DeleteFaculty/>} />
 
                   <Route path='*' element={<NotFound />}/>
               </Routes>

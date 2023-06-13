@@ -4,6 +4,7 @@ import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
+import { Link } from 'react-router-dom';
 
 const schema = z.object({
     name: z.string().nonempty("Faculty name cannot be empty.")
@@ -66,9 +67,11 @@ const FacultyItemCard = (props: {name: string}) => {
                 variant="outlined" sx={{ margin: '0.5rem 0.5rem' }}>
           {isEditing ? "Save" : "Edit"}
         </Button>
-        <Button color="error" type="button" variant="outlined" sx={{ margin: '0.5rem 0.5rem' }}>
-          Remove
-        </Button>
+        <Link to={"/faculties/" + props.name + "/delete"}>
+            <Button color="error" type="button" variant="outlined" sx={{ margin: '0.5rem 0.5rem' }}>
+              Delete
+            </Button>
+        </Link>
       </div>
     </form>
   );

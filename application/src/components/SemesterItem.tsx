@@ -24,9 +24,11 @@ const SemesterItemCard = (props: {target: SemesterType}) => {
             Edit
           </Button>
         </Link>
-        <Button color="error" onClick={remove} type="button" variant="outlined" sx={{ margin: '0.5rem 0.5rem' }}>
-          Remove
-        </Button>
+        <Link to={"/semesters/" + formatSemester(props.target.year, props.target.season) + "/delete"}>
+            <Button color="error" onClick={remove} type="button" variant="outlined" sx={{ margin: '0.5rem 0.5rem' }}>
+              Delete
+            </Button>
+        </Link>
       </div>
     </div>
   );
