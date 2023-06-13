@@ -24,10 +24,10 @@ const addCourseTeacher = async (data: addTeacherCourseData): UserAddTeacherCours
             taughtCourses: true,
         }
         });
-        if (user == null) {
+        if (user === null) {
           throw new NonexistentRecordError('No User found');
         }
-        if (user?.deletedAt != null) {
+        if (user?.deletedAt !== null) {
           throw new DeletedRecordError('The user has already been deleted!');
         }
         const course = await transaction.courseSemester.findUnique({
@@ -35,10 +35,10 @@ const addCourseTeacher = async (data: addTeacherCourseData): UserAddTeacherCours
             id: data.enrollCourseId,
           },
         });
-        if (course == null) {
+        if (course === null) {
           throw new NonexistentRecordError('No CourseSemester found');
         }
-        if (course?.deletedAt != null) {
+        if (course?.deletedAt !== null) {
           throw new DeletedRecordError('The CourseSemester has already been deleted!');
         }
         const taughtCoursesIds = user.taughtCourses.map(x => x.courseId);

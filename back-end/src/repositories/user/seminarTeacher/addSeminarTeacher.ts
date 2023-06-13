@@ -24,10 +24,10 @@ const addSeminarTeacher = async (data: addTeacherSeminarData): UserAddTeacherSem
             taughtGroups: true,
         }
         });
-        if (user == null) {
+        if (user === null) {
           throw new NonexistentRecordError('No User found');
         }
-        if (user?.deletedAt != null) {
+        if (user?.deletedAt !== null) {
           throw new DeletedRecordError('The user is deleted!');
         }
         const seminarGroup = await transaction.seminarGroup.findUnique({
@@ -38,10 +38,10 @@ const addSeminarTeacher = async (data: addTeacherSeminarData): UserAddTeacherSem
             teachers: true,
           }
         });
-        if (seminarGroup == null) {
+        if (seminarGroup === null) {
           throw new NonexistentRecordError('No seminar group found');
         }
-        if (seminarGroup?.deletedAt != null) {
+        if (seminarGroup?.deletedAt !== null) {
           throw new DeletedRecordError('The seminar group is deleted!');
         }
         const taughtSeminarsIds = user.taughtGroups.map(x => x.id);

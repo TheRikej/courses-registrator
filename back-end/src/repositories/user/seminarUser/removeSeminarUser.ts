@@ -27,10 +27,10 @@ const removeSeminarUser = async (data: removeStudentSeminarData): UserRemoveSemi
               }
           }
           });
-          if (user == null) {
+          if (user === null) {
             throw new NonexistentRecordError('No User found');
           }
-          if (user?.deletedAt != null) {
+          if (user?.deletedAt !== null) {
             throw new DeletedRecordError('The user has already been deleted!');
           }
           const seminar = await transaction.seminarGroup.findUnique({
@@ -41,10 +41,10 @@ const removeSeminarUser = async (data: removeStudentSeminarData): UserRemoveSemi
               students: true
             }
           });
-          if (seminar == null) {
+          if (seminar === null) {
             throw new NonexistentRecordError('No Seminar found');
           }
-          if (seminar?.deletedAt != null) {
+          if (seminar?.deletedAt !== null) {
             throw new DeletedRecordError('The seminar has already been deleted!');
           }
           const groupStudent = await transaction.groupStudent.updateMany({

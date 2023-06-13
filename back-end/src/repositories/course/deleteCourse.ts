@@ -11,7 +11,7 @@ const deleteCourse = async (data: DeleteData): CourseDeleteResult => {
         const deletedAt = new Date();
         const course = await transaction.course.findUnique({
           where: {
-            id: data.id,
+            id: data.id.toUpperCase(),
           },
           include: {
             courseSemesters: {
@@ -21,7 +21,7 @@ const deleteCourse = async (data: DeleteData): CourseDeleteResult => {
             }
           }
         });
-        if (course == null) {
+        if (course === null) {
           throw new NonexistentRecordError('No course found');
         }
         if (course.deletedAt !== null) {
@@ -37,7 +37,7 @@ const deleteCourse = async (data: DeleteData): CourseDeleteResult => {
           }
         const deleted = await transaction.course.update({
           where: {
-            id: data.id,
+            id: data.id.toUpperCase(),
           },
           data: {
             deletedAt,

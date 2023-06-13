@@ -30,7 +30,7 @@ const readSpecificFaculty = async (
           }
         },
       });
-      if (faculty.deletedAt != null) {
+      if (faculty.deletedAt !== null) {
         throw new DeletedRecordError('The faculty has been deleted!');
       }
       return Result.ok(faculty);

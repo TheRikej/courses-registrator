@@ -19,7 +19,7 @@ const readSpecificCourse = async (
       }
       const course = await prisma.course.findFirstOrThrow({
         where: {
-            ...(data?.id !== undefined ? { id: data.id} : {}),
+            ...(data?.id !== undefined ? { id: data.id.toUpperCase()} : {}),
             ...(data?.name !== undefined ? { name: data.name} : {}),
         },
         include: {
@@ -30,7 +30,7 @@ const readSpecificCourse = async (
           }
         },
       });
-      if (course.deletedAt != null) {
+      if (course.deletedAt !== null) {
         throw new DeletedRecordError('The course has been deleted!');
       }
       return Result.ok(course);

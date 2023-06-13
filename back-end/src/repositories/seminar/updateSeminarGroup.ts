@@ -14,7 +14,7 @@ const updateSeminar = async (data: UpdateData): CourseUpdateResult => {
             id: data.id,
           },
         });
-        if (course == null) {
+        if (course === null) {
           throw new NonexistentRecordError('No seminar group found');
         }
         if (course.deletedAt !== null) {

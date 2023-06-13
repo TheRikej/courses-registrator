@@ -41,7 +41,7 @@ const readSpecific = async (
           },
         },
       });
-      if (user.deletedAt != null) {
+      if (user.deletedAt !== null) {
         throw new DeletedRecordError('The user has been deleted!');
       }
       return Result.ok(user);

@@ -25,7 +25,7 @@ const readSpecificSemesterCourse = async (
           }
         },
       });
-      if (course.deletedAt != null) {
+      if (course.deletedAt !== null) {
         throw new Error('The course semester has been deleted!');
       }
       return Result.ok(course);

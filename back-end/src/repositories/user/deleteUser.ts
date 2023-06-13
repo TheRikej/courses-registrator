@@ -22,10 +22,10 @@ const deleteUser = async (data: UserDeleteData): UserDeleteResult => {
             id: data.id,
           },
         });
-        if (user == null) {
+        if (user === null) {
           throw new NonexistentRecordError('No User found');
         }
-        if (user?.deletedAt != null) {
+        if (user?.deletedAt !== null) {
           throw new DeletedRecordError('The user has already been deleted!');
         }
         const deleted = await transaction.user.update({

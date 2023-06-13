@@ -23,10 +23,10 @@ const removeCourseTeacher = async (data: removeTeacherData): UserRemoveTeacherRe
               taughtCourses: true,
           }
           });
-          if (user == null) {
+          if (user === null) {
             throw new NonexistentRecordError('No User found');
           }
-          if (user?.deletedAt != null) {
+          if (user?.deletedAt !== null) {
             throw new DeletedRecordError('The user has already been deleted!');
           }
           const course = await transaction.courseSemester.findUnique({
@@ -34,7 +34,7 @@ const removeCourseTeacher = async (data: removeTeacherData): UserRemoveTeacherRe
               id: data.courseId,
             },
           });
-          if (course == null) {
+          if (course === null) {
             throw new NonexistentRecordError('No CourseSemester found');
           }
           const taughtCoursesIds = user.taughtCourses.map(x => x.id);

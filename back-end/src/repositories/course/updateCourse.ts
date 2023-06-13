@@ -11,7 +11,7 @@ const updateCourse = async (data: UpdateData): CourseUpdateResult => {
       await prisma.$transaction(async (transaction) => {
         const course = await transaction.course.findUnique({
           where: {
-            id: data.id,
+            id: data.id.toUpperCase(),
           },
         });
         if (course === null) {
@@ -22,7 +22,7 @@ const updateCourse = async (data: UpdateData): CourseUpdateResult => {
         }
         const update = await transaction.course.update({
           where: {
-            id: data.id,
+            id: data.id.toUpperCase(),
           },
           data: {
             ...(data.credits !== undefined ? { credits: data.credits } : {}),

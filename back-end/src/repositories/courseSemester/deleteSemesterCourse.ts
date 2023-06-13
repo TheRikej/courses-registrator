@@ -15,7 +15,7 @@ const deleteSemesterCourse = async (data: DeleteData): SemesterDeleteResult => {
             id: data.id,
           },
         });
-        if (group == null) {
+        if (group === null) {
           throw new NonexistentRecordError('No course for given semester found');
         }
         if (group.deletedAt !== null) {

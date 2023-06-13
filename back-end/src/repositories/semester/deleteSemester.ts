@@ -21,7 +21,7 @@ const deleteSemester = async (data: DeleteData): SemesterDeleteResult => {
             }
           }
         });
-        if (semester == null) {
+        if (semester === null) {
           throw new NonexistentRecordError('No semester found');
         }
         if (semester.deletedAt !== null) {

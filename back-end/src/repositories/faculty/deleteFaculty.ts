@@ -25,7 +25,7 @@ const deleteFaculty = async (data: DeleteData): FacultyDeleteResult => {
             }
           }
         });
-        if (faculty == null) {
+        if (faculty === null) {
           throw new NonexistentRecordError('No faculty found');
         }
         if (faculty.deletedAt !== null) {

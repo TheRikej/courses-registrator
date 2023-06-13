@@ -19,7 +19,7 @@ const deleteSeminarGroup = async (data: DeleteData): SeminarDeleteResult => {
             teachers: true,
           }
         });
-        if (group == null) {
+        if (group === null) {
           throw new NonexistentRecordError('No group found');
         }
         if (group.deletedAt !== null) {

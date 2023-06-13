@@ -27,10 +27,10 @@ const addCourseUser = async (data: addStudentCourseData): UserAddStudentCourseRe
             }
         }
         });
-        if (user == null) {
+        if (user === null) {
           throw new NonexistentRecordError('No User found');
         }
-        if (user?.deletedAt != null) {
+        if (user?.deletedAt !== null) {
           throw new DeletedRecordError('The user has already been deleted!');
         }
         const course = await transaction.courseSemester.findUnique({
@@ -45,10 +45,10 @@ const addCourseUser = async (data: addStudentCourseData): UserAddStudentCourseRe
             }
           }
         });
-        if (course == null) {
+        if (course === null) {
           throw new NonexistentRecordError('No CourseSemester found');
         }
-        if (course?.deletedAt != null) {
+        if (course?.deletedAt !== null) {
           throw new DeletedRecordError('The CourseSemester has already been deleted!');
         }
         const currentDate = new Date();

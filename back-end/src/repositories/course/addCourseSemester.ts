@@ -21,10 +21,10 @@ const addCourseSemester = async (data: AddCreateSemesterData): AddCourseSemester
           },
         });
         
-        if (course == null) {
+        if (course === null) {
           throw new NonexistentRecordError('No course found');
         }
-        if (course?.deletedAt != null) {
+        if (course?.deletedAt !== null) {
           throw new DeletedRecordError('The course has already been deleted!');
         }
         let timeslot = undefined;
@@ -41,10 +41,10 @@ const addCourseSemester = async (data: AddCreateSemesterData): AddCourseSemester
           },
         });
         
-        if (semseter == null) {
+        if (semseter === null) {
           throw new Error('No semester found');
         }
-        if (semseter?.deletedAt != null) {
+        if (semseter?.deletedAt !== null) {
           throw new Error('The semester has already been deleted!');
         }
         

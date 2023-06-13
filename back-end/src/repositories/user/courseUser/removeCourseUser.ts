@@ -26,10 +26,10 @@ const removeCourseUser = async (data: removeStudentCourseData): UserRemoveStuden
             }
         }
         });
-        if (user == null) {
+        if (user === null) {
           throw new Error('No User found');
         }
-        if (user?.deletedAt != null) {
+        if (user?.deletedAt !== null) {
           throw new Error('The user has already been deleted!');
         }
         const course = await transaction.courseSemester.findUnique({
@@ -40,10 +40,10 @@ const removeCourseUser = async (data: removeStudentCourseData): UserRemoveStuden
             students: true
           }
         });
-        if (course == null) {
+        if (course === null) {
           throw new Error('No CourseSemester found');
         }
-        if (course?.deletedAt != null) {
+        if (course?.deletedAt !== null) {
           throw new Error('The CourseSemester has already been deleted!');
         }
         const courseStudent = await transaction.courseStudent.updateMany({

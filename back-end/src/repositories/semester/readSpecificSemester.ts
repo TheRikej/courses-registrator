@@ -22,7 +22,7 @@ const readSpecificSemester = async (
           courseSemesters: true,
         },
       });
-      if (semster.deletedAt != null) {
+      if (semster.deletedAt !== null) {
         throw new DeletedRecordError('The semster has been deleted!');
       }
       return Result.ok(semster);

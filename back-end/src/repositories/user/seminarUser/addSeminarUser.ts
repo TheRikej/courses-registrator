@@ -35,10 +35,10 @@ const addSeminarUser = async (data: addStudentSeminarData): UserAddStudentSemina
             }
         }
         });
-        if (user == null) {
+        if (user === null) {
           throw new NonexistentRecordError('No User found');
         }
-        if (user?.deletedAt != null) {
+        if (user?.deletedAt !== null) {
           throw new DeletedRecordError('The user has already been deleted!');
         }
         const seminarGroup = await transaction.seminarGroup.findUnique({
@@ -49,10 +49,10 @@ const addSeminarUser = async (data: addStudentSeminarData): UserAddStudentSemina
             students: true,
           }
         });
-        if (seminarGroup == null) {
+        if (seminarGroup === null) {
           throw new NonexistentRecordError('No seminar group found');
         }
-        if (seminarGroup?.deletedAt != null) {
+        if (seminarGroup?.deletedAt !== null) {
           throw new DeletedRecordError('The seminar group has already been deleted!');
         }
         const amountOfUsers = seminarGroup.students.length;
@@ -67,7 +67,7 @@ const addSeminarUser = async (data: addStudentSeminarData): UserAddStudentSemina
           throw new OperationNotAllowedError('Registration for this group has already ended yet!');
         }
         const studiedCoursesIds = user.studiedCourses.map(x => x.courseId);
-        if (studiedCoursesIds.indexOf(seminarGroup.courseSemesterId) == -1){
+        if (studiedCoursesIds.indexOf(seminarGroup.courseSemesterId) === -1){
           throw new OperationNotAllowedError('This user is not enrolled in the course for this seminar!');
         }
         const studiedCoursesSeminarIds = user.studiedGroups.map(x => x.group.courseSemesterId);

@@ -14,7 +14,7 @@ const updateCourseSemester = async (data: UpdateData): UpdateCourseSemesterResul
             id: data.id,
           },
         });
-        if (course == null) {
+        if (course === null) {
           throw new NonexistentRecordError('No course semester found');
         }
         if (course.deletedAt !== null) {
