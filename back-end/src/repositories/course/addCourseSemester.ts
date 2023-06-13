@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { AddCreateSemesterData } from './types/data';
 import type { AddCourseSemesterResult } from './types/result';
+import { DeletedRecordError, NonexistentRecordError } from '../errors';
 
 /**
  * Creates CourseSemester for semester and course
@@ -21,10 +22,10 @@ const addCourseSemester = async (data: AddCreateSemesterData): AddCourseSemester
         });
         
         if (course == null) {
-          throw new Error('No course found');
+          throw new NonexistentRecordError('No course found');
         }
         if (course?.deletedAt != null) {
-          throw new Error('The course has already been deleted!');
+          throw new DeletedRecordError('The course has already been deleted!');
         }
         let timeslot = undefined;
         if (data.timeslot !== undefined){

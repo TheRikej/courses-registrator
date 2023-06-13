@@ -2,9 +2,10 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { DeleteData } from './types/data';
 import type { SemesterDeleteResult } from './types/result';
+import { DeletedRecordError, NonexistentRecordError } from '../errors';
 
 
-const deleteSemesterCourseGroup = async (data: DeleteData): SemesterDeleteResult => {
+const deleteSemesterCourse = async (data: DeleteData): SemesterDeleteResult => {
   try {
     return Result.ok(
       await prisma.$transaction(async (transaction) => {
@@ -15,10 +16,10 @@ const deleteSemesterCourseGroup = async (data: DeleteData): SemesterDeleteResult
           },
         });
         if (group == null) {
-          throw new Error('No seminar course found');
+          throw new NonexistentRecordError('No course for given semester found');
         }
         if (group.deletedAt !== null) {
-          throw new Error('The seminar course has already been deleted!');
+          throw new DeletedRecordError('The course for given semester has already been deleted!');
         }
         const deleted = await transaction.courseSemester.update({
           where: {
@@ -52,4 +53,4 @@ const deleteSemesterCourseGroup = async (data: DeleteData): SemesterDeleteResult
   }
 };
 
-export default deleteSemesterCourseGroup;
+export default deleteSemesterCourse;

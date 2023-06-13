@@ -1,7 +1,8 @@
 import { Result } from '@badrap/result';
 import prisma from '../../client';
-import type { removeTeacherData } from '../types/data';
+import type { removeTeacherSeminarData } from '../types/data';
 import type { UserRemoveTeacherResult } from '../types/result';
+import { DeletedRecordError, MissingRelationError, NonexistentRecordError } from '../../errors';
 
 /**
  * Removes existing teacher from course that they teach.
@@ -10,7 +11,7 @@ import type { UserRemoveTeacherResult } from '../types/result';
  * @returns 
  */ 
 
-const removeSeminarTeacher = async (data: removeTeacherData): UserRemoveTeacherResult => {
+const removeSeminarTeacher = async (data: removeTeacherSeminarData): UserRemoveTeacherResult => {
   try {
     return Result.ok(
       await prisma.$transaction(async (transaction) => {
@@ -22,23 +23,26 @@ const removeSeminarTeacher = async (data: removeTeacherData): UserRemoveTeacherR
               taughtGroups: true,
           }
           });
-          if (user == null) {
-            throw new Error('No User found');
+          if (user === null) {
+            throw new NonexistentRecordError('No User found');
           }
-          if (user?.deletedAt != null) {
-            throw new Error('The user has already been deleted!');
+          if (user?.deletedAt !== null) {
+            throw new DeletedRecordError('The user has already been deleted!');
           }
           const seminar = await transaction.seminarGroup.findUnique({
             where: {
-              id: data.courseId,
+              id: data.seminarId,
             },
           });
-          if (seminar == null) {
-            throw new Error('No Seminar found');
+          if (seminar === null) {
+            throw new NonexistentRecordError('No Seminar found');
           }
-          const taughtCoursesIds = user.taughtGroups.map(x => x.id);
-          if (taughtCoursesIds.indexOf(data.courseId) === -1){
-            throw new Error('The user does not teach this seminar!');
+          if (seminar.deletedAt !== null) {
+            throw new DeletedRecordError('The Seminar has already been deleted!');
+          }
+          const taughtGroupsIds = user.taughtGroups.map(x => x.id);
+          if (taughtGroupsIds.indexOf(data.seminarId) === -1){
+            throw new MissingRelationError('The user does not teach this seminar!');
           }
           const userUpdate = await transaction.user.update({
               where: {
@@ -46,13 +50,13 @@ const removeSeminarTeacher = async (data: removeTeacherData): UserRemoveTeacherR
               },
               data: {
                   taughtGroups: {
-                      disconnect: [{ id: data.courseId }],
+                      disconnect: [{ id: data.seminarId }],
                   }
               }
             });
             await transaction.seminarGroup.update({
               where: {
-                id: data.courseId,
+                id: data.seminarId,
               },
               data: {
                 teachers: {

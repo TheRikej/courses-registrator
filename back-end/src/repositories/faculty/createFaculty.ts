@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { FacultyCreateData } from './types/data';
 import type { FacultyCreateResult } from './types/result';
+import { DuplicateRecordError } from '../errors';
 
 /**
  * Creates new faculty.
@@ -17,7 +18,7 @@ const createFaculty = async (data: FacultyCreateData): FacultyCreateResult => {
       },
     });
     if (faculty !== null) {
-      throw new Error("Faculty with this name already exists!");
+      throw new DuplicateRecordError("Faculty with this name already exists!");
     }
     return Result.ok(await prisma.$transaction(async (transaction) => {
       const faculty = await transaction.faculty.create({

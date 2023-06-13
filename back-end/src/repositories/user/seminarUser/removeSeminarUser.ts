@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../../client';
 import type { removeStudentSeminarData } from '../types/data';
 import type { UserRemoveSeminarResult } from '../types/result';
+import { DeletedRecordError, NonexistentRecordError } from '../../errors';
 
 /**
  * Enrolls existing student to existing seminar, that he is not already enrolled in.
@@ -27,10 +28,10 @@ const removeSeminarUser = async (data: removeStudentSeminarData): UserRemoveSemi
           }
           });
           if (user == null) {
-            throw new Error('No User found');
+            throw new NonexistentRecordError('No User found');
           }
           if (user?.deletedAt != null) {
-            throw new Error('The user has already been deleted!');
+            throw new DeletedRecordError('The user has already been deleted!');
           }
           const seminar = await transaction.seminarGroup.findUnique({
             where: {
@@ -41,10 +42,10 @@ const removeSeminarUser = async (data: removeStudentSeminarData): UserRemoveSemi
             }
           });
           if (seminar == null) {
-            throw new Error('No Seminar found');
+            throw new NonexistentRecordError('No Seminar found');
           }
           if (seminar?.deletedAt != null) {
-            throw new Error('The seminar has already been deleted!');
+            throw new DeletedRecordError('The seminar has already been deleted!');
           }
           const groupStudent = await transaction.groupStudent.updateMany({
             where: {

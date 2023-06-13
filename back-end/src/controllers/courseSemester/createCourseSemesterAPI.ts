@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import createCourseSemester from '../../repositories/course/addCourseSemester';
 import {z} from "zod";
 import { TimeSlotSchema } from '../types';
+import { DeletedRecordError, NonexistentRecordError } from '../../repositories/errors';
 
 const idSchema = z.object({
     id: z
@@ -56,6 +57,18 @@ const createCourseSemesterAPI = async (req: Request, res: Response) => {
           error: e.errors,
         });
       }
+      if (e instanceof NonexistentRecordError) {
+        return res.status(404).send({
+            status: 'error',
+            error: "CourseSemester with given Id doesn't exist",
+        });
+    }
+    if (e instanceof DeletedRecordError) {
+        return res.status(410).send({
+            status: 'error',
+            error: "CourseSemester with given Id was deleted",
+        });
+    }
   
       return res.status(500).send({
         status: 'error',

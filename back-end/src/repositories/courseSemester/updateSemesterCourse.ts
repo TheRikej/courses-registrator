@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { UpdateData } from './types/data';
 import type { UpdateCourseSemesterResult } from './types/result';
+import { DeletedRecordError, NonexistentRecordError } from '../errors';
 
 
 const updateCourseSemester = async (data: UpdateData): UpdateCourseSemesterResult => {
@@ -14,10 +15,10 @@ const updateCourseSemester = async (data: UpdateData): UpdateCourseSemesterResul
           },
         });
         if (course == null) {
-          throw new Error('No course semester found');
+          throw new NonexistentRecordError('No course semester found');
         }
         if (course.deletedAt !== null) {
-          throw new Error('The course semester has been deleted!');
+          throw new DeletedRecordError('The course semester has been deleted!');
         }
         let timeslot = undefined;
         if (data.timeslot !== undefined){

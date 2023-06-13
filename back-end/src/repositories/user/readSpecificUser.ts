@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { UserReadSpecificData } from './types/data';
 import type { UserReadSpecificType } from './types/result';
+import { DeletedRecordError } from '../errors';
 
 /**
  * Returns user and all their courses and seminar groups.
@@ -41,7 +42,7 @@ const readSpecific = async (
         },
       });
       if (user.deletedAt != null) {
-        throw new Error('The user has been deleted!');
+        throw new DeletedRecordError('The user has been deleted!');
       }
       return Result.ok(user);
     } catch (e) {

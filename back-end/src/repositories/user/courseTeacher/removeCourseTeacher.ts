@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../../client';
 import type { removeTeacherData } from '../types/data';
 import type { UserRemoveTeacherResult } from '../types/result';
+import { DeletedRecordError, MissingRelationError, NonexistentRecordError } from '../../errors';
 
 /**
  * Removes existing student from course that they teaches.
@@ -23,10 +24,10 @@ const removeCourseTeacher = async (data: removeTeacherData): UserRemoveTeacherRe
           }
           });
           if (user == null) {
-            throw new Error('No User found');
+            throw new NonexistentRecordError('No User found');
           }
           if (user?.deletedAt != null) {
-            throw new Error('The user has already been deleted!');
+            throw new DeletedRecordError('The user has already been deleted!');
           }
           const course = await transaction.courseSemester.findUnique({
             where: {
@@ -34,12 +35,12 @@ const removeCourseTeacher = async (data: removeTeacherData): UserRemoveTeacherRe
             },
           });
           if (course == null) {
-            throw new Error('No CourseSemester found');
+            throw new NonexistentRecordError('No CourseSemester found');
           }
           const taughtCoursesIds = user.taughtCourses.map(x => x.id);
           console.log(taughtCoursesIds)
           if (taughtCoursesIds.indexOf(data.courseId) === -1){
-            throw new Error('The user does not teach this course!');
+            throw new MissingRelationError('The user does not teach this course!');
           }
           const userUpdate = await transaction.user.update({
               where: {

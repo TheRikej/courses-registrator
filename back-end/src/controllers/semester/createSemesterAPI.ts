@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import createSemester from '../../repositories/semester/createSemester';
 import {z} from "zod";
 import { SemesterSeason } from '@prisma/client';
+import { DuplicateRecordError } from '../../repositories/errors';
 
 const semesterSchema = z.object({
     year: z
@@ -41,6 +42,12 @@ const createSemesterAPI = async (req: Request, res: Response) => {
           error: e.errors,
         });
       }
+      if (e instanceof DuplicateRecordError) {
+        return res.status(409).send({
+            status: 'error',
+            error: e.message,
+        });
+    }
   
       return res.status(500).send({
         status: 'error',

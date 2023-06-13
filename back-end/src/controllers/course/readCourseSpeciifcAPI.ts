@@ -1,13 +1,14 @@
 import type { Request, Response } from 'express';
 import readSpecificCourse from '../../repositories/course/readSpecificCourse';
 import {z} from "zod";
+import { DeletedRecordError } from '../../repositories/errors';
 
 const idSchema = z.object({
     id: z
       .string({
         required_error: 'Id is required',
       })
-    })
+    }) //TODO repository takes name as optional input
 
 const readCourseSemesterSpecificAPI = async (req: Request, res: Response) => {
     try {
@@ -27,7 +28,13 @@ const readCourseSemesterSpecificAPI = async (req: Request, res: Response) => {
                 status: 'error',
                 error: e.errors,
             });
-        }        
+        }
+        if (e instanceof DeletedRecordError) {
+            return res.status(410).send({
+                status: 'error',
+                error: "Course with given ID has already been deleted",
+            });
+        }
   
       return res.status(500).send({
         status: 'error',

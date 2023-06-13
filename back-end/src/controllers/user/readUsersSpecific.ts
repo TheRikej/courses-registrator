@@ -1,6 +1,8 @@
 import type { Request, Response } from 'express';
 import readSpecificUser from '../../repositories/user/readSpecificUser';
 import {z} from "zod";
+import { DeletedRecordError } from '../../repositories/errors';
+import { Prisma } from '@prisma/client';
 
 const idSchema = z.object({
     id: z
@@ -26,6 +28,18 @@ const readUserSpecificAPI = async (req: Request, res: Response) => {
             return res.status(404).send({
                 status: 'error',
                 error: e.errors,
+            });
+        }
+        if (e instanceof Prisma.NotFoundError) {
+            return res.status(404).send({
+                status: 'error',
+                error: e.message,
+            });
+        }
+        if (e instanceof DeletedRecordError) {
+            return res.status(410).send({
+                status: 'error',
+                error: e.message,
             });
         }        
   

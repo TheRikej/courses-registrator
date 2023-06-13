@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { ReadCourseData } from './types/data';
 import type { CourseResult } from './types/result';
+import { DeletedRecordError } from '../errors';
 
 /**
  * Returns Course and all its CourseSemesters.
@@ -30,7 +31,7 @@ const readSpecificCourse = async (
         },
       });
       if (course.deletedAt != null) {
-        throw new Error('The course has been deleted!');
+        throw new DeletedRecordError('The course has been deleted!');
       }
       return Result.ok(course);
     } catch (e) {

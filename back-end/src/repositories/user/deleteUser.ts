@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { UserDeleteData } from './types/data';
 import type { UserDeleteResult } from './types/result';
+import { DeletedRecordError, NonexistentRecordError } from '../errors';
 
 /**
  * Deletes an user.
@@ -22,10 +23,10 @@ const deleteUser = async (data: UserDeleteData): UserDeleteResult => {
           },
         });
         if (user == null) {
-          throw new Error('No User found');
+          throw new NonexistentRecordError('No User found');
         }
         if (user?.deletedAt != null) {
-          throw new Error('The user has already been deleted!');
+          throw new DeletedRecordError('The user has already been deleted!');
         }
         const deleted = await transaction.user.update({
           where: {

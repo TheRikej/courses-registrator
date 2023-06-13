@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import createSeminar from '../../repositories/seminar/createSeminarGroup';
 import {z} from "zod";
 import { TimeSlotSchema } from '../types';
-import { Prisma } from '@prisma/client';
+import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../../repositories/errors';
 
 const SeminarSchema = z.object({
     registrationStart: z
@@ -53,6 +53,25 @@ const createUserAPI = async (req: Request, res: Response) => {
           error: e.errors,
         });
       }
+      if (e instanceof NonexistentRecordError) {
+        return res.status(404).send({
+            status: 'error',
+            error: e.message,
+        });
+    }
+    if (e instanceof DeletedRecordError) {
+        return res.status(410).send({
+            status: 'error',
+            error: e.message,
+        });
+    } 
+    if (e instanceof DuplicateRecordError) {
+        return res.status(409).send({
+            status: 'error',
+            error: e.message,
+        });
+    }
+
   
       return res.status(500).send({
         status: 'error',
