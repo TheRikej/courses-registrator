@@ -13,11 +13,12 @@ const semesterSchema = z.object({
       .nativeEnum(SemesterSeason, {
         required_error: "SemesterSeason is required"
     }),
-    semesterStart : z
+    semesterStart : z.coerce
       .date({
         required_error: "SemesterStart is required"
-    }),
-    semesterEnd : z
+    })
+    ,
+    semesterEnd : z.coerce
       .date({
         required_error: "SemesterEnd is required"
     }),

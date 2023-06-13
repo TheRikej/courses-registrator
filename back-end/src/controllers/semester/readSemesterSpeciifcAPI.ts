@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import readSpecificSemester from '../../repositories/semester/readSpecificSemester';
 import {z} from "zod";
-import { NonexistentRecordError, DeletedRecordError } from '../../repositories/errors';
+import { DeletedRecordError } from '../../repositories/errors';
 import { Prisma } from '@prisma/client';
 
 const idSchema = z.object({

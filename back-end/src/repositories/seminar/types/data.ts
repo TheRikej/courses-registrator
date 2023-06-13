@@ -4,7 +4,7 @@ export type CreateSeminar = {
     registrationStart: Date,
     registrationEnd:   Date,
     capacity:          number,
-    courseSemesterId:  string,
+    id:  string,
     timeslot: {
       day:               Day,
       startHour:    number,
@@ -34,4 +34,8 @@ export type CreateSeminar = {
       endMinute:    number,
     }
     room?:              string,
+  };
+
+  export type ReadAllSeminar = {
+    id: string
   }

@@ -18,7 +18,7 @@ const createSeminarGroup = async (data: CreateSeminar): CourseCreateResult => {
       await prisma.$transaction(async (transaction) => {
         const course = await transaction.courseSemester.findUnique({
           where: {
-            id: data.courseSemesterId,
+            id: data.id,
           },
         });
 
@@ -26,7 +26,7 @@ const createSeminarGroup = async (data: CreateSeminar): CourseCreateResult => {
           where: {
             groupNumber: data.groupNumber,
             deletedAt: null,
-            courseSemesterId: data.courseSemesterId,
+            courseSemesterId: data.id,
           },
         });
         if (seminarGroup !== null) {
@@ -50,7 +50,7 @@ const createSeminarGroup = async (data: CreateSeminar): CourseCreateResult => {
             capacity: data.capacity,
             registrationEnd: data.registrationEnd,
             registrationStart: data.registrationStart,
-            courseSemester: { connect: { id: data.courseSemesterId } },
+            courseSemester: { connect: { id: data.id } },
             timeSlot: { connect: { id: timeslot.id } },
           },
           include: {

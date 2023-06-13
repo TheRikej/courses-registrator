@@ -35,7 +35,7 @@ const createFacultyAPI = async (req: Request, res: Response) => {
     if (e instanceof DuplicateRecordError) {
         return res.status(409).send({
             status: 'error',
-            error: "CourseSemester with given name already exists",
+            error: e.message,
         });
     }
   

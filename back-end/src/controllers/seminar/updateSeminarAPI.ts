@@ -12,10 +12,10 @@ const idSchema = z.object({
     })
 
 const SeminarSchema = z.object({
-    registrationStart: z
+    registrationStart: z.coerce
         .date()
         .optional(),
-    registrationEnd: z
+    registrationEnd: z.coerce
         .date()
         .optional(),
     room: z

@@ -33,13 +33,13 @@ const readCourseSemesterSpecificAPI = async (req: Request, res: Response) => {
         if (e instanceof Prisma.NotFoundError) {
             return res.status(404).send({
                 status: 'error',
-                error: "CourseSemseter with given Id doesn't exist",
+                error: e.message,
             });
         }
         if (e instanceof DeletedRecordError) {
             return res.status(410).send({
                 status: 'error',
-                error: "CourseSemester with given Id was deleted",
+                error: e.message,
             });
         }
   

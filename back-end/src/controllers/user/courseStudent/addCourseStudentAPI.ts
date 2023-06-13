@@ -1,8 +1,7 @@
 import type { Request, Response } from 'express';
 import addCourseStudent from '../../../repositories/user/courseUser/addCourseUser';
 import {z} from "zod";
-import { Prisma } from '@prisma/client';
-import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError, OperationNotAllowedError } from '../../../repositories/errors';
+import { DeletedRecordError, NonexistentRecordError, OperationNotAllowedError } from '../../../repositories/errors';
 
 const idSchema = z.object({
     id: z

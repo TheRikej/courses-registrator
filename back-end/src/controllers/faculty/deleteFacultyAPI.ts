@@ -32,13 +32,13 @@ const deleteFacultyAPI = async (req: Request, res: Response) => {
         if (e instanceof NonexistentRecordError) {
             return res.status(404).send({
                 status: 'error',
-                error: "Faculty with given Id doesn't exist",
+                error: e.message,
             });
         }
         if (e instanceof DeletedRecordError) {
             return res.status(410).send({
                 status: 'error',
-                error: "Faculty with given Id was deleted",
+                error: e.message,
             });
         }
   

@@ -11,10 +11,10 @@ const idSchema = z.object({
       })
     })
 const courseSemesterSchema = z.object({
-    registrationStart : z
+    registrationStart : z.coerce
         .date()
         .optional(),
-    registrationEnd : z
+    registrationEnd : z.coerce
         .date()
         .optional(),
     capacity : z
@@ -23,7 +23,7 @@ const courseSemesterSchema = z.object({
     room: z
         .string()
         .optional(),
-    timeSlot: TimeSlotSchema.optional(),
+    timeslot: TimeSlotSchema.optional(),
     });
 
 const updateCourseSemesterAPI = async (req: Request, res: Response) => {
@@ -52,13 +52,13 @@ const updateCourseSemesterAPI = async (req: Request, res: Response) => {
         if (e instanceof NonexistentRecordError) {
             return res.status(404).send({
                 status: 'error',
-                error: "CourseSemster with given Id doesn't exist",
+                error: e.message,
             });
         }
         if (e instanceof DeletedRecordError) {
             return res.status(410).send({
                 status: 'error',
-                error: "CourseSemester with given Id was deleted",
+                error: e.message,
             });
         } 
     

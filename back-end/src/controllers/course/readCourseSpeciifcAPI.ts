@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import readSpecificCourse from '../../repositories/course/readSpecificCourse';
 import {z} from "zod";
 import { DeletedRecordError } from '../../repositories/errors';
+import { Prisma } from '@prisma/client';
 
 const idSchema = z.object({
     id: z
@@ -24,7 +25,7 @@ const readCourseSemesterSpecificAPI = async (req: Request, res: Response) => {
       throw semester.error;
     } catch (e) {
         if (e instanceof z.ZodError) {
-            return res.status(404).send({
+            return res.status(400).send({
                 status: 'error',
                 error: e.errors,
             });
@@ -32,9 +33,16 @@ const readCourseSemesterSpecificAPI = async (req: Request, res: Response) => {
         if (e instanceof DeletedRecordError) {
             return res.status(410).send({
                 status: 'error',
-                error: "Course with given ID has already been deleted",
+                error: e.message,
             });
         }
+        if (e instanceof Prisma.NotFoundError) {
+            return res.status(404).send({
+                status: 'error',
+                error: e.message,
+            });
+        }
+
   
       return res.status(500).send({
         status: 'error',

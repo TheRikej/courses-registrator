@@ -1,7 +1,6 @@
 import type { Request, Response } from 'express';
 import addSeminarTeacher from '../../../repositories/user/seminarTeacher/addSeminarTeacher';
 import {z} from "zod";
-import { Prisma } from '@prisma/client';
 import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../../../repositories/errors';
 
 const idSchema = z.object({

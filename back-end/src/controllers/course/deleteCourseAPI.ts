@@ -7,7 +7,8 @@ const idSchema = z.object({
     id: z
       .string({
         required_error: 'Id is required',
-      })
+      }),
+    is_teacher: z.boolean()
     })
 
 const deleteCourseAPI = async (req: Request, res: Response) => {
@@ -32,13 +33,13 @@ const deleteCourseAPI = async (req: Request, res: Response) => {
         if (e instanceof NonexistentRecordError) {
             return res.status(404).send({
                 status: 'error',
-                error: "Course with given Id doesn't exist",
+                error: e.message,
             });
         }
         if (e instanceof DeletedRecordError) {
             return res.status(410).send({
                 status: 'error',
-                error: "Course with given Id was deleted",
+                error: e.message,
             });
         }
   

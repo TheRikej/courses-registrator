@@ -52,13 +52,13 @@ const updateCourseAPI = async (req: Request, res: Response) => {
           if (e instanceof NonexistentRecordError) {
             return res.status(404).send({
                 status: 'error',
-                error: "Course with given Id doesn't exist",
+                error: e.message,
             });
         }
         if (e instanceof DeletedRecordError) {
             return res.status(410).send({
                 status: 'error',
-                error: "Course with given has already been deleted",
+                error: e.message,
             });
         }
     

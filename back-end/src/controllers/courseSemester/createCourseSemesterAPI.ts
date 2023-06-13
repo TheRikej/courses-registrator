@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import createCourseSemester from '../../repositories/course/addCourseSemester';
 import {z} from "zod";
 import { TimeSlotSchema } from '../types';
-import { DeletedRecordError, NonexistentRecordError } from '../../repositories/errors';
+import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../../repositories/errors';
 
 const idSchema = z.object({
     id: z
@@ -16,11 +16,11 @@ const courseSemesterSchema = z.object({
       .string({
         required_error: 'SemesterId is required',
     }),
-    registrationStart : z
+    registrationStart : z.coerce
       .date({
         required_error: "SemesterStart is required"
     }),
-    registrationEnd : z
+    registrationEnd : z.coerce
       .date({
         required_error: "SemesterEnd is required"
     }),
@@ -31,7 +31,7 @@ const courseSemesterSchema = z.object({
     room: z
       .string()
       .optional(),
-    timeSlot: TimeSlotSchema.optional(),
+    timeslot: TimeSlotSchema.optional(),
   });
 
 const createCourseSemesterAPI = async (req: Request, res: Response) => {
@@ -60,13 +60,19 @@ const createCourseSemesterAPI = async (req: Request, res: Response) => {
       if (e instanceof NonexistentRecordError) {
         return res.status(404).send({
             status: 'error',
-            error: "CourseSemester with given Id doesn't exist",
+            error: e.message,
         });
     }
     if (e instanceof DeletedRecordError) {
         return res.status(410).send({
             status: 'error',
-            error: "CourseSemester with given Id was deleted",
+            error: e.message,
+        });
+    }
+    if (e instanceof DuplicateRecordError) {
+        return res.status(409).send({
+            status: 'error',
+            error: e.message,
         });
     }
   

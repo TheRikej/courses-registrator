@@ -50,7 +50,7 @@ const createCourseAPI = async (req: Request, res: Response) => {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         return res.status(409).send({
             status: 'error',
-            error: "Course Id already in use",
+            error: e.message,
           });
         }
   
