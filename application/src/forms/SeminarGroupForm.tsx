@@ -38,7 +38,8 @@ interface CourseSemesterForm {
   teachers: [number] | null,
 }
 
-const CourseSemesterForm = () => {
+//TODO: default Values when editing ("defaultValue={...}")
+const CourseSemesterForm = (props: {isEdit: boolean}) => {
   const {
     register,
     handleSubmit,
@@ -48,7 +49,7 @@ const CourseSemesterForm = () => {
   } = useForm<CourseSemesterForm>({
     resolver: zodResolver(schema),
   });
-  const { code, semester } = useParams();
+  const { code, semester, group } = useParams();
 
   //TODO: fetch users and set the logged in user as the default value in guarantor input
   const users = [
@@ -65,7 +66,7 @@ const CourseSemesterForm = () => {
     const minutesFrom = values.timeHourFrom?.getMinutes();
     const hoursTo = values.timeHourTo?.getHours();
     const minutesTo = values.timeHourTo?.getMinutes();
-    //TODO: send data
+    //TODO: send data (but beware difference between create/edit)
   };
 
   return (
@@ -75,7 +76,9 @@ const CourseSemesterForm = () => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <h1 className="font-poppins text-2xl m-6 font-bold text-blue-950">
-        Create a seminar group for {code?.toUpperCase()} ({semester})
+        {!props.isEdit ?
+            "Create a seminar group for " + code?.toUpperCase() + " (" + semester?.toLowerCase() + ")"
+            : "Edit seminar " + group + " (" + code?.toUpperCase() + ", " + semester?.toLowerCase() + ")"}
       </h1>
 
       <TextField
@@ -259,11 +262,12 @@ const CourseSemesterForm = () => {
 
         <div className="flex flex-col content-center justify-center m-auto">
             <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
-                Create
+                {props.isEdit ? "Submit" : "Create"}
             </Button>
-            <Link to={"/courses/" + code}>
+            <Link to={"/courses/" + code + "/" + semester?.toLowerCase() + "/"
+                    + (props.isEdit ? ("seminars/" + group) : "")}>
                 <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 2rem' }}>
-                    Back to {code}
+                    {"Back to " + code + (props.isEdit ? "/"+group : "")}
                 </Button>
             </Link>
         </div>

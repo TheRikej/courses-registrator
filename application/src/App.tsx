@@ -15,15 +15,15 @@ function App() {
           <Header/>
           <div className="flex justify-center m-auto h-screen">
               <Routes>
-                  <Route path="/courses/:code/list" element={<CourseSemesterForm />} />
-                  <Route path="/courses/:code/:semester/edit" element={<CourseSemesterForm />} />
-                  <Route path="/courses/create" element={<CourseForm />} />
-                  <Route path="/courses/:code/edit" element={<CourseForm />} />
-                  <Route path="/courses/:code/:semester/seminars/create" element={<SeminarGroupForm />} />
-                  <Route path="/courses/:code/:semester/seminars/:group/edit" element={<SeminarGroupForm />} />
+                  <Route path="/courses/:code/list" element={<CourseSemesterForm isEdit={false}/>} />
+                  <Route path="/courses/:code/:semester/edit" element={<CourseSemesterForm isEdit={true}/>} />
+                  <Route path="/courses/create" element={<CourseForm isEdit={false}/>} />
+                  <Route path="/courses/:code/edit" element={<CourseForm isEdit={true}/>} />
+                  <Route path="/courses/:code/:semester/seminars/create" element={<SeminarGroupForm isEdit={false}/>} />
+                  <Route path="/courses/:code/:semester/seminars/:group/edit" element={<SeminarGroupForm isEdit={true}/>} />
 
-                  <Route path="/semesters/create" element={<SemesterForm />} />
-                  <Route path="/semesters/:semester/edit" element={<SemesterForm />} />
+                  <Route path="/semesters/create" element={<SemesterForm isEdit={false}/>} />
+                  <Route path="/semesters/:semester/edit" element={<SemesterForm isEdit={true}/>} />
                   <Route path="/semesters/" element={<Semesters />} />
 
                   <Route path="/faculties/" element={<Faculties />} />

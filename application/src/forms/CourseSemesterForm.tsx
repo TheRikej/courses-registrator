@@ -41,7 +41,8 @@ interface CourseSemesterForm {
   teachers: [number] | null,
 }
 
-const CourseSemesterForm = () => {
+//TODO: default Values when editing ("defaultValue={...}")
+const CourseSemesterForm = (props: {isEdit: boolean}) => {
   const {
     register,
     handleSubmit,
@@ -51,7 +52,7 @@ const CourseSemesterForm = () => {
   } = useForm<CourseSemesterForm>({
     resolver: zodResolver(schema),
   });
-  const { code } = useParams();
+  const { code, semester } = useParams();
 
   //TODO: fetch semester API
   const semesters = [
@@ -89,7 +90,7 @@ const CourseSemesterForm = () => {
     const minutesFrom = values.timeHourFrom?.getMinutes();
     const hoursTo = values.timeHourTo?.getHours();
     const minutesTo = values.timeHourTo?.getMinutes();
-    //TODO: send data
+    //TODO: send data (but beware difference between create/edit)
   };
 
   return (
@@ -99,7 +100,10 @@ const CourseSemesterForm = () => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <h1 className="font-poppins text-2xl m-6 font-bold text-blue-950">
-        List course {code?.toUpperCase()} in a new semester
+        {props.isEdit
+            ? ("Edit course " + code?.toUpperCase() + " in " + semester?.toLowerCase())
+            : ("List course " + code?.toUpperCase() + " in a new semester")
+        }
       </h1>
       <div className="mx-4 my-1 w-64">
         <TextField
@@ -307,7 +311,7 @@ const CourseSemesterForm = () => {
         <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
           Submit
         </Button>
-        <Link to={"/courses/" + code}>
+        <Link to={"/courses/" + code + (props.isEdit ? "/"+semester : "")}>
           <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 4rem' }}>
             Back to {code}
           </Button>

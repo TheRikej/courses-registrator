@@ -4,7 +4,7 @@ import {TextField, Button, MenuItem} from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {DateTimePicker} from "@mui/x-date-pickers";
-import {Link} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 
 const schema = z.object({
   year: z.number().min(2000, "Year must be greater than 2000."),
@@ -23,7 +23,8 @@ interface SemesterForm {
     season: "SPRING" | "FALL",
 }
 
-const SemesterForm = () => {
+//TODO: default Values when editing ("defaultValue={...}")
+const SemesterForm = (props: {isEdit: boolean}) => {
   const {
     register,
     handleSubmit,
@@ -33,11 +34,12 @@ const SemesterForm = () => {
   } = useForm<SemesterForm>({
     resolver: zodResolver(schema),
   });
+  const { semester } = useParams();
 
   const onSubmit = () => {
     const values = getValues();
     console.log(values);
-    //TODO: send data
+    //TODO: send data (but beware difference between create/edit)
   };
 
   return (
@@ -47,7 +49,7 @@ const SemesterForm = () => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <h1 className="font-poppins text-2xl m-6 font-bold text-blue-950">
-        Create new semester
+          {props.isEdit ? ("Edit semester " + semester?.toLowerCase()) : "Create new semester"}
       </h1>
 
       <div className="mx-4 my-1 w-64">
@@ -69,10 +71,9 @@ const SemesterForm = () => {
 
       <TextField
           id="year"
-          className="w-auto w-60"
           label="Year *"
           variant="outlined"
-          sx={{ margin: '1rem 2rem 1rem 1rem' }}
+          sx={{ margin: '1rem 2rem 1rem 1rem', width: '15rem' }}
           {...register('year', { valueAsNumber: true })}
           error={errors.year !== undefined}
           size="small"
@@ -135,7 +136,7 @@ const SemesterForm = () => {
 
       <div className="flex flex-col content-center justify-center">
         <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
-          Create
+          {props.isEdit ? "Submit" : "Create"}
         </Button>
         <Link to="/semesters/">
             <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem' }}>

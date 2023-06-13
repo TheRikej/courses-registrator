@@ -4,7 +4,7 @@ import {TextField, Button, MenuItem, FormHelperText} from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Select from 'react-select';
-import {Link} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 
 const schema = z.object({
   name: z.string().nonempty('Name is required.').max(40, "Name cannot be longer than 40 characters."),
@@ -25,7 +25,8 @@ interface CourseForm {
   guarantor: number,
 }
 
-const CourseForm = () => {
+//TODO: default Values when editing ("defaultValue={...}")
+const CourseForm = (props: {isEdit: boolean}) => {
   const {
     register,
     handleSubmit,
@@ -35,6 +36,7 @@ const CourseForm = () => {
   } = useForm<CourseForm>({
     resolver: zodResolver(schema),
   });
+  const { code } = useParams();
 
   //TODO: fetch faculties API
   const faculties = [
@@ -67,7 +69,7 @@ const CourseForm = () => {
   const onSubmit = () => {
     const values = getValues();
     console.log(values);
-    //TODO: send data
+    //TODO: send data (but beware difference between create/edit)
   };
 
   return (
@@ -77,7 +79,7 @@ const CourseForm = () => {
           onSubmit={handleSubmit(onSubmit)}
       >
         <h1 className="font-poppins text-2xl m-6 font-bold text-blue-950">
-          Create new course
+          {props.isEdit ? ("Edit course " + code) : "Create new course"}
         </h1>
 
         <TextField
@@ -181,11 +183,11 @@ const CourseForm = () => {
 
         <div className="flex flex-col content-center justify-center m-auto">
           <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
-            Create
+            {props.isEdit ? "Submit" : "Create"}
           </Button>
-          <Link to="/courses/">
+          <Link to={"/courses/" + (props.isEdit ? code : "")}>
             <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 4rem' }}>
-              Back to courses
+              Back to {props.isEdit ? code : "courses"}
             </Button>
           </Link>
         </div>
