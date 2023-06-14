@@ -12,6 +12,8 @@ import DeleteFaculty from './forms/DeleteFaculty';
 import DeleteSemester from "./forms/DeleteSemester";
 import SeminarGroup from "./pages/SeminarGroup";
 import DeleteSeminarGroup from "./forms/DeleteSeminarGroup";
+import Course from "./pages/Course";
+import DeleteCourse from "./forms/DeleteCourse";
 
 function App() {
   return (
@@ -21,8 +23,12 @@ function App() {
               <Routes>
                   <Route path="/courses/:code/list" element={<CourseSemesterForm isEdit={false}/>} />
                   <Route path="/courses/:code/:semester/edit" element={<CourseSemesterForm isEdit={true}/>} />
+
                   <Route path="/courses/create" element={<CourseForm isEdit={false}/>} />
+                  <Route path="/courses/:code/show" element={<Course/>} />
+                  <Route path="/courses/:code/delete" element={<DeleteCourse/>} />
                   <Route path="/courses/:code/edit" element={<CourseForm isEdit={true}/>} />
+
                   <Route path="/courses/:code/:semester/seminars/create" element={<SeminarGroupForm isEdit={false}/>} />
                   <Route path="/courses/:code/:semester/seminars/:group/show" element={<SeminarGroup/>} />
                   <Route path="/courses/:code/:semester/seminars/:group/delete" element={<DeleteSeminarGroup/>} />
