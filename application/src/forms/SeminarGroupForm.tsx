@@ -31,7 +31,7 @@ const schema = z.object({
   path: ["timeHourTo"],
 });
 
-interface CourseSemesterForm {
+interface SeminarGroupForm {
   registrationFrom: Date,
   registrationTo: Date,
   capacity: number,
@@ -43,14 +43,14 @@ interface CourseSemesterForm {
 }
 
 //TODO: default Values when editing ("defaultValue={...}")
-const CourseSemesterForm = (props: {isEdit: boolean}) => {
+const SeminarGroupForm = (props: {isEdit: boolean}) => {
   const {
     register,
     handleSubmit,
     control,
     getValues,
     formState: { errors },
-  } = useForm<CourseSemesterForm>({
+  } = useForm<SeminarGroupForm>({
     resolver: zodResolver(schema),
   });
   const { code, semester, group } = useParams();
@@ -279,4 +279,4 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
   );
 };
 
-export default CourseSemesterForm;
+export default SeminarGroupForm;
