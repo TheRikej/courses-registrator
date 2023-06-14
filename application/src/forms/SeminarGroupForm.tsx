@@ -13,11 +13,15 @@ const schema = z.object({
       .max(200, "Capacity cannot be greater than 200."),
   registrationFrom: z.date(),
   registrationTo: z.date(),
-  room: z.string(),
-  timeDay: z.number().optional().nullable(),
-  timeHourFrom: z.date().optional().nullable(),
-  timeHourTo: z.date().optional().nullable(),
-  teachers: z.number().array().min(1, "At least one teacher is required."),
+  room: z.string().nonempty("Room is required."),
+  timeDay: z.number({ required_error: 'Day is required.'}),
+  timeHourFrom: z.date({ required_error: 'Start time is required.',
+      invalid_type_error: 'Start time is required.'}),
+  timeHourTo: z.date({ required_error: 'End time is required.',
+      invalid_type_error: 'End time is required.'}),
+  teachers: z.number({invalid_type_error: 'At least one teacher is required.'})
+      .array()
+      .min(1, "At least one teacher is required."),
 }).refine((data) => data.registrationFrom < data.registrationTo, {
   message: "End date cannot be earlier than start date.",
   path: ["registrationTo"],
@@ -155,7 +159,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
         </h2>
         <TextField
             id="address"
-            label="Room"
+            label="Room *"
             variant="outlined"
             className="w-60"
             sx={{ margin: '0 1rem 0.5rem' }}
@@ -168,7 +172,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
           <div>
             <TextField
                 id="timeDay"
-                label="Day"
+                label="Day *"
                 className="w-32"
                 select
                 size="small"
@@ -193,7 +197,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
                 defaultValue={null}
                 render={({ field }) => (
                     <TimePicker
-                        label="Start"
+                        label="Start *"
                         {...field}
                         inputRef={field.ref}
                         className="w-28 mr-4"
@@ -216,7 +220,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
                 defaultValue={null}
                 render={({ field }) => (
                     <TimePicker
-                        label="End"
+                        label="End *"
                         {...field}
                         inputRef={field.ref}
                         className="w-28"
