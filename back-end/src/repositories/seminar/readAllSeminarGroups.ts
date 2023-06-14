@@ -27,6 +27,10 @@ const readAllSeminarGroups = async (
             return await prisma.seminarGroup.findMany({
                 where: {
                     courseSemesterId: data.id
+                },
+                include: {
+                    teachers: true,
+                    students: true,
                 }
             })
         })

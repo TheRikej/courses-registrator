@@ -28,7 +28,9 @@ const readAllSemesterCourses = async (
               courseId: { in: courseIds },
             },
             include: {
-              course: true
+              course: true,
+              teachers: true,
+              students: true,
             }
           });
           return course;

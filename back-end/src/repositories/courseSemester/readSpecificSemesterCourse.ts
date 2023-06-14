@@ -22,7 +22,9 @@ const readSpecificSemesterCourse = async (
             where: {
                 deletedAt: null
             }
-          }
+          },
+          teachers: true,
+          students: true,
         },
       });
       if (course.deletedAt !== null) {

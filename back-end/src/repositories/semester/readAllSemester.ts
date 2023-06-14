@@ -19,6 +19,7 @@ const readAllSemester = async (data: ReadAllSemesterData): SemesterReadAllResult
         },
         orderBy: {
             year: "desc",
+            season: "desc"
         },
       });
       return Result.ok(semester);
