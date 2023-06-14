@@ -75,7 +75,7 @@ const SeminarGroup = () => {
                 </div>
             </div>
             <div className="block mx-auto">
-                <Link to={"/course/" + code + "/" + semester + "/show"}>
+                <Link to={"/courses/" + code + "/" + semester + "/show"}>
                     <Button type="button" variant="outlined" sx={{ margin: '1.5rem 2rem 1rem' }}>
                         Back to {code?.toUpperCase()}
                     </Button>

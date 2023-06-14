@@ -14,6 +14,8 @@ import SeminarGroup from "./pages/SeminarGroup";
 import DeleteSeminarGroup from "./forms/DeleteSeminarGroup";
 import Course from "./pages/Course";
 import DeleteCourse from "./forms/DeleteCourse";
+import CourseSemester from "./pages/CourseSemester";
+import DeleteCourseSemester from "./forms/DeleteCourseSemester";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
           <div className="flex justify-center m-auto h-screen">
               <Routes>
                   <Route path="/courses/:code/list" element={<CourseSemesterForm isEdit={false}/>} />
+                  <Route path="/courses/:code/:semester/show" element={<CourseSemester/>} />
+                  <Route path="/courses/:code/:semester/delete" element={<DeleteCourseSemester/>} />
                   <Route path="/courses/:code/:semester/edit" element={<CourseSemesterForm isEdit={true}/>} />
 
                   <Route path="/courses/create" element={<CourseForm isEdit={false}/>} />
