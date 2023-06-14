@@ -185,7 +185,7 @@ const CourseForm = (props: {isEdit: boolean}) => {
           <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
             {props.isEdit ? "Submit" : "Create"}
           </Button>
-          <Link to={"/courses/" + (props.isEdit ? code+"/show" : "")}>
+          <Link to={props.isEdit ? ("/courses/"+code+"/show") : "/"}>
             <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 4rem' }}>
               Back to {props.isEdit ? code : "courses"}
             </Button>

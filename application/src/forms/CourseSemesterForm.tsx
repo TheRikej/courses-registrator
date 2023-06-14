@@ -311,7 +311,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
         <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
           Submit
         </Button>
-        <Link to={"/courses/" + code + (props.isEdit ? "/"+semester : "/show")}>
+        <Link to={"/courses/" + code + (props.isEdit ? "/"+semester+"/show" : "/show")}>
           <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 4rem' }}>
             Back to {code}
           </Button>
