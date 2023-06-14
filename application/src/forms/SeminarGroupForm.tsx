@@ -269,7 +269,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
                 {props.isEdit ? "Submit" : "Create"}
             </Button>
             <Link to={"/courses/" + code + "/" + semester?.toLowerCase() + "/"
-                    + (props.isEdit ? ("seminars/" + group) : "")}>
+                    + (props.isEdit ? ("seminars/" + group) : "/show")}>
                 <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 2rem' }}>
                     {"Back to " + code + (props.isEdit ? "/"+group : "")}
                 </Button>
