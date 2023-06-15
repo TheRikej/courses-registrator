@@ -50,3 +50,8 @@
   export type UserReadSpecificData = {
     id: string;
   };
+
+  export type LoginData = {
+    id: string;
+    password: string;
+  };

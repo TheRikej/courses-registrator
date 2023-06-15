@@ -33,6 +33,7 @@
   "dependencies": {
     "@badrap/result": "^0.2.13",
     "@prisma/client": "^4.13.0",
+    "argon2": "^0.30.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "date-fns": "^2.29.3",
