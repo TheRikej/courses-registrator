@@ -20,14 +20,14 @@ router.delete("/user/:id", API.user.deleteUser)
 
 router.post("/course", API.course.createCourse)
 router.get("/course", API.course.readCourseAll)
-router.get("/course/:id/teacher", API.course.readCourseSpecific.readCourseSemesterSpecificAPI)
-router.get("/course/:id", API.course.readCourseSpecific.studentReadCourseSemesterSpecificAPI)
+router.get("/course/:id", API.course.readCourseSpecific)
 router.delete("/course/:id", API.course.deleteCourse)
 router.put("/course/:id", API.course.updateCourse)
 
 router.post("/course/:id/courseSemester", API.courseSemester.createCourseSemester)
 router.get("/courseSemester", API.courseSemester.readCourseSemesterAll)
-router.get("/courseSemester/:id", API.courseSemester.readCourseSemesterSpecific)
+router.get("/courseSemester/:id", API.courseSemester.readCourseSemesterSpecific.studentReadCourseSemesterSpecificAPI)
+router.get("/courseSemester/:id/teacher", API.courseSemester.readCourseSemesterSpecific.readCourseSemesterSpecificAPI)
 router.delete("/courseSemester/:id", API.courseSemester.deleteCourseSemester)
 router.put("/courseSemester/:id", API.courseSemester.updateCourseSemester)
 
