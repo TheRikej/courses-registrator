@@ -20,7 +20,8 @@ router.delete("/user/:id", API.user.deleteUser)
 
 router.post("/course", API.course.createCourse)
 router.get("/course", API.course.readCourseAll)
-router.get("/course/:id", API.course.readCourseSpecific)
+router.get("/course/:id/teacher", API.course.readCourseSpecific.readCourseSemesterSpecificAPI)
+router.get("/course/:id", API.course.readCourseSpecific.studentReadCourseSemesterSpecificAPI)
 router.delete("/course/:id", API.course.deleteCourse)
 router.put("/course/:id", API.course.updateCourse)
 
@@ -41,9 +42,21 @@ router.get("/semester/:id", API.semester.readSemesterSpecific)
 router.delete("/semester/:id", API.semester.deleteSemester)
 
 router.post("/courseSemester/:id/seminar", API.seminar.createSeminar)
-router.get("/courseSemester/:id/seminar", API.seminar.readAllSeminar)
-// router.get("/seminar/:id", API.seminar.readCourseSpecific)
+router.get("/courseSemester/:id/seminar/teacher", API.seminar.readAllSeminar.readSeminarAllAPI)
+router.get("/courseSemester/:id/seminar", API.seminar.readAllSeminar.studentReadSeminarAllAPI)
 router.delete("/seminar/:id", API.seminar.deleteSeminar)
 router.put("/seminar/:id", API.seminar.updateSeminar)
+
+router.put("/courseSemester/:enrollCourseId/teacher/:id")
+router.delete("/courseSemester/:courseId/teacher/:id")
+
+router.put("/courseSemester/:enrollCourseId/student/:id")
+router.delete("/courseSemester/:enrollCourseId/student/:id")
+
+router.put("/seminar/:enrollSeminarId/teacher/:id")
+router.delete("/seminar/:seminarId/teacher/:id")
+
+router.put("/seminar/:enrollSeminarId/student/:id")
+router.delete("/seminar/:seminarId/student/:id")
 
 export default router;
