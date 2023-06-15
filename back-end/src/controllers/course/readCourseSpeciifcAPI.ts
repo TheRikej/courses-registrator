@@ -51,4 +51,47 @@ const readCourseSemesterSpecificAPI = async (req: Request, res: Response) => {
     }
   };
 
-export default readCourseSemesterSpecificAPI;
+  const studentReadCourseSemesterSpecificAPI = async (req: Request, res: Response) => {
+    try {
+      const data = await idSchema.parseAsync(req.params)
+      const semester = await readSpecificCourse(data);
+      if (semester.isOk) {
+        return res.status(200).send({
+          status: 'success',
+          data: {...semester.unwrap(), students: undefined },
+        });
+      }
+  
+      throw semester.error;
+    } catch (e) {
+        if (e instanceof z.ZodError) {
+            return res.status(400).send({
+                status: 'error',
+                error: e.errors,
+            });
+        }
+        if (e instanceof DeletedRecordError) {
+            return res.status(410).send({
+                status: 'error',
+                error: e.message,
+            });
+        }
+        if (e instanceof Prisma.NotFoundError) {
+            return res.status(404).send({
+                status: 'error',
+                error: e.message,
+            });
+        }
+
+  
+      return res.status(500).send({
+        status: 'error',
+        error: 'Internal Server Error',
+      });
+    }
+  };
+
+export default {
+    readCourseSemesterSpecificAPI,
+    studentReadCourseSemesterSpecificAPI
+}

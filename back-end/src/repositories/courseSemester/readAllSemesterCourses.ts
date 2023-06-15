@@ -29,8 +29,8 @@ const readAllSemesterCourses = async (
             },
             include: {
               course: true,
-              teachers: true,
-              students: true,
+            //   teachers: true,
+            //   students: true,
             }
           });
           return course;

@@ -14,15 +14,15 @@ const idSchema = z.object({
 const readSeminarAllAPI = async (req: Request, res: Response) => {
     try {
       const data = await idSchema.parseAsync(req.params)
-      const semesters = await readAllSeminars(data);
-      if (semesters.isOk) {
+      const seminar = await readAllSeminars(data);
+      if (seminar.isOk) {
         return res.status(200).send({
           status: 'success',
-          data: semesters.unwrap(),
+          data: seminar.unwrap(),
         });
       }
   
-      throw semesters.error;
+      throw seminar.error;
     } catch (e) { 
     
       if (e instanceof z.ZodError) {
@@ -44,4 +44,40 @@ const readSeminarAllAPI = async (req: Request, res: Response) => {
     }
   };
 
-export default readSeminarAllAPI;
+  const studentReadSeminarAllAPI = async (req: Request, res: Response) => {
+    try {
+      const data = await idSchema.parseAsync(req.params)
+      const seminar = await readAllSeminars(data);
+      if (seminar.isOk) {
+        return res.status(200).send({
+          status: 'success',
+          data: seminar.unwrap().map(x => { return {...x, students: undefined }}),
+        });
+      }
+  
+      throw seminar.error;
+    } catch (e) { 
+    
+      if (e instanceof z.ZodError) {
+        return res.status(400).send({
+            status: 'error',
+            error: e.errors,
+        });
+        }
+      if (e instanceof NonexistentRecordError) {
+        return res.status(404).send({
+            status: 'error',
+            error: e.message,
+        });
+        }
+      return res.status(500).send({
+        status: 'error',
+        error: 'Internal Server Error',
+      });
+    }
+  };
+
+export default {
+    readSeminarAllAPI,
+    studentReadSeminarAllAPI
+    };
