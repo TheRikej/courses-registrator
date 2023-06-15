@@ -19,6 +19,7 @@ const createCourse = async (data: CourseCreateData): CourseResult => {
           description: data.description,
           credits: data.credits,
           name: data.name,
+          guarantor: { connect: { id: data.guarantorId } },
           faculty: { connect: { id: data.facultyId } },
         },
       }),

@@ -17,7 +17,9 @@ const createUser = async (data: UserCreateData): UserCreateResult => {
           userName: data.userName,
           email: data.email,
           hashedPassword: data.hashedPassword,
-          salt: data.salt,
+          teacher: data.teacher,
+          student: data.student,
+          administrator: data.admin,
         },
       }),
     );

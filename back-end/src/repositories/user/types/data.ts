@@ -3,7 +3,9 @@
     userName: string;
     email: string;
     hashedPassword: string;
-    salt: string;
+    teacher: boolean,
+    student: boolean,
+    admin: boolean,
   };
 
   export type UserDeleteData = {
