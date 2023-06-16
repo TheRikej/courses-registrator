@@ -30,7 +30,7 @@ const Users = () => {
                         className="my-1 mx-1 rounded-lg border-solid border-4 p-0.5 lg:w-80"
                         key={user.email}
                     >
-                        <Link to={"/users/" + user.id + "/show"}>
+                        <Link to={"/users/" + user.id + "/show"} className="m-2">
                             {user.userName}, id {user.id} ({user.administrator ? "admin" : ""} {user.teacher ? " teacher" : ""}
                             {user.student ? " student" : ""})
                         </Link>
