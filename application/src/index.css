@@ -5,6 +5,24 @@
 @layer base {
 }
 
+.extraWide {
+    width: 50rem;
+}
+
+.textboxWide {
+    width: 29.5rem;
+}
+
+@media only screen and (max-width: 640px) {
+    .extra-wide {
+        width: 100%;
+    }
+
+    .textboxWide {
+        width: 100%;
+    }
+}
+
 /* SOURCE: https://www.w3schools.com/css/css_dropdowns.asp */
 .dropbtn {
 }

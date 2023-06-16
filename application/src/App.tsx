@@ -16,6 +16,7 @@ import Course from "./pages/Course";
 import DeleteCourse from "./forms/DeleteCourse";
 import CourseSemester from "./pages/CourseSemester";
 import DeleteCourseSemester from "./forms/DeleteCourseSemester";
+import Homepage from "./pages/Homepage";
 
 function App() {
   return (
@@ -23,6 +24,9 @@ function App() {
           <Header/>
           <div className="flex justify-center m-auto h-screen">
               <Routes>
+                  <Route path="/" element={<Homepage/>}/>
+                  <Route path="/courses/" element={<Homepage/>}/>
+
                   <Route path="/courses/:code/list" element={<CourseSemesterForm isEdit={false}/>} />
                   <Route path="/courses/:code/:semester/show" element={<CourseSemester/>} />
                   <Route path="/courses/:code/:semester/delete" element={<DeleteCourseSemester/>} />
