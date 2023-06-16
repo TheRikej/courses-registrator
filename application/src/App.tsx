@@ -17,6 +17,7 @@ import DeleteCourse from "./forms/DeleteCourse";
 import CourseSemester from "./pages/CourseSemester";
 import DeleteCourseSemester from "./forms/DeleteCourseSemester";
 import Homepage from "./pages/Homepage";
+import Users from "./pages/Users";
 
 function App() {
   return (
@@ -49,6 +50,8 @@ function App() {
 
                   <Route path="/faculties/" element={<Faculties />} />
                   <Route path="/faculties/:faculty/delete" element={<DeleteFaculty/>} />
+
+                  <Route path="/users/" element={<Users />} />
 
                   <Route path='*' element={<NotFound />}/>
               </Routes>
