@@ -20,6 +20,8 @@ import Homepage from "./pages/Homepage";
 import Users from "./pages/Users";
 import User from "./pages/User";
 import DeleteUser from "./forms/DeleteUser";
+import RegisterForm from "./forms/RegisterForm";
+import LoginForm from "./forms/LoginForm";
 
 function App() {
   return (
@@ -56,6 +58,9 @@ function App() {
                   <Route path="/users/" element={<Users />} />
                   <Route path="/users/:id/show" element={<User/>} />
                   <Route path="/users/:id/delete" element={<DeleteUser/>} />
+
+                  <Route path="/login" element={<LoginForm />} />
+                  <Route path="/register" element={<RegisterForm />} />
 
                   <Route path='*' element={<NotFound />}/>
               </Routes>
