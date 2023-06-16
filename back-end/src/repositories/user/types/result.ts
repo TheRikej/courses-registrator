@@ -31,6 +31,8 @@ export type UserAddStudentCourseResult = AsyncResult<AddStudentCourseReturnType>
 
 export type UserAddTeacherCourseResult = AsyncResult<TeacherCourseReturnType>;
 
+export type LoginResult = AsyncResult<User>;
+
 export type UserRemoveTeacherResult = AsyncResult<TeacherCourseReturnType>;
 
 export type UserAddTeacherSeminarResult = AsyncResult<AddTeacherSeminarReturnType>;

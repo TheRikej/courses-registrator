@@ -29,6 +29,7 @@ const updateCourse = async (data: UpdateData): CourseUpdateResult => {
             ...(data.description !== undefined ? { description: data.description } : {}),
             ...(data.name !== undefined ? { name: data.name } : {}),
             ...(data.faculty !== undefined ? { faculty: { connect: { id: data.faculty } } } : {}),
+            ...(data.guarantor !== undefined ? { guarantor: { connect: { id: data.guarantor } } } : {}),
           },
           include: {
             courseSemesters: true,

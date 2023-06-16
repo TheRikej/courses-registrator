@@ -7,6 +7,7 @@ export type CourseCreateData = {
     facultyId: string;
     credits: number;
     id: string;
+    guarantorId: string,
   };
 
   export type AddCreateSemesterData = {
@@ -44,4 +45,5 @@ export type CourseCreateData = {
     name?:             string,
     faculty?:          string,
     credits?:          number,
+    guarantor?:        string,
   }

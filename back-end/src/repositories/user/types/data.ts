@@ -3,7 +3,9 @@
     userName: string;
     email: string;
     hashedPassword: string;
-    salt: string;
+    teacher: boolean,
+    student: boolean,
+    admin: boolean,
   };
 
   export type UserDeleteData = {
@@ -52,4 +54,9 @@
 
   export type UserReadSpecificData = {
     id: string;
+  };
+
+  export type LoginData = {
+    id: string;
+    password: string;
   };

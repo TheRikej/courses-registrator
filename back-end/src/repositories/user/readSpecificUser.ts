@@ -19,6 +19,11 @@ const readSpecific = async (
           id: data.id,
         },
         include: {
+          guarantedCourses: {
+            where: {
+              deletedAt: null,
+            }
+          },
           studiedCourses: {
             where: {
               deletedAt: null,

@@ -24,6 +24,7 @@ import updateCourse from './src/repositories/course/updateCourse';
 import updateCourseSemester from './src/repositories/courseSemester/updateSemesterCourse';
 import updateSeminar from './src/repositories/seminar/updateSeminarGroup';
 import deleteUser from './src/repositories/user/deleteUser';
+import login from './src/repositories/user/loginUser';
 
 // Here you can try prisma functions.
 
@@ -227,14 +228,20 @@ async function main() {
     id: "62905279-56ac-4c3a-a22d-6da9e1ae508a",
   })
   console.log(usr)*/
-  const usr = await createCourse({
-    id: "pL777",
-    name: "ss",
-    description: "s",
-    facultyId: "e1368111-ca0c-4d14-809c-cd105e1e7d0a",
-    credits: 7,
-  })
-  console.log(usr)
+  const user1 = await createUser({
+    userName: 'thehomelander',
+    email: 'homer@vught.cdom',
+    teacher: true,
+    student: true,
+    admin: true,
+    hashedPassword: '10745cd9b0f85388c7dcf40453a398085563eff44c95e445c620dfdbdc5b87e6',
+  });
+  const user2 = await login({
+    id: user1.isOk ? user1.value.id : "fail",
+    password: '10745cd9b0f85388c7dcf40453a398085563eff44c95e445c620dfdbdc5b87e6',
+  });
+  console.log(user1)
+  console.log(user2)
 }
 
 main()
