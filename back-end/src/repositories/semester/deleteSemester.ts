@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { DeleteData } from './types/data';
 import type { SemesterDeleteResult } from './types/result';
+import { DeletedRecordError, NonexistentRecordError } from '../errors';
 
 const deleteSemester = async (data: DeleteData): SemesterDeleteResult => {
   try {
@@ -20,11 +21,11 @@ const deleteSemester = async (data: DeleteData): SemesterDeleteResult => {
             }
           }
         });
-        if (semester == null) {
-          throw new Error('No semester found');
+        if (semester === null) {
+          throw new NonexistentRecordError('No semester found');
         }
         if (semester.deletedAt !== null) {
-          throw new Error('The semester has already been deleted!');
+          throw new DeletedRecordError('The semester has already been deleted!');
         }
         for (const courseSem of semester.courseSemesters) {
             await prisma.seminarGroup.updateMany({

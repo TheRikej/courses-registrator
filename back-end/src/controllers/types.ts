@@ -18,8 +18,6 @@ export const TimeSlotSchema = z.object({
     endMinute: z.number({
         required_error: 'EndMinute is required',
       }),
-
-
 })
 
 

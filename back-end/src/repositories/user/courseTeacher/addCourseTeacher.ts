@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../../client';
 import type { addTeacherCourseData } from '../types/data';
 import type { UserAddTeacherCourseResult } from '../types/result';
+import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../../errors';
 
 /**
  * Add user to course as teacher.
@@ -23,26 +24,26 @@ const addCourseTeacher = async (data: addTeacherCourseData): UserAddTeacherCours
             taughtCourses: true,
         }
         });
-        if (user == null) {
-          throw new Error('No User found');
+        if (user === null) {
+          throw new NonexistentRecordError('No User found');
         }
-        if (user?.deletedAt != null) {
-          throw new Error('The user has already been deleted!');
+        if (user?.deletedAt !== null) {
+          throw new DeletedRecordError('The user has already been deleted!');
         }
         const course = await transaction.courseSemester.findUnique({
           where: {
             id: data.enrollCourseId,
           },
         });
-        if (course == null) {
-          throw new Error('No CourseSemester found');
+        if (course === null) {
+          throw new NonexistentRecordError('No CourseSemester found');
         }
-        if (course?.deletedAt != null) {
-          throw new Error('The CourseSemester has already been deleted!');
+        if (course?.deletedAt !== null) {
+          throw new DeletedRecordError('The CourseSemester has already been deleted!');
         }
         const taughtCoursesIds = user.taughtCourses.map(x => x.courseId);
         if (taughtCoursesIds.indexOf(data.enrollCourseId) !== -1){
-          throw new Error('The user has already teaches this course!');
+          throw new DuplicateRecordError('The user has already teaches this course!');
         }
         const userUpdate = await transaction.user.update({
             where: {

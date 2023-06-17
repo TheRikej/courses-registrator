@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { DeleteData } from './types/data';
 import type { FacultyDeleteResult } from './types/result';
+import { DeletedRecordError, NonexistentRecordError } from '../errors';
 
 const deleteFaculty = async (data: DeleteData): FacultyDeleteResult => {
   try {
@@ -24,11 +25,11 @@ const deleteFaculty = async (data: DeleteData): FacultyDeleteResult => {
             }
           }
         });
-        if (faculty == null) {
-          throw new Error('No faculty found');
+        if (faculty === null) {
+          throw new NonexistentRecordError('No faculty found');
         }
         if (faculty.deletedAt !== null) {
-          throw new Error('The faculty has already been deleted!');
+          throw new DeletedRecordError('The faculty has already been deleted!');
         }
         for (const course of faculty.courses) {
             for (const semaster of course.courseSemesters) {

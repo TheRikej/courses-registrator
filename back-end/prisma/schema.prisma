@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id                String @id @default(uuid())
+  id                Int       @id @default(autoincrement())
   userName          String
   email             String @unique
   createdAt         DateTime @default(now())
@@ -33,7 +33,7 @@ model Course {
   name              String
   deletedAt         DateTime?
   guarantor         User @relation(fields: [guarantorId], references: [id])
-  guarantorId       String
+  guarantorId       Int
   faculty           Faculty @relation(fields: [facultyId], references: [id])
   facultyId         String
   credits           Int
@@ -77,7 +77,7 @@ model CourseStudent {
     id        String @id @default(uuid())
     deletedAt DateTime?
     student   User @relation(fields: [studentId], references: [id])
-    studentId String
+    studentId Int
     course    CourseSemester @relation(fields: [courseId], references: [id])
     courseId  String
 }
@@ -86,7 +86,7 @@ model GroupStudent {
     id        String @id @default(uuid())
     deletedAt DateTime?
     student   User @relation(fields: [studentId], references: [id])
-    studentId String
+    studentId Int
     group     SeminarGroup @relation(fields: [groupId], references: [id])
     groupId   String
 }

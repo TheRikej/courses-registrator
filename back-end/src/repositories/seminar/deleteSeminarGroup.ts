@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { DeleteData } from './types/data';
 import type { SeminarDeleteResult } from './types/result';
+import { DeletedRecordError, NonexistentRecordError } from '../errors';
 
 
 const deleteSeminarGroup = async (data: DeleteData): SeminarDeleteResult => {
@@ -18,11 +19,11 @@ const deleteSeminarGroup = async (data: DeleteData): SeminarDeleteResult => {
             teachers: true,
           }
         });
-        if (group == null) {
-          throw new Error('No group found');
+        if (group === null) {
+          throw new NonexistentRecordError('No group found');
         }
         if (group.deletedAt !== null) {
-          throw new Error('The group has already been deleted!');
+          throw new DeletedRecordError('The group has already been deleted!');
         }
         const deleted = await transaction.seminarGroup.update({
           where: {

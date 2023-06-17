@@ -1,12 +1,15 @@
 import type { Request, Response } from 'express';
 import createFaculty from '../../repositories/faculty/createFaculty';
 import {z} from "zod";
+import { DuplicateRecordError } from '../../repositories/errors';
 
 const facultySchema = z.object({
     name: z
       .string({
         required_error: 'name is required',
-      }),
+      })
+      .trim()
+      .min(1, "Faculty name cannot be empty"),
   });
 
 const createFacultyAPI = async (req: Request, res: Response) => {
@@ -28,6 +31,13 @@ const createFacultyAPI = async (req: Request, res: Response) => {
           error: e.errors,
         });
       }
+
+    if (e instanceof DuplicateRecordError) {
+        return res.status(409).send({
+            status: 'error',
+            error: e.message,
+        });
+    }
   
       return res.status(500).send({
         status: 'error',

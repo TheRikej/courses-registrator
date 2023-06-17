@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { ReadSemesterData } from './types/data';
 import type { SemesterReadResult } from './types/result';
+import { DeletedRecordError } from '../errors';
 
 /**
  * Returns semester and all its CourseSemesters.
@@ -21,8 +22,8 @@ const readSpecificSemester = async (
           courseSemesters: true,
         },
       });
-      if (semster.deletedAt != null) {
-        throw new Error('The semster has been deleted!');
+      if (semster.deletedAt !== null) {
+        throw new DeletedRecordError('The semster has been deleted!');
       }
       return Result.ok(semster);
     } catch (e) {

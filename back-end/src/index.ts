@@ -20,7 +20,7 @@ app.use(router);
 
 // No route was taken - 404 - Resource (API endpoint) not found.
 app.use((_req, res) => {
-  const response: ApiResponse<{}> = {
+  const response: ApiResponse<NonNullable<unknown>> = {
     status: 'failure',
     data: {},
     error: 'No matching endpoint was found.',

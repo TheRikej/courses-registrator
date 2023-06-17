@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { CreateSeminar } from './types/data';
 import type { CourseCreateResult } from './types/result';
+import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../errors';
 
 /**
  * 
@@ -17,7 +18,7 @@ const createSeminarGroup = async (data: CreateSeminar): CourseCreateResult => {
       await prisma.$transaction(async (transaction) => {
         const course = await transaction.courseSemester.findUnique({
           where: {
-            id: data.courseSemesterId,
+            id: data.id,
           },
         });
 
@@ -25,17 +26,17 @@ const createSeminarGroup = async (data: CreateSeminar): CourseCreateResult => {
           where: {
             groupNumber: data.groupNumber,
             deletedAt: null,
-            courseSemesterId: data.courseSemesterId,
+            courseSemesterId: data.id,
           },
         });
         if (seminarGroup !== null) {
-          throw new Error('Seminar group with this number already exists!');
+          throw new DuplicateRecordError('Seminar group with this number already exists!');
         }
         if (course === null) {
-          throw new Error('No course found');
+          throw new NonexistentRecordError('No course found');
         }
         if (course?.deletedAt !== null) {
-          throw new Error('The semaster course has already been deleted!');
+          throw new DeletedRecordError('The semaster course has already been deleted!');
         }
         const timeslot = await transaction.timeSlot.create({
           data: {
@@ -49,7 +50,7 @@ const createSeminarGroup = async (data: CreateSeminar): CourseCreateResult => {
             capacity: data.capacity,
             registrationEnd: data.registrationEnd,
             registrationStart: data.registrationStart,
-            courseSemester: { connect: { id: data.courseSemesterId } },
+            courseSemester: { connect: { id: data.id } },
             timeSlot: { connect: { id: timeslot.id } },
           },
           include: {

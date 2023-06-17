@@ -1,15 +1,9 @@
 import type { Request, Response } from 'express';
-import createUser from '../../repositories/user/createUser';
+import loginUser from '../../repositories/user/loginUser';
 import {z} from "zod";
-import { Prisma } from '@prisma/client';
+import { DeletedRecordError, NonexistentRecordError, VerificationFailedError } from '../../repositories/errors';
 
 const UserSchema = z.object({
-    userName: z
-      .string({
-        required_error: 'Name is required',
-      })
-      .trim()
-      .min(1, 'Name cannot be empty'),
     email: z
       .string({
         required_error: 'Email is required',
@@ -17,29 +11,16 @@ const UserSchema = z.object({
       .trim()
       .min(1, 'Email cannot be empty')
       .email('Invalid email'),
-    hashedPassword: z
+    password: z
       .string({
         required_error: 'Password is required',
       })
-      .min(1, 'Name cannot be empty'),
-    teacher: z
-      .boolean({
-      required_error: 'Teacher rights are required',
-      }),
-    student: z
-      .boolean({
-      required_error: 'Teacher rights are required',
-      }),
-    admin: z
-      .boolean({
-      required_error: 'Teacher rights are required',
-      })
   });
 
-const createUserAPI = async (req: Request, res: Response) => {
+const loginAPI = async (req: Request, res: Response) => {
     try {
       const userData = await UserSchema.parseAsync(req.body);
-      const user = await createUser(userData);
+      const user = await loginUser(userData);
       if (user.isOk) {
         return res.status(201).send({
           status: 'success',
@@ -55,12 +36,24 @@ const createUserAPI = async (req: Request, res: Response) => {
           error: e.errors,
         });
       }
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        return res.status(409).send({
+      if (e instanceof NonexistentRecordError) {
+        return res.status(404).send({
             status: 'error',
-            error: "Email already in use",
-          });
-        }
+            error: e.message,
+        });
+    }
+    if (e instanceof DeletedRecordError) {
+        return res.status(410).send({
+            status: 'error',
+            error: e.message,
+        });
+    }
+    if (e instanceof VerificationFailedError) {
+        return res.status(401).send({
+            status: 'error',
+            error: e.message,
+        });
+    } 
   
       return res.status(500).send({
         status: 'error',
@@ -69,4 +62,4 @@ const createUserAPI = async (req: Request, res: Response) => {
     }
   };
 
-export default createUserAPI;
+export default loginAPI;

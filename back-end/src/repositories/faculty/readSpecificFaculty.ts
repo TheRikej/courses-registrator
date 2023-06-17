@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { ReadFacultyData } from './types/data';
 import type { FacultyReadResult } from './types/result';
+import { DeletedRecordError } from '../errors';
 
 /**
  * Returns faculty and all his courses.
@@ -29,8 +30,8 @@ const readSpecificFaculty = async (
           }
         },
       });
-      if (faculty.deletedAt != null) {
-        throw new Error('The faculty has been deleted!');
+      if (faculty.deletedAt !== null) {
+        throw new DeletedRecordError('The faculty has been deleted!');
       }
       return Result.ok(faculty);
     } catch (e) {

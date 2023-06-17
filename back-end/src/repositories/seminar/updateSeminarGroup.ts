@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { UpdateData } from './types/data';
 import type { CourseUpdateResult } from './types/result';
+import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../errors';
 
 
 const updateSeminar = async (data: UpdateData): CourseUpdateResult => {
@@ -13,11 +14,11 @@ const updateSeminar = async (data: UpdateData): CourseUpdateResult => {
             id: data.id,
           },
         });
-        if (course == null) {
-          throw new Error('No seminar group found');
+        if (course === null) {
+          throw new NonexistentRecordError('No seminar group found');
         }
         if (course.deletedAt !== null) {
-          throw new Error('The seminar group has been deleted!');
+          throw new DeletedRecordError('The seminar group has been deleted!');
         }
         const seminarGroup = await transaction.seminarGroup.findFirst({
             where: {
@@ -26,8 +27,8 @@ const updateSeminar = async (data: UpdateData): CourseUpdateResult => {
               courseSemesterId: course.courseSemesterId,
             },
           });
-          if (seminarGroup !== null) {
-            throw new Error('Seminar group with this number already exists!');
+          if (seminarGroup !== null && seminarGroup.id !== data.id) {
+            throw new DuplicateRecordError('Seminar group with this number already exists!');
           }
         let timeslot = undefined;
         if (data.timeslot !== undefined){

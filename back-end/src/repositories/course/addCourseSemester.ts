@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { AddCreateSemesterData } from './types/data';
 import type { AddCourseSemesterResult } from './types/result';
+import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../errors';
 
 /**
  * Creates CourseSemester for semester and course
@@ -16,15 +17,15 @@ const addCourseSemester = async (data: AddCreateSemesterData): AddCourseSemester
       await prisma.$transaction(async (transaction) => {
         const course = await transaction.course.findUnique({
           where: {
-            id: data.id,
+            id: data.id.toUpperCase(),
           },
         });
         
-        if (course == null) {
-          throw new Error('No course found');
+        if (course === null) {
+          throw new NonexistentRecordError('No course found');
         }
-        if (course?.deletedAt != null) {
-          throw new Error('The course has already been deleted!');
+        if (course?.deletedAt !== null) {
+          throw new DeletedRecordError('The course has already been deleted!');
         }
         let timeslot = undefined;
         if (data.timeslot !== undefined){
@@ -40,11 +41,21 @@ const addCourseSemester = async (data: AddCreateSemesterData): AddCourseSemester
           },
         });
         
-        if (semseter == null) {
+        if (semseter === null) {
           throw new Error('No semester found');
         }
-        if (semseter?.deletedAt != null) {
+        if (semseter?.deletedAt !== null) {
           throw new Error('The semester has already been deleted!');
+        }
+
+        const query = await transaction.courseSemester.findFirst({
+            where: {
+                courseId: data.id,
+                semesterId: data.semesterId
+            }
+        })
+        if (query !== null) {
+            throw new DuplicateRecordError("Course is already thought in the given semester")
         }
         
         const courseSemester = await transaction.courseSemester.create({

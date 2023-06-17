@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import updateCourseSemester from '../../repositories/courseSemester/updateSemesterCourse';
 import {z} from "zod";
 import { TimeSlotSchema } from '../types';
+import { DeletedRecordError, NonexistentRecordError } from '../../repositories/errors';
 
 const idSchema = z.object({
     id: z
@@ -10,10 +11,10 @@ const idSchema = z.object({
       })
     })
 const courseSemesterSchema = z.object({
-    registrationStart : z
+    registrationStart : z.coerce
         .date()
         .optional(),
-    registrationEnd : z
+    registrationEnd : z.coerce
         .date()
         .optional(),
     capacity : z
@@ -22,7 +23,7 @@ const courseSemesterSchema = z.object({
     room: z
         .string()
         .optional(),
-    timeSlot: TimeSlotSchema.optional(),
+    timeslot: TimeSlotSchema.optional(),
     });
 
 const updateCourseSemesterAPI = async (req: Request, res: Response) => {
@@ -43,11 +44,23 @@ const updateCourseSemesterAPI = async (req: Request, res: Response) => {
         throw courseSemester.error;
       } catch (e) {
           if (e instanceof z.ZodError) {
-              return res.status(404).send({
+              return res.status(400).send({
                   status: 'error',
                   error: e.errors,
               });
-          }        
+          }
+        if (e instanceof NonexistentRecordError) {
+            return res.status(404).send({
+                status: 'error',
+                error: e.message,
+            });
+        }
+        if (e instanceof DeletedRecordError) {
+            return res.status(410).send({
+                status: 'error',
+                error: e.message,
+            });
+        } 
     
         return res.status(500).send({
           status: 'error',

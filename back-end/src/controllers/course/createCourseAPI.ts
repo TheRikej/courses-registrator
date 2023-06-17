@@ -23,9 +23,15 @@ const courseSchema = z.object({
         required_error: "Credits are required"
     }),
     id: z
-      .string()
+      .string({
+        required_error: 'Id is required',
+      })
       .trim()
       .min(1, "Course Id cannot be empty"),
+    guarantorId: z
+        .number({
+            required_error: 'GuarantorId is required',
+        })
   });
 
 const createCourseAPI = async (req: Request, res: Response) => {
@@ -50,7 +56,7 @@ const createCourseAPI = async (req: Request, res: Response) => {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         return res.status(409).send({
             status: 'error',
-            error: "Course Id already in use",
+            error: e.message,
           });
         }
   

@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../../client';
 import type { addStudentSeminarData } from '../types/data';
 import type { UserAddStudentSeminarReturnType } from '../types/result';
+import { DeletedRecordError, NonexistentRecordError, OperationNotAllowedError } from '../../errors';
 
 /**
  * Enrolls existing student to existing seminar, that he is not already enrolled in.
@@ -34,11 +35,11 @@ const addSeminarUser = async (data: addStudentSeminarData): UserAddStudentSemina
             }
         }
         });
-        if (user == null) {
-          throw new Error('No User found');
+        if (user === null) {
+          throw new NonexistentRecordError('No User found');
         }
-        if (user?.deletedAt != null) {
-          throw new Error('The user has already been deleted!');
+        if (user?.deletedAt !== null) {
+          throw new DeletedRecordError('The user has already been deleted!');
         }
         const seminarGroup = await transaction.seminarGroup.findUnique({
           where: {
@@ -48,30 +49,30 @@ const addSeminarUser = async (data: addStudentSeminarData): UserAddStudentSemina
             students: true,
           }
         });
-        if (seminarGroup == null) {
-          throw new Error('No seminar group found');
+        if (seminarGroup === null) {
+          throw new NonexistentRecordError('No seminar group found');
         }
-        if (seminarGroup?.deletedAt != null) {
-          throw new Error('The seminar group has already been deleted!');
+        if (seminarGroup?.deletedAt !== null) {
+          throw new DeletedRecordError('The seminar group has already been deleted!');
         }
         const amountOfUsers = seminarGroup.students.length;
         if (amountOfUsers >= seminarGroup.capacity){
-          throw new Error('This seminar group is full!');
+          throw new OperationNotAllowedError('This seminar group is full!');
         }
         const currentDate = new Date();
         if (seminarGroup.registrationStart > currentDate) {
-          throw new Error('Registration for this group has not begun yet!');
+          throw new OperationNotAllowedError('Registration for this group has not begun yet!');
         }
         if (seminarGroup.registrationEnd < currentDate) {
-          throw new Error('Registration for this group has already ended yet!');
+          throw new OperationNotAllowedError('Registration for this group has already ended yet!');
         }
         const studiedCoursesIds = user.studiedCourses.map(x => x.courseId);
-        if (studiedCoursesIds.indexOf(seminarGroup.courseSemesterId) == -1){
-          throw new Error('This user is not enrolled in the course for this seminar!');
+        if (studiedCoursesIds.indexOf(seminarGroup.courseSemesterId) === -1){
+          throw new OperationNotAllowedError('This user is not enrolled in the course for this seminar!');
         }
         const studiedCoursesSeminarIds = user.studiedGroups.map(x => x.group.courseSemesterId);
         if (studiedCoursesSeminarIds.indexOf(seminarGroup.courseSemesterId) !== -1){
-          throw new Error('This user is already enrolled in another seminar group of this course!');
+          throw new OperationNotAllowedError('This user is already enrolled in another seminar group of this course!');
         }
         const seminarStudent = await transaction.groupStudent.create({
           data: {

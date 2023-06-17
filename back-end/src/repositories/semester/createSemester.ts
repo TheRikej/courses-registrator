@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { SemseterCreateData } from './types/data';
 import type { SemesterCreateResult } from './types/result';
+import { DuplicateRecordError } from '../errors';
 
 /**
  * Creates new semseter.
@@ -20,7 +21,7 @@ const createSemester = async (data: SemseterCreateData): SemesterCreateResult =>
           }
         })
         if ((await semesters).length > 0){
-          throw new Error("There already is semester of this year and season!");
+          throw new DuplicateRecordError("There already is semester of this year and season!");
         }
         const semester = await transaction.semester.create({
           data: {

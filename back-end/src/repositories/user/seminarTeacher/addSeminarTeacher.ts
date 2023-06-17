@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../../client';
 import type { addTeacherSeminarData } from '../types/data';
 import type { UserAddTeacherSeminarResult } from '../types/result';
+import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError, OperationNotAllowedError } from '../../errors';
 
 /**
  * Adds taught course to teacher.
@@ -23,11 +24,11 @@ const addSeminarTeacher = async (data: addTeacherSeminarData): UserAddTeacherSem
             taughtGroups: true,
         }
         });
-        if (user == null) {
-          throw new Error('No User found');
+        if (user === null) {
+          throw new NonexistentRecordError('No User found');
         }
-        if (user?.deletedAt != null) {
-          throw new Error('The user is deleted!');
+        if (user?.deletedAt !== null) {
+          throw new DeletedRecordError('The user is deleted!');
         }
         const seminarGroup = await transaction.seminarGroup.findUnique({
           where: {
@@ -37,19 +38,15 @@ const addSeminarTeacher = async (data: addTeacherSeminarData): UserAddTeacherSem
             teachers: true,
           }
         });
-        if (seminarGroup == null) {
-          throw new Error('No seminar group found');
+        if (seminarGroup === null) {
+          throw new NonexistentRecordError('No seminar group found');
         }
-        if (seminarGroup?.deletedAt != null) {
-          throw new Error('The seminar group is deleted!');
-        }
-        const taughtCoursesIds = user.taughtCourses.map(x => x.id);
-        if (taughtCoursesIds.indexOf(seminarGroup.courseSemesterId) == -1){
-          throw new Error('This user does not teach this course this seminar!');
+        if (seminarGroup?.deletedAt !== null) {
+          throw new DeletedRecordError('The seminar group is deleted!');
         }
         const taughtSeminarsIds = user.taughtGroups.map(x => x.id);
         if (taughtSeminarsIds.indexOf(data.enrollSeminarId) !== -1){
-          throw new Error('The user has already teaches this seminar!');
+          throw new DuplicateRecordError('The user has already teaches this seminar!');
         }
         const userUpdate = await transaction.user.update({
             where: {

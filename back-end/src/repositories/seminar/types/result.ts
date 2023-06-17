@@ -5,6 +5,9 @@ export type CourseCreateResult = AsyncResult<SeminarGroup>;
 
 export type CourseUpdateResult = AsyncResult<SeminarGroup>;
 
+export type CourseReadAllResult = AsyncResult<SeminarGroup[]>;
+
+
 export type SeminarDeleteResult = AsyncResult<SeminarGroup & {
     teachers: User[],
     students: GroupStudent[],

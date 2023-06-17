@@ -1,11 +1,11 @@
 import type { Request, Response } from 'express';
 import addCourseTeacher from '../../../repositories/user/courseTeacher/addCourseTeacher';
 import {z} from "zod";
-import { Prisma } from '@prisma/client';
+import { NonexistentRecordError, DeletedRecordError, DuplicateRecordError } from '../../../repositories/errors';
 
 const idSchema = z.object({
     id: z
-      .string({
+      .number({
         required_error: 'User Id is required',
       }),
     enrollCourseId: z
@@ -33,12 +33,24 @@ const addCourseTeacherAPI = async (req: Request, res: Response) => {
           error: e.errors,
         });
       }
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        return res.status(409).send({
+      if (e instanceof NonexistentRecordError) {
+        return res.status(404).send({
             status: 'error',
-            error: "Email already in use",
-          });
+            error: e.message,
+        });
         }
+        if (e instanceof DeletedRecordError) {
+            return res.status(410).send({
+                status: 'error',
+                error: e.message,
+            });
+        }
+        if (e instanceof DuplicateRecordError) {
+            return res.status(409).send({
+                status: 'error',
+                error: e.message,
+            });
+        } 
   
       return res.status(500).send({
         status: 'error',

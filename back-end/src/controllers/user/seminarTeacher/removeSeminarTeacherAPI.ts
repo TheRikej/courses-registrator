@@ -1,13 +1,14 @@
 import type { Request, Response } from 'express';
 import removeSeminarTeacher from '../../../repositories/user/seminarTeacher/removeSeminarTeacher';
 import {z} from "zod";
+import { DeletedRecordError, MissingRelationError, NonexistentRecordError } from '../../../repositories/errors';
 
 const idSchema = z.object({
     id: z
-      .string({
+      .number({
         required_error: 'Id is required',
       }),
-    courseId: z //TODO fix with repositary update
+    seminarId: z
       .string({
         required_error: 'Id is required',
       }),
@@ -31,7 +32,25 @@ const removeSeminarTeacherAPI = async (req: Request, res: Response) => {
                 status: 'error',
                 error: e.errors,
             });
-        }        
+        }
+        if (e instanceof NonexistentRecordError) {
+            return res.status(404).send({
+                status: 'error',
+                error: e.message,
+            });
+            }
+        if (e instanceof DeletedRecordError) {
+            return res.status(410).send({
+                status: 'error',
+                error: e.message,
+            });
+        }
+        if (e instanceof MissingRelationError) {
+            return res.status(204).send({
+                status: 'success',
+                error: e.message,
+            });
+        }      
   
       return res.status(500).send({
         status: 'error',

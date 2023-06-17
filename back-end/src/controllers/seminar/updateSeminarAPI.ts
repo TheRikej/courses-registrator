@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import updateSeminar from '../../repositories/seminar/updateSeminarGroup';
 import {z} from "zod";
 import { TimeSlotSchema } from '../types';
+import { NonexistentRecordError, DeletedRecordError, DuplicateRecordError } from '../../repositories/errors';
 
 const idSchema = z.object({
     id: z
@@ -11,10 +12,10 @@ const idSchema = z.object({
     })
 
 const SeminarSchema = z.object({
-    registrationStart: z
+    registrationStart: z.coerce
         .date()
         .optional(),
-    registrationEnd: z
+    registrationEnd: z.coerce
         .date()
         .optional(),
     room: z
@@ -49,11 +50,29 @@ const updateSeminarAPI = async (req: Request, res: Response) => {
         throw seminar.error;
       } catch (e) {
           if (e instanceof z.ZodError) {
-              return res.status(404).send({
+              return res.status(400).send({
                   status: 'error',
                   error: e.errors,
               });
           }        
+          if (e instanceof NonexistentRecordError) {
+            return res.status(404).send({
+                status: 'error',
+                error: e.message,
+            });
+        }
+        if (e instanceof DeletedRecordError) {
+            return res.status(410).send({
+                status: 'error',
+                error: e.message,
+            });
+        }
+        if (e instanceof DuplicateRecordError) {
+            return res.status(409).send({
+                status: 'error',
+                error: e.message,
+            });
+        }
     
         return res.status(500).send({
           status: 'error',

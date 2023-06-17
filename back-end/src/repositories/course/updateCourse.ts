@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { UpdateData } from './types/data';
 import type { CourseUpdateResult } from './types/result';
+import { DeletedRecordError, NonexistentRecordError } from '../errors';
 
 
 const updateCourse = async (data: UpdateData): CourseUpdateResult => {
@@ -10,18 +11,18 @@ const updateCourse = async (data: UpdateData): CourseUpdateResult => {
       await prisma.$transaction(async (transaction) => {
         const course = await transaction.course.findUnique({
           where: {
-            id: data.id,
+            id: data.id.toUpperCase(),
           },
         });
         if (course === null) {
-          throw new Error('No course found');
+          throw new NonexistentRecordError('No course found');
         }
         if (course.deletedAt !== null) {
-          throw new Error('The course has been deleted!');
+          throw new DeletedRecordError('The course has been deleted!');
         }
         const update = await transaction.course.update({
           where: {
-            id: data.id,
+            id: data.id.toUpperCase(),
           },
           data: {
             ...(data.credits !== undefined ? { credits: data.credits } : {}),
