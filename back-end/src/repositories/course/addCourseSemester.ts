@@ -81,3 +81,4 @@ const addCourseSemester = async (data: AddCreateSemesterData): AddCourseSemester
 };
 
 export default addCourseSemester;
+
