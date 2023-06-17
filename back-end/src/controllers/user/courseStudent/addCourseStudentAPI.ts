@@ -5,7 +5,7 @@ import { DeletedRecordError, NonexistentRecordError, OperationNotAllowedError } 
 
 const idSchema = z.object({
     id: z
-      .string({
+      .number({
         required_error: 'User Id is required',
       }),
     enrollCourseId: z

@@ -24,6 +24,9 @@ const courseSchema = z.object({
     credits : z
       .number()
       .optional(),
+    guarantor: z
+      .number()
+      .optional(),
   });
 
 const updateCourseAPI = async (req: Request, res: Response) => {

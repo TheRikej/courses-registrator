@@ -9,54 +9,54 @@
   };
 
   export type UserDeleteData = {
-    id: string;
+    id: number;
   };
 
   export type addStudentCourseData = {
-    id: string;
+    id: number;
     enrollCourseId: string;
   };
 
   export type addTeacherCourseData = {
-    id: string;
+    id: number;
     enrollCourseId: string;
   };
 
   export type addTeacherSeminarData = {
-    id: string;
+    id: number;
     enrollSeminarId: string;
   };
 
   export type removeStudentCourseData = {
-    id: string;
+    id: number;
     enrollCourseId: string;
   };
 
   export type removeStudentSeminarData = {
-    id: string;
+    id: number;
     seminarId: string;
   };
 
   export type removeTeacherData = {
-    id: string;
+    id: number;
     courseId: string;
   };
 
   export type removeTeacherSeminarData = {
-    id: string;
+    id: number;
     seminarId: string;
   };
 
   export type addStudentSeminarData = {
-    id: string;
+    id: number;
     enrollSeminarId: string;
   };
 
   export type UserReadSpecificData = {
-    id: string;
+    id: number;
   };
 
   export type LoginData = {
-    id: string;
+    email: string;
     password: string;
   };

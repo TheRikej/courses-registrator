@@ -5,7 +5,7 @@ import { DeletedRecordError, MissingRelationError, NonexistentRecordError } from
 
 const idSchema = z.object({
     id: z
-      .string({
+      .number({
         required_error: 'Id is required',
       }),
     seminarId: z

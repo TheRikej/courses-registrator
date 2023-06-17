@@ -22,11 +22,18 @@ const UserSchema = z.object({
         required_error: 'Password is required',
       })
       .min(1, 'Name cannot be empty'),
-    salt: z
-      .string({
-      required_error: 'Password is required',
+    teacher: z
+      .boolean({
+      required_error: 'Teacher rights are required',
+      }),
+    student: z
+      .boolean({
+      required_error: 'Teacher rights are required',
+      }),
+    admin: z
+      .boolean({
+      required_error: 'Teacher rights are required',
       })
-      .min(1, 'Name cannot be empty'),
   });
 
 const createUserAPI = async (req: Request, res: Response) => {
