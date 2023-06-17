@@ -1,5 +1,4 @@
 import type { Day } from '@prisma/client';
-import { number } from 'zod';
 
 export type CourseCreateData = {
     description: string,

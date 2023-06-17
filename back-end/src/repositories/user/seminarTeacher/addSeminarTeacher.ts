@@ -2,7 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../../client';
 import type { addTeacherSeminarData } from '../types/data';
 import type { UserAddTeacherSeminarResult } from '../types/result';
-import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError, OperationNotAllowedError } from '../../errors';
+import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../../errors';
 
 /**
  * Adds taught course to teacher.

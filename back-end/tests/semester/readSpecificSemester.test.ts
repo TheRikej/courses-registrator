@@ -1,5 +1,5 @@
-import readSpecificSemester from '../../src/repositories/semester/readSpecificSemester';
 import prisma from '../../src/repositories/client';
+import createSemester from '../../src/repositories/semester/createSemester';
 
 describe('semester.readSpecificSemester test suite', () => {
   beforeEach(async () => {

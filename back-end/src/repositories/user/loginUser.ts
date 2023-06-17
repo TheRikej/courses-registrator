@@ -28,8 +28,6 @@ const login = async (data: LoginData): LoginResult => {
         if (user?.deletedAt != null) {
           throw new DeletedRecordError('The user has already been deleted!');
         }
-        console.log(user.hashedPassword)
-        console.log(data.password)
         const verification = await verify(user.hashedPassword, data.password)
         if (!verification) {
             throw new VerificationFailedError('Wrong password!');

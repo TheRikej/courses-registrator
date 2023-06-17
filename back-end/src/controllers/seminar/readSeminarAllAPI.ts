@@ -1,7 +1,6 @@
 import type { Request, Response } from 'express';
 import readAllSeminars from '../../repositories/seminar/readAllSeminarGroups';
 import {z} from 'zod'
-import { SemesterSeason } from '@prisma/client';
 import { NonexistentRecordError } from '../../repositories/errors';
 
 const idSchema = z.object({

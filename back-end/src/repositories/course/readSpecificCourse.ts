@@ -36,7 +36,7 @@ const readSpecificCourse = async (
       if (course.deletedAt !== null) {
         throw new DeletedRecordError('The course has been deleted!');
       }
-      let res = {...course, semesters: course.courseSemesters.map(x => 
+      const res = {...course, semesters: course.courseSemesters.map(x => 
         x.semester.year + x.semester.season)}
       return Result.ok(res);
     } catch (e) {
