@@ -2,12 +2,15 @@ export interface UserModel {
     id: number,
     userName: string,
     email: string,
-    createdAt: Date,
+    createdAt: string,
     teacher: boolean,
     student: boolean,
     administrator: boolean,
 }
 
-/*export interface MessageWithUser extends Msg{
-    sender: { id: string, name: string, picture?: string },
-}*/
+export interface SemesterModel {
+    year: number,
+    season: string,
+    semesterStart: Date,
+    semesterEnd: Date,
+}

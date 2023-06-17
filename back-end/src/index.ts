@@ -7,7 +7,7 @@ import router from './routes';
 
 // configEnvVariables(); TODO check
 const app = express();
-const port = env.PORT ?? 3000;
+const port = env.PORT ?? 4000;
 
 // middlware
 app.use(cors());

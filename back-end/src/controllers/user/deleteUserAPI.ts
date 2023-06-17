@@ -5,7 +5,7 @@ import { NonexistentRecordError, DeletedRecordError } from '../../repositories/e
 
 const idSchema = z.object({
     id: z
-      .number({
+      .string({
         required_error: 'Id is required',
       })
     })
@@ -13,7 +13,8 @@ const idSchema = z.object({
 const deleteUserAPI = async (req: Request, res: Response) => {
     try {
       const data = await idSchema.parseAsync(req.params)
-      const user = await deleteUser(data);
+      const numId = +data.id;
+      const user = await deleteUser({ id: numId });
       if (user.isOk) {
         return res.status(200).send({
           status: 'success',

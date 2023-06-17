@@ -17,6 +17,7 @@ router.get("/user", API.user.readUserAll)
 router.post("/user", API.user.createUser)
 router.get("/user/:id", API.user.readUserSpecific)
 router.delete("/user/:id", API.user.deleteUser)
+router.put("/user/:id", API.user.updateUserStatus)
 
 router.post("/course", API.course.createCourse)
 router.get("/course", API.course.readCourseAll)

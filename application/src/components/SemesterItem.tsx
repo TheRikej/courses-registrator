@@ -16,7 +16,7 @@ const SemesterItemCard = (props: {target: SemesterType}) => {
         <b>{formatSemester(props.target.year, props.target.season)}</b>
       </p>
       <p className="lg:col-span-2 text-sm lg:text-base">
-        ({props.target.semesterStart.toDateString() + " – " + props.target.semesterEnd.toDateString()})
+        ({(new Date(props.target.semesterStart)).toDateString() + " – " + (new Date(props.target.semesterEnd)).toDateString()})
       </p>
       <div>
         <Link to={"/semesters/" + formatSemester(props.target.year, props.target.season) + "/edit"}>

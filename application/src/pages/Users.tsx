@@ -7,20 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 import { UserRequests } from '../services';
 
 const Users = () => {
-    
-    const user = {
-        id: 45,
-        userName: "xjudiny",
-        email: "judiny@courseregistrator.cz",
-        createdAt: new Date(),
-        teacher: false,
-        student: true,
-        administrator: true,
-    };
 
-    const users = [user, user, user, user, user, user, user, user, user, user, user, user];
-
-    /*const { data: users } = useQuery({
+    const { data: users } = useQuery({
         queryKey: ['users'],
         queryFn: () => UserRequests.getUsers(),
     })
@@ -29,7 +17,7 @@ const Users = () => {
         return <></>
     }
 
-    if (!users) return <>Loading...</>;*/
+    if (!users) return <>Loading...</>;
 
     return (
         <div className="flex flex-col flex-start m-2">
@@ -38,7 +26,7 @@ const Users = () => {
             </h1>
             <div className="rounded-lg border-solid border-2 mx-2">
                 <ul className="overflow-y-scroll max-h-96">
-                    {users.map(user =>
+                    {users.data.map(user =>
                     <li
                         className="my-1 mx-1 rounded-lg border-solid border-4 p-0.5 lg:w-80"
                         key={user.email}
