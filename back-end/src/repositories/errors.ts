@@ -7,3 +7,5 @@ export class DuplicateRecordError extends Error {}
 export class MissingRelationError extends Error {}
 
 export class OperationNotAllowedError extends Error {}
+
+export class VerificationFailedError extends Error {}

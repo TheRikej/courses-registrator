@@ -3,6 +3,7 @@ import prisma from '../client';
 import type { LoginData } from './types/data';
 import type { LoginResult } from './types/result';
 import { verify } from 'argon2';
+import { DeletedRecordError, NonexistentRecordError, VerificationFailedError } from '../errors';
 
 /**
  * Login user
@@ -17,21 +18,21 @@ const login = async (data: LoginData): LoginResult => {
       await prisma.$transaction(async (transaction) => {
         const user = await transaction.user.findUnique({
           where: {
-            id: data.id,
+            email: data.email,
           },
         });
         
         if (user == null) {
-          throw new Error('No user found');
+          throw new NonexistentRecordError('No user found');
         }
         if (user?.deletedAt != null) {
-          throw new Error('The user has already been deleted!');
+          throw new DeletedRecordError('The user has already been deleted!');
         }
         console.log(user.hashedPassword)
         console.log(data.password)
         const verification = await verify(user.hashedPassword, data.password)
         if (!verification) {
-            throw new Error('Wrong password!');
+            throw new VerificationFailedError('Wrong password!');
         }
         return user;
       }),
