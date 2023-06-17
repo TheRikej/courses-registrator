@@ -1,32 +1,80 @@
 image: node:18.15
 
 stages:
-  - dev
+  - lint
+  - build
+  - test
 
 cache:
   paths:
-    - node_modules/
+    - back-end/node_modules/
+    - application/node_modules/
 
-before_script:
-  - cd application
+.backend-before-script: &backend-before-script
+  - cd back-end/
   - npm install
 
-lint:
-  stage: dev
+.frontend-before-script: &frontend-before-script
+  - cd application/
+  - npm install
+
+backend-lint:
+  stage: lint
+  before_script:
+    - *backend-before-script
+  script:
+    - npm run lint
+  tags:
+    - shared-fi
+
+frontend-lint:
+  stage: lint
+  before_script:
+    - *frontend-before-script
   script:
     - npm run lint
   tags: 
     - shared-fi
 
-build:
-  stage: dev
+backend-build:
+  stage: build
+  needs:
+    - backend-lint
+  before_script:
+    - *backend-before-script
+  script:
+    - npm run build
+  tags:
+    - shared-fi
+
+frontend-build:
+  stage: build
+  needs:
+    - frontend-lint
+  before_script:
+    - *frontend-before-script
   script:
     - npm run build
   tags: 
     - shared-fi
 
-test:
-  stage: dev
+backend-test:
+  stage: test
+  needs:
+    - backend-build
+  before_script:
+    - *backend-before-script
+  script:
+    - npm run test
+  tags:
+    - shared-fi
+
+frontend-test:
+  stage: test
+  needs:
+    - frontend-build
+  before_script:
+    - *frontend-before-script
   script:
     - npm run test
   tags:
