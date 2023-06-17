@@ -3,9 +3,11 @@ import SemesterItem from "../components/SemesterItem";
 import {Button} from "@mui/material";
 import {Link} from "react-router-dom";
 import formatSemester from "../utils/semester";
+import { useQuery } from "@tanstack/react-query";
+import { UserRequests } from '../services';
 
 const Users = () => {
-    //TODO: fetch users API
+    
     const user = {
         id: 45,
         userName: "xjudiny",
@@ -17,6 +19,17 @@ const Users = () => {
     };
 
     const users = [user, user, user, user, user, user, user, user, user, user, user, user];
+
+    /*const { data: users } = useQuery({
+        queryKey: ['users'],
+        queryFn: () => UserRequests.getUsers(),
+    })
+
+    if(users?.data === undefined) {
+        return <></>
+    }
+
+    if (!users) return <>Loading...</>;*/
 
     return (
         <div className="flex flex-col flex-start m-2">
