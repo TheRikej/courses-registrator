@@ -11,6 +11,7 @@ import CourseSemesterItem from "../components/CourseSemesterItem";
 const Courses = () => {
     const [enrolledOnly, setEnrolledOnly] = useState<boolean>(false);
     const [teachingOnly, setTeachingOnly] = useState<boolean>(false);
+    const [filtering, setFiltering] = React.useState<boolean>(false);
 
     //TODO: fetch course API
     const courseNoSemester = {
@@ -103,7 +104,7 @@ const Courses = () => {
     }
 
     const handleFilter = () => {
-        //TODO:
+        setFiltering(true);
     };
 
     const clearFilter = () => {
