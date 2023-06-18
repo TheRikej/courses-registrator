@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import deleteSeminar from '../../repositories/seminar/deleteSeminarGroup';
 import {z} from "zod";
-import { NonexistentRecordError, DeletedRecordError } from '../../repositories/errors';
+import { NonexistentRecordError, DeletedRecordError, AuthorizationFailedError } from '../../repositories/errors';
 
 const idSchema = z.object({
     id: z
@@ -27,6 +27,12 @@ const deleteSeminarAPI = async (req: Request, res: Response) => {
             return res.status(400).send({
                 status: 'error',
                 error: e.errors,
+            });
+        }
+        if (e instanceof AuthorizationFailedError) {
+            return res.status(403).send({
+                status: 'error',
+                error: e.message,
             });
         }
         if (e instanceof NonexistentRecordError) {

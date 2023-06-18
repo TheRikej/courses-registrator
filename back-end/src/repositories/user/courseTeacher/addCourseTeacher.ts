@@ -2,7 +2,8 @@ import { Result } from '@badrap/result';
 import prisma from '../../client';
 import type { addTeacherCourseData } from '../types/data';
 import type { UserAddTeacherCourseResult } from '../types/result';
-import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../../errors';
+import { AuthorizationFailedError, DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../../errors';
+import { request } from 'express';
 
 /**
  * Add user to course as teacher.
@@ -30,17 +31,27 @@ const addCourseTeacher = async (data: addTeacherCourseData): UserAddTeacherCours
         if (user?.deletedAt !== null) {
           throw new DeletedRecordError('The user has already been deleted!');
         }
-        const course = await transaction.courseSemester.findUnique({
+        const courseSemester = await transaction.courseSemester.findUnique({
           where: {
             id: data.enrollCourseId,
           },
+          include: {
+            course: true,
+            teachers: true,
+          }
         });
-        if (course === null) {
+        if (courseSemester === null) {
           throw new NonexistentRecordError('No CourseSemester found');
         }
-        if (course?.deletedAt !== null) {
+        if (courseSemester?.deletedAt !== null) {
           throw new DeletedRecordError('The CourseSemester has already been deleted!');
         }
+        if ( request.session.user === undefined || (!request.session.user?.admin
+            && courseSemester.course.guarantorId !== request.session.user?.id
+            && !courseSemester.teachers.map(x => x.id).includes(request.session.user.id))) {
+           throw new AuthorizationFailedError("You don't have right to add teachers to this course")
+       }
+
         const taughtCoursesIds = user.taughtCourses.map(x => x.courseId);
         if (taughtCoursesIds.indexOf(data.enrollCourseId) !== -1){
           throw new DuplicateRecordError('The user has already teaches this course!');

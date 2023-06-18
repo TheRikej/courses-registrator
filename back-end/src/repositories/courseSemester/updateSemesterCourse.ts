@@ -2,24 +2,32 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { UpdateData } from './types/data';
 import type { UpdateCourseSemesterResult } from './types/result';
-import { DeletedRecordError, NonexistentRecordError } from '../errors';
+import { AuthorizationFailedError, DeletedRecordError, NonexistentRecordError } from '../errors';
+import { request } from 'express';
 
 
 const updateCourseSemester = async (data: UpdateData): UpdateCourseSemesterResult => {
   try {
     return Result.ok(
       await prisma.$transaction(async (transaction) => {
-        const course = await transaction.courseSemester.findUnique({
+        const courseSemester = await transaction.courseSemester.findUnique({
           where: {
             id: data.id,
           },
+          include: {
+            course: true
+          }
         });
-        if (course === null) {
+        if (courseSemester === null) {
           throw new NonexistentRecordError('No course semester found');
         }
-        if (course.deletedAt !== null) {
+        if (courseSemester.deletedAt !== null) {
           throw new DeletedRecordError('The course semester has been deleted!');
         }
+        if (courseSemester.course.guarantorId !== request.session.user?.id && !request.session.user?.admin) {
+            throw new AuthorizationFailedError("You don't have rights to update this course")
+        }
+        
         let timeslot = undefined;
         if (data.timeslot !== undefined){
           timeslot = await transaction.timeSlot.create({

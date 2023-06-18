@@ -2,7 +2,8 @@ import { Result } from '@badrap/result';
 import prisma from '../../client';
 import type { removeTeacherData } from '../types/data';
 import type { UserRemoveTeacherResult } from '../types/result';
-import { DeletedRecordError, MissingRelationError, NonexistentRecordError } from '../../errors';
+import { AuthorizationFailedError, DeletedRecordError, MissingRelationError, NonexistentRecordError } from '../../errors';
+import { request } from 'express';
 
 /**
  * Removes existing student from course that they teaches.
@@ -29,14 +30,24 @@ const removeCourseTeacher = async (data: removeTeacherData): UserRemoveTeacherRe
           if (user?.deletedAt !== null) {
             throw new DeletedRecordError('The user has already been deleted!');
           }
-          const course = await transaction.courseSemester.findUnique({
+          const courseSemester = await transaction.courseSemester.findUnique({
             where: {
               id: data.courseId,
             },
+            include: {
+                teachers: true,
+                course: true,
+            },
           });
-          if (course === null) {
+          if (courseSemester === null) {
             throw new NonexistentRecordError('No CourseSemester found');
           }
+          if ( request.session.user === undefined || (!request.session.user?.admin
+            && courseSemester.course.guarantorId !== request.session.user?.id
+            && !courseSemester.teachers.map(x => x.id).includes(request.session.user.id))) {
+           throw new AuthorizationFailedError("You don't have right to remove teachers from this course")
+       }
+
           const taughtCoursesIds = user.taughtCourses.map(x => x.id);
           console.log(taughtCoursesIds)
           if (taughtCoursesIds.indexOf(data.courseId) === -1){

@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import addCourseTeacher from '../../../repositories/user/courseTeacher/addCourseTeacher';
 import {z} from "zod";
-import { NonexistentRecordError, DeletedRecordError, DuplicateRecordError } from '../../../repositories/errors';
+import { NonexistentRecordError, DeletedRecordError, DuplicateRecordError, AuthorizationFailedError } from '../../../repositories/errors';
 
 const idSchema = z.object({
     id: z.coerce
@@ -33,6 +33,12 @@ const addCourseTeacherAPI = async (req: Request, res: Response) => {
           error: e.errors,
         });
       }
+      if (e instanceof AuthorizationFailedError) {
+        return res.status(403).send({
+            status: 'error',
+            error: e.message,
+        });
+    }
       if (e instanceof NonexistentRecordError) {
         return res.status(404).send({
             status: 'error',

@@ -2,7 +2,8 @@ import { Result } from '@badrap/result';
 import prisma from '../../client';
 import type { addTeacherSeminarData } from '../types/data';
 import type { UserAddTeacherSeminarResult } from '../types/result';
-import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError, OperationNotAllowedError } from '../../errors';
+import { AuthorizationFailedError, DeletedRecordError, DuplicateRecordError, NonexistentRecordError, OperationNotAllowedError } from '../../errors';
+import { request } from 'express';
 
 /**
  * Adds taught course to teacher.
@@ -36,6 +37,12 @@ const addSeminarTeacher = async (data: addTeacherSeminarData): UserAddTeacherSem
           },
           include: {
             teachers: true,
+            courseSemester: {
+                include: {
+                    teachers: true,
+                    course: true,
+                }
+            }
           }
         });
         if (seminarGroup === null) {
@@ -44,6 +51,13 @@ const addSeminarTeacher = async (data: addTeacherSeminarData): UserAddTeacherSem
         if (seminarGroup?.deletedAt !== null) {
           throw new DeletedRecordError('The seminar group is deleted!');
         }
+        if ( request.session.user === undefined || (!request.session.user?.admin
+            && !seminarGroup.teachers.map(x => x.id).includes(request.session.user.id)
+            && seminarGroup.courseSemester.course.guarantorId !== request.session.user?.id
+            && !seminarGroup.courseSemester.teachers.map(x => x.id).includes(request.session.user.id))) {
+           throw new AuthorizationFailedError("You don't have rights to add teachers to this seminar")
+        }     
+
         const taughtSeminarsIds = user.taughtGroups.map(x => x.id);
         if (taughtSeminarsIds.indexOf(data.enrollSeminarId) !== -1){
           throw new DuplicateRecordError('The user has already teaches this seminar!');

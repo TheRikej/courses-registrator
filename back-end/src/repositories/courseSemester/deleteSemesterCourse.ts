@@ -2,7 +2,8 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { DeleteData } from './types/data';
 import type { SemesterDeleteResult } from './types/result';
-import { DeletedRecordError, NonexistentRecordError } from '../errors';
+import { AuthorizationFailedError, DeletedRecordError, NonexistentRecordError } from '../errors';
+import { request } from 'express';
 
 
 const deleteSemesterCourse = async (data: DeleteData): SemesterDeleteResult => {
@@ -10,16 +11,22 @@ const deleteSemesterCourse = async (data: DeleteData): SemesterDeleteResult => {
     return Result.ok(
       await prisma.$transaction(async (transaction) => {
         const deletedAt = new Date();
-        const group = await transaction.courseSemester.findUnique({
+        const courseSemester = await transaction.courseSemester.findUnique({
           where: {
             id: data.id,
           },
+          include: {
+            course: true,
+          },
         });
-        if (group === null) {
+        if (courseSemester === null) {
           throw new NonexistentRecordError('No course for given semester found');
         }
-        if (group.deletedAt !== null) {
+        if (courseSemester.deletedAt !== null) {
           throw new DeletedRecordError('The course for given semester has already been deleted!');
+        }
+        if (courseSemester.course.guarantorId !== request.session.user?.id && !request.session.user?.admin) {
+            throw new AuthorizationFailedError("You don't have right to delete this course")
         }
         const deleted = await transaction.courseSemester.update({
           where: {

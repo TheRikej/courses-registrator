@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import updateSeminar from '../../repositories/seminar/updateSeminarGroup';
 import {z} from "zod";
 import { TimeSlotSchema } from '../types';
-import { NonexistentRecordError, DeletedRecordError, DuplicateRecordError } from '../../repositories/errors';
+import { NonexistentRecordError, DeletedRecordError, DuplicateRecordError, AuthorizationFailedError } from '../../repositories/errors';
 
 const idSchema = z.object({
     id: z
@@ -54,7 +54,13 @@ const updateSeminarAPI = async (req: Request, res: Response) => {
                   status: 'error',
                   error: e.errors,
               });
-          }        
+          }
+          if (e instanceof AuthorizationFailedError) {
+            return res.status(403).send({
+                status: 'error',
+                error: e.message,
+            });
+        }
           if (e instanceof NonexistentRecordError) {
             return res.status(404).send({
                 status: 'error',

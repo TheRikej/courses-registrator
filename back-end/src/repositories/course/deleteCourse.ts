@@ -2,7 +2,8 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { DeleteData } from './types/data';
 import type { CourseDeleteResult } from './types/result';
-import { DeletedRecordError, NonexistentRecordError } from '../errors';
+import { AuthorizationFailedError, DeletedRecordError, NonexistentRecordError } from '../errors';
+import { request } from 'express';
 
 const deleteCourse = async (data: DeleteData): CourseDeleteResult => {
   try {
@@ -26,6 +27,9 @@ const deleteCourse = async (data: DeleteData): CourseDeleteResult => {
         }
         if (course.deletedAt !== null) {
           throw new DeletedRecordError('The course has already been deleted!');
+        }
+        if (course.guarantorId !== request.session.user?.id && !request.session.user?.admin) {
+            throw new AuthorizationFailedError("You don't have rights to delete this course")
         }
         for (const courseSem of course.courseSemesters) {
             await prisma.seminarGroup.updateMany({
