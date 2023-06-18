@@ -17,10 +17,10 @@ const readAllSemester = async (data: ReadAllSemesterData): SemesterReadAllResult
             ...(data?.season !== undefined ? { season: data.season} : {}),
             ...(data?.year !== undefined ? { year: data.year} : {}),
         },
-        orderBy: {
-            year: "desc",
-            season: "desc"
-        },
+        orderBy: [
+            {year: "desc",},
+            {season: "desc",},
+        ],
       });
       return Result.ok(semester);
     } catch (e) {

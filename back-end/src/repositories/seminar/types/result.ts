@@ -15,6 +15,7 @@ export type CourseUpdateResult = AsyncResult<SeminarGroup & {
 export type CourseReadAllResult = AsyncResult<(SeminarGroup & {
     teachers: User[];
     students: GroupStudent[];
+    currentCapacity: number;
 })[]>;
 
 

@@ -5,6 +5,7 @@ export type CourseSemesterResult = AsyncResult<CourseSemester & {
     teachers: User[];
     students: CourseStudent[];
     seminarGroups: SeminarGroup[];
+    currentCapacity: number;
 }>;
 
 export type AllCourseSemesterResult = AsyncResult<(CourseSemester & {
