@@ -17,7 +17,11 @@ const idSchema = z.object({
 const removeCourseTeacherAPI = async (req: Request, res: Response) => {
     try {
       const data = await idSchema.parseAsync(req.params)
-      const user = await removeCourseTeacher(data);
+      if (req.session?.user === undefined) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      const user = await removeCourseTeacher({...data, loggedInUser: req.session.user});
+      
       if (user.isOk) {
         return res.status(204).send({
           status: 'success',

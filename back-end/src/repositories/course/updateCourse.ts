@@ -21,7 +21,7 @@ const updateCourse = async (data: UpdateData): CourseUpdateResult => {
         if (course.deletedAt !== null) {
           throw new DeletedRecordError('The course has been deleted!');
         }
-        if (course.guarantorId !== request.session.user?.id && !request.session.user?.admin) {
+        if (course.guarantorId !== data.loggedInUser.id && !data.loggedInUser.admin) {
             throw new AuthorizationFailedError("You don't have rights to update this course")
         }
         const update = await transaction.course.update({

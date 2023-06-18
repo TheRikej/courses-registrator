@@ -17,7 +17,7 @@ const idSchema = z.object({
 const addSeminarStudentAPI = async (req: Request, res: Response) => {
     try {
       const userData = await idSchema.parseAsync(req.params);
-      if (userData.id != req.session.user?.id && !req.session.user?.admin) {
+      if (userData.id !== req.session.user?.id && !req.session.user?.admin) {
         return res.status(403).json({ message: "You don't have rights to make operations with this user" });
       }
       const user = await addSeminarStudent(userData);

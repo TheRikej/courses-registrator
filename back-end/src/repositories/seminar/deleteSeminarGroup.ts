@@ -3,7 +3,6 @@ import prisma from '../client';
 import type { DeleteData } from './types/data';
 import type { SeminarDeleteResult } from './types/result';
 import { AuthorizationFailedError, DeletedRecordError, NonexistentRecordError } from '../errors';
-import { request } from 'express';
 
 
 const deleteSeminarGroup = async (data: DeleteData): SeminarDeleteResult => {
@@ -32,10 +31,10 @@ const deleteSeminarGroup = async (data: DeleteData): SeminarDeleteResult => {
         if (group.deletedAt !== null) {
           throw new DeletedRecordError('The group has already been deleted!');
         }
-        if ( request.session.user === undefined || (!request.session.user?.admin
-            && !group.teachers.map(x => x.id).includes(request.session.user.id)
-            && group.courseSemester.course.guarantorId !== request.session.user?.id
-            && !group.courseSemester.teachers.map(x => x.id).includes(request.session.user.id))) {
+        if ( !data.loggedInUser.admin
+            && !group.teachers.map(x => x.id).includes(data.loggedInUser.id)
+            && group.courseSemester.course.guarantorId !== data.loggedInUser.id
+            && !group.courseSemester.teachers.map(x => x.id).includes(data.loggedInUser.id)) {
            throw new AuthorizationFailedError("You don't have rights to delete this seminar")
        }
 

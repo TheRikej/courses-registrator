@@ -22,10 +22,10 @@ const login = async (data: LoginData): LoginResult => {
           },
         });
         
-        if (user == null) {
+        if (user === null) {
           throw new NonexistentRecordError('No user found');
         }
-        if (user?.deletedAt != null) {
+        if (user?.deletedAt !== null) {
           throw new DeletedRecordError('The user has already been deleted!');
         }
 

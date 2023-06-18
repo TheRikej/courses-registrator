@@ -30,9 +30,14 @@ const updateCourseSemesterAPI = async (req: Request, res: Response) => {
     try {
         const id = await idSchema.parseAsync(req.params)
         const courseSemesterData = await courseSemesterSchema.parseAsync(req.body)
+        if (req.session?.user === undefined) {
+            return res.status(401).json({ message: "Unauthorized" });
+          }
+        
         const courseSemester = await updateCourseSemester({
             ...id,
-            ...courseSemesterData
+            ...courseSemesterData,
+            loggedInUser: req.session.user
         });
         if (courseSemester.isOk) {
           return res.status(200).send({

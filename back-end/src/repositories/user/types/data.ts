@@ -1,3 +1,5 @@
+import { LoggedInUser } from "../../types";
+
   
   export type UserCreateData = {
     userName: string;
@@ -18,11 +20,13 @@
   };
 
   export type addTeacherCourseData = {
+    loggedInUser: LoggedInUser
     id: number;
     enrollCourseId: string;
   };
 
   export type addTeacherSeminarData = {
+    loggedInUser: LoggedInUser
     id: number;
     enrollSeminarId: string;
   };
@@ -38,11 +42,13 @@
   };
 
   export type removeTeacherData = {
+    loggedInUser: LoggedInUser
     id: number;
     courseId: string;
   };
 
   export type removeTeacherSeminarData = {
+    loggedInUser: LoggedInUser
     id: number;
     seminarId: string;
   };

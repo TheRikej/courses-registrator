@@ -8,8 +8,6 @@ export type CourseCreateResult = AsyncResult<SeminarGroup & {
 
 export type CourseUpdateResult = AsyncResult<SeminarGroup & {
     timeSlot: TimeSlot;
-    teachers: User[];
-    students: GroupStudent[];
 }>;
 
 export type CourseReadAllResult = AsyncResult<(SeminarGroup & {

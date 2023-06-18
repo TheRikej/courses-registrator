@@ -3,8 +3,6 @@ import prisma from '../client';
 import type { UpdateData } from './types/data';
 import type { CourseUpdateResult } from './types/result';
 import { AuthorizationFailedError, DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../errors';
-import { request } from 'express';
-
 
 const updateSeminar = async (data: UpdateData): CourseUpdateResult => {
   try {
@@ -30,10 +28,11 @@ const updateSeminar = async (data: UpdateData): CourseUpdateResult => {
         if (group.deletedAt !== null) {
           throw new DeletedRecordError('The seminar group has been deleted!');
         }
-        if ( request.session.user === undefined || (!request.session.user?.admin
-            && !group.teachers.map(x => x.id).includes(request.session.user.id)
-            && group.courseSemester.course.guarantorId !== request.session.user?.id
-            && !group.courseSemester.teachers.map(x => x.id).includes(request.session.user.id))) {
+        if ( !data.loggedInUser.admin
+            && !group.teachers.map(x => x.id).includes(data.loggedInUser.id)
+            && group.courseSemester.course.guarantorId !== data.loggedInUser.id
+            && !group.courseSemester.teachers.map(x => x.id).includes(data.loggedInUser.id)
+        ){
            throw new AuthorizationFailedError("You don't have rights to update this seminar")
         }     
 
@@ -70,8 +69,8 @@ const updateSeminar = async (data: UpdateData): CourseUpdateResult => {
             ...(timeslot !== undefined ? { timeSlot: { connect: { id: timeslot.id } } } : {}),
           },
           include: {
-            students: true,
-            teachers: true,
+            // students: true,
+            // teachers: true,
             timeSlot: true
           },
         });

@@ -3,7 +3,6 @@ import prisma from '../client';
 import type { CreateSeminar } from './types/data';
 import type { CourseCreateResult } from './types/result';
 import { AuthorizationFailedError, DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../errors';
-import { request } from 'express';
 
 /**
  * 
@@ -32,9 +31,9 @@ const createSeminarGroup = async (data: CreateSeminar): CourseCreateResult => {
         if (courseSemester?.deletedAt !== null) {
           throw new DeletedRecordError('The semster course has already been deleted!');
         }
-        if ( request.session.user === undefined || (!request.session.user?.admin
-             && courseSemester.course.guarantorId !== request.session.user?.id
-             && !courseSemester.teachers.map(x => x.id).includes(request.session.user.id))) {
+        if ( !data.loggedInUser.admin
+             && courseSemester.course.guarantorId !== data.loggedInUser.id
+             && !courseSemester.teachers.map(x => x.id).includes(data.loggedInUser.id)) {
             throw new AuthorizationFailedError("You don't have rights to create seminars for this course")
         }
 

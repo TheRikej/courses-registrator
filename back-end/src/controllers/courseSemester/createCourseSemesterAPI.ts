@@ -38,10 +38,16 @@ const createCourseSemesterAPI = async (req: Request, res: Response) => {
     try {
       const id = await idSchema.parseAsync(req.params)
       const courseSemesterData = await courseSemesterSchema.parseAsync(req.body);
+      if (req.session?.user === undefined) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const courseSemester = await createCourseSemester({
         ...courseSemesterData,
         ...id,
+        loggedInUser: req.session.user
       });
+
       if (courseSemester.isOk) {
         return res.status(201).send({
           status: 'success',

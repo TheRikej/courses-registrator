@@ -33,10 +33,15 @@ const updateCourseAPI = async (req: Request, res: Response) => {
     try {
         const id = await idSchema.parseAsync(req.params)
         const courseData = await courseSchema.parseAsync(req.body)
+        if (req.session?.user === undefined) {
+            return res.status(401).json({ message: "Unauthorized" });
+          }          
         const course = await updateCourse({
             ...id,
-            ...courseData
+            ...courseData,
+            loggedInUser: req.session.user
         });
+        
         if (course.isOk) {
           return res.status(200).send({
             status: 'success',

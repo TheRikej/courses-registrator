@@ -3,7 +3,6 @@ import prisma from '../../client';
 import type { addTeacherSeminarData } from '../types/data';
 import type { UserAddTeacherSeminarResult } from '../types/result';
 import { AuthorizationFailedError, DeletedRecordError, DuplicateRecordError, NonexistentRecordError, OperationNotAllowedError } from '../../errors';
-import { request } from 'express';
 
 /**
  * Adds taught course to teacher.
@@ -51,10 +50,10 @@ const addSeminarTeacher = async (data: addTeacherSeminarData): UserAddTeacherSem
         if (seminarGroup?.deletedAt !== null) {
           throw new DeletedRecordError('The seminar group is deleted!');
         }
-        if ( request.session.user === undefined || (!request.session.user?.admin
-            && !seminarGroup.teachers.map(x => x.id).includes(request.session.user.id)
-            && seminarGroup.courseSemester.course.guarantorId !== request.session.user?.id
-            && !seminarGroup.courseSemester.teachers.map(x => x.id).includes(request.session.user.id))) {
+        if ( !data.loggedInUser.admin
+            && !seminarGroup.teachers.map(x => x.id).includes(data.loggedInUser.id)
+            && seminarGroup.courseSemester.course.guarantorId !== data.loggedInUser.id
+            && !seminarGroup.courseSemester.teachers.map(x => x.id).includes(data.loggedInUser.id)) {
            throw new AuthorizationFailedError("You don't have rights to add teachers to this seminar")
         }     
 

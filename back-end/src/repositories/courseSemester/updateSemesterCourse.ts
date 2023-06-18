@@ -3,8 +3,6 @@ import prisma from '../client';
 import type { UpdateData } from './types/data';
 import type { UpdateCourseSemesterResult } from './types/result';
 import { AuthorizationFailedError, DeletedRecordError, NonexistentRecordError } from '../errors';
-import { request } from 'express';
-
 
 const updateCourseSemester = async (data: UpdateData): UpdateCourseSemesterResult => {
   try {
@@ -24,7 +22,7 @@ const updateCourseSemester = async (data: UpdateData): UpdateCourseSemesterResul
         if (courseSemester.deletedAt !== null) {
           throw new DeletedRecordError('The course semester has been deleted!');
         }
-        if (courseSemester.course.guarantorId !== request.session.user?.id && !request.session.user?.admin) {
+        if (courseSemester.course.guarantorId !== data.loggedInUser.id && !data.loggedInUser.admin) {
             throw new AuthorizationFailedError("You don't have rights to update this course")
         }
         

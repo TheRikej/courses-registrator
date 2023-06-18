@@ -36,10 +36,15 @@ const updateSeminarAPI = async (req: Request, res: Response) => {
     try {
         const id = await idSchema.parseAsync(req.params)
         const seminarData = await SeminarSchema.parseAsync(req.body)
+        if (req.session?.user === undefined) {
+            return res.status(401).json({ message: "Unauthorized" });
+          }
         const seminar = await updateSeminar({
             ...id,
             ...seminarData,
+            loggedInUser: req.session.user
         });
+        
         if (seminar.isOk) {
           return res.status(200).send({
             status: 'success',
@@ -49,13 +54,13 @@ const updateSeminarAPI = async (req: Request, res: Response) => {
     
         throw seminar.error;
       } catch (e) {
-          if (e instanceof z.ZodError) {
-              return res.status(400).send({
-                  status: 'error',
-                  error: e.errors,
-              });
-          }
-          if (e instanceof AuthorizationFailedError) {
+        if (e instanceof z.ZodError) {
+            return res.status(400).send({
+                status: 'error',
+                error: e.errors,
+            });
+        }
+        if (e instanceof AuthorizationFailedError) {
             return res.status(403).send({
                 status: 'error',
                 error: e.message,
@@ -79,10 +84,10 @@ const updateSeminarAPI = async (req: Request, res: Response) => {
                 error: e.message,
             });
         }
-    
+        if (e instanceof Error)
         return res.status(500).send({
           status: 'error',
-          error: 'Internal Server Error',
+          error: e.message+e.name//'Internal Server Error',
         });
       }
     };

@@ -3,7 +3,6 @@ import prisma from '../client';
 import type { AddCreateSemesterData } from './types/data';
 import type { AddCourseSemesterResult } from './types/result';
 import { AuthorizationFailedError, DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../errors';
-import { request } from 'express';
 
 /**
  * Creates CourseSemester for semester and course
@@ -28,7 +27,7 @@ const addCourseSemester = async (data: AddCreateSemesterData): AddCourseSemester
         if (course?.deletedAt !== null) {
           throw new DeletedRecordError('The course has already been deleted!');
         }
-        if (course.guarantorId !== request.session.user?.id && !request.session.user?.admin) {
+        if (course.guarantorId !== data.loggedInUser.id && !data.loggedInUser.admin) {
             throw new AuthorizationFailedError("You don't have rights to assign this course to new semester")
         }
         let timeslot = undefined;

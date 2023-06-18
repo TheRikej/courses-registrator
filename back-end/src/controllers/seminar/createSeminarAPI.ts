@@ -41,9 +41,13 @@ const createUserAPI = async (req: Request, res: Response) => {
     try {
       const id = await idSchema.parseAsync(req.params)
       const seminarData = await SeminarSchema.parseAsync(req.body);
+      if (req.session?.user === undefined) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
       const seminar = await createSeminar({
         ...id,
-        ...seminarData
+        ...seminarData,
+        loggedInUser: req.session.user
       });
       if (seminar.isOk) {
         return res.status(201).send({

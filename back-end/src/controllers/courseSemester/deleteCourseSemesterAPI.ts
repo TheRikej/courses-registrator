@@ -13,7 +13,11 @@ const idSchema = z.object({
 const deleteCourseSemesterAPI = async (req: Request, res: Response) => {
     try {
       const data = await idSchema.parseAsync(req.params)
-      const semester = await deleteCourseSemester(data);
+      if (req.session?.user === undefined) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      const semester = await deleteCourseSemester({...data, loggedInUser: req.session.user});
+
       if (semester.isOk) {
         return res.status(200).send({
           status: 'success',

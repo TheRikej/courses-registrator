@@ -17,7 +17,11 @@ const idSchema = z.object({
 const addCourseTeacherAPI = async (req: Request, res: Response) => {
     try {
       const userData = await idSchema.parseAsync(req.params);
-      const user = await addCourseTeacher(userData);
+      if (req.session?.user === undefined) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      const user = await addCourseTeacher({...userData, loggedInUser: req.session.user});
+
       if (user.isOk) {
         return res.status(201).send({
           status: 'success',

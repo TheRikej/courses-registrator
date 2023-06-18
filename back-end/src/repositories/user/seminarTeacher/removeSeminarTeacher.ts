@@ -3,7 +3,6 @@ import prisma from '../../client';
 import type { removeTeacherSeminarData } from '../types/data';
 import type { UserRemoveTeacherResult } from '../types/result';
 import { AuthorizationFailedError, DeletedRecordError, MissingRelationError, NonexistentRecordError } from '../../errors';
-import { request } from 'express';
 
 /**
  * Removes existing teacher from course that they teach.
@@ -50,10 +49,10 @@ const removeSeminarTeacher = async (data: removeTeacherSeminarData): UserRemoveT
           if (seminar.deletedAt !== null) {
             throw new DeletedRecordError('The Seminar has already been deleted!');
           }
-          if ( request.session.user === undefined || (!request.session.user?.admin
-            && !seminar.teachers.map(x => x.id).includes(request.session.user.id)
-            && seminar.courseSemester.course.guarantorId !== request.session.user?.id
-            && !seminar.courseSemester.teachers.map(x => x.id).includes(request.session.user.id))) {
+          if ( !data.loggedInUser.admin
+            && !seminar.teachers.map(x => x.id).includes(data.loggedInUser.id)
+            && seminar.courseSemester.course.guarantorId !== data.loggedInUser.id
+            && !seminar.courseSemester.teachers.map(x => x.id).includes(data.loggedInUser.id)) {
            throw new AuthorizationFailedError("You don't have rights to delete this seminar")
         }     
           const taughtGroupsIds = user.taughtGroups.map(x => x.id);
