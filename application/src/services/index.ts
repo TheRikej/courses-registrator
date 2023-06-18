@@ -1,3 +1,4 @@
-export * as UserRequests from './userRequest';
-export * as CourseRequests from './courseRequest';
-export * as SemesterRequests from './semesterRequest';
+export * as UserRequests from './requests/userRequest';
+export * as CourseRequests from './requests/courseRequest';
+export * as SemesterRequests from './requests/semesterRequest';
+export * as FacultyRequests from './requests/facultyRequest';

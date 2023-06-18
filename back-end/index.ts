@@ -1,5 +1,5 @@
 import prisma from './src/repositories/client';
-import createUser from './src/repositories/user/createUser';
+import deleteFaculty from './src/repositories/faculty/deleteFaculty';
 import readAllSemester from './src/repositories/semester/readAllSemester';
 
 // Here you can try prisma functions.
@@ -218,7 +218,8 @@ async function main() {
   });*/
   //console.log(user1)
   const users = await readAllSemester({});
-  console.log(users)
+  //const faculty = await deleteFaculty({id: "bbb"});
+  //console.log(faculty)
 }
 
 main()

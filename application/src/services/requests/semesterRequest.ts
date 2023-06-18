@@ -1,6 +1,6 @@
-import { SemesterModel } from "./models";
-import axiosInstance from "./base";
-import { ResponseMulti, ResponseSingle } from "./responses";
+import { SemesterModel } from "../models";
+import axiosInstance from "../base";
+import { ResponseMulti, ResponseSingle } from "../responses";
 
 export const getSemesters = async (): Promise<ResponseMulti<SemesterModel>> => {
     const response = await axiosInstance.get('/semester', {});

@@ -12,8 +12,8 @@ const idSchema = z.object({
 
 const deleteFacultyAPI = async (req: Request, res: Response) => {
     try {
-      const data = await idSchema.parseAsync(req.params)
-      const faculty = await deleteFaculty(data);
+      const id = await idSchema.parseAsync(req.params);
+      const faculty = await deleteFaculty({...id});
       if (faculty.isOk) {
         return res.status(200).send({
           status: 'success',
@@ -30,6 +30,7 @@ const deleteFacultyAPI = async (req: Request, res: Response) => {
             });
         }
         if (e instanceof NonexistentRecordError) {
+          console.log(e.message)
             return res.status(404).send({
                 status: 'error',
                 error: e.message,

@@ -5,13 +5,15 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
 import { Link } from 'react-router-dom';
+import { FacultyRequests } from '../services';
+import { useMutation } from '@tanstack/react-query';
 
 const schema = z.object({
     name: z.string().nonempty("Faculty name cannot be empty.")
         .max(50, "Faculty name cannot be longer than 50 characters."),
 });
 
-const FacultyItemCard = (props: {name: string}) => {
+const FacultyItemCard = (props: {name: string, id: string}) => {
     const {
         register,
         handleSubmit,
@@ -24,7 +26,16 @@ const FacultyItemCard = (props: {name: string}) => {
         }
     });
 
-    const [isEditing, setEditing] = useState<boolean>(false);
+    const [facName, setName] = useState<string>(props.name);
+
+  const { mutate: editFaculty } = useMutation({
+      mutationFn: (info: {
+          name: string,
+          id: string,
+      }) => FacultyRequests.editFaculty( info.name, info.id ),
+  });
+
+  const [isEditing, setEditing] = useState<boolean>(false);
 
   const edit = () => {
     if (!isEditing || errors.name === undefined) {
@@ -33,10 +44,9 @@ const FacultyItemCard = (props: {name: string}) => {
   }
 
   const onSubmit = () => {
-      //TODO: edit faculty in db
-      // Also change the value in the <p> field (now it comes only
-      // from props, but after edit it should have the new value)
       const name = getValues().name;
+      editFaculty({ name: name, id: props.id });
+      setName(name);
   }
 
   return (
@@ -47,7 +57,7 @@ const FacultyItemCard = (props: {name: string}) => {
       <TextField
           id="name"
           label="Faculty name *"
-          defaultValue={props.name}
+          defaultValue={facName}
           className="w-auto lg:w-72"
           sx={{ margin: '0.5rem 1rem' }}
           size="small"
@@ -58,16 +68,16 @@ const FacultyItemCard = (props: {name: string}) => {
         />
       :
       <p className="m-0 lg:ml-4 float-left text-xl">
-        <b>{props.name}</b>
+        <b>{facName}</b>
       </p>
       }
       <div className="mr-0 lg:ml-auto">
         <Button onClick={edit} color={isEditing ? "success" : "info"}
-                type={isEditing ? "submit" : "button"}
+                type={isEditing ? "button" : "submit"}
                 variant="outlined" sx={{ margin: '0.5rem 0.5rem' }}>
           {isEditing ? "Save" : "Edit"}
         </Button>
-        <Link to={"/faculties/" + props.name + "/delete"}>
+        <Link to={"/faculties/" + facName + "/delete"} state={{id: props.id}} >
             <Button color="error" type="button" variant="outlined" sx={{ margin: '0.5rem 0.5rem' }}>
               Delete
             </Button>

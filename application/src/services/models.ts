@@ -14,3 +14,8 @@ export interface SemesterModel {
     semesterStart: Date,
     semesterEnd: Date,
 }
+
+export interface FacultyModel {
+    name: string,
+    id: string,
+}

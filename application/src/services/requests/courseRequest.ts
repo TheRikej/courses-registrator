@@ -1,6 +1,6 @@
-import { UserModel } from "./models";
-import axiosInstance from "./base";
-import { ResponseMulti, ResponseSingle } from "./responses";
+import { UserModel } from "../models";
+import axiosInstance from "../base";
+import { ResponseMulti, ResponseSingle } from "../responses";
 
 export const getCourses = async (): Promise<ResponseMulti<UserModel>> => {
     const response = await axiosInstance.get('/user');
