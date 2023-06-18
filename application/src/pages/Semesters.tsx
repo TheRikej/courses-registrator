@@ -31,7 +31,7 @@ const Semesters = () => {
                         className="my-1 mx-1 rounded-lg border-solid border-4 p-0.5"
                         key={formatSemester(semester.year, semester.season)}
                     >
-                        <SemesterItem target={semester}/>
+                        <SemesterItem target={semester} id={semester.id}/>
                     </li>
                     )}
                 </ul>

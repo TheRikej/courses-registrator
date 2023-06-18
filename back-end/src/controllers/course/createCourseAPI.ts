@@ -44,7 +44,7 @@ const createCourseAPI = async (req: Request, res: Response) => {
           data: course.unwrap(),
         });
       }
-  
+      console.log(course.error.message)
       throw course.error;
     } catch (e) {
       if (e instanceof z.ZodError) {

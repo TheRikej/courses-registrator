@@ -9,6 +9,14 @@ export interface UserModel {
 }
 
 export interface SemesterModel {
+    id: string,
+    year: number,
+    season: string,
+    semesterStart: Date,
+    semesterEnd: Date,
+}
+
+export interface SemesterCreateModel {
     year: number,
     season: string,
     semesterStart: Date,
@@ -18,4 +26,13 @@ export interface SemesterModel {
 export interface FacultyModel {
     name: string,
     id: string,
+}
+
+export interface CourseModel {
+    id: string,
+    credits: number,
+    description: string,
+    guarantorId: number,
+    name: string,
+    facultyId: string,
 }

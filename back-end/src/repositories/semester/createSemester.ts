@@ -18,6 +18,7 @@ const createSemester = async (data: SemseterCreateData): SemesterCreateResult =>
           where: {
             season: data.season,
             year: data.year,
+            deletedAt: null
           }
         })
         if ((await semesters).length > 0){

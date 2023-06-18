@@ -42,6 +42,7 @@ router.post("/semester", API.semester.createSemester)
 router.get("/semester", API.semester.readSemesterAll)
 router.get("/semester/:id", API.semester.readSemesterSpecific)
 router.delete("/semester/:id", API.semester.deleteSemester)
+router.put("/semester/:id", API.semester.updateSemesterAPI)
 
 router.post("/courseSemester/:id/seminar", API.seminar.createSeminar)
 router.get("/courseSemester/:id/seminar/teacher", API.seminar.readAllSeminar.readSeminarAllAPI)
