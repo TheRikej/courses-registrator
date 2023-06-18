@@ -4,7 +4,7 @@ import {z} from "zod";
 import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../../../repositories/errors';
 
 const idSchema = z.object({
-    id: z
+    id: z.coerce
       .number({
         required_error: 'User Id is required',
       }),
@@ -16,7 +16,7 @@ const idSchema = z.object({
 
 const addSeminarTeacherAPI = async (req: Request, res: Response) => {
     try {
-      const userData = await idSchema.parseAsync(req.body);
+      const userData = await idSchema.parseAsync(req.params);
       const user = await addSeminarTeacher(userData);
       if (user.isOk) {
         return res.status(201).send({

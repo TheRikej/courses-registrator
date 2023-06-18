@@ -5,7 +5,7 @@ import { DeletedRecordError } from '../../repositories/errors';
 import { Prisma } from '@prisma/client';
 
 const idSchema = z.object({
-    id: z
+    id: z.coerce
       .number({
         required_error: 'Id is required',
       })

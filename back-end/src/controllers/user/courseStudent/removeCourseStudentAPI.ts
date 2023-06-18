@@ -3,7 +3,7 @@ import removeCourseStudent from '../../../repositories/user/courseUser/removeCou
 import {z} from "zod";
 
 const idSchema = z.object({
-    id: z
+    id: z.coerce
       .number({
         required_error: 'Id is required',
       }),
@@ -15,12 +15,14 @@ const idSchema = z.object({
 
 const removeCourseStudentAPI = async (req: Request, res: Response) => {
     try {
-      const data = await idSchema.parseAsync(req.params)
+      const data = await idSchema.parseAsync(req.params);
+      if (data.id != req.session.user?.id && !req.session.user?.admin) {
+        return res.status(403).json({ message: "You don't have rights to make operations with this user" });
+      }
       const user = await removeCourseStudent(data);
       if (user.isOk) {
-        return res.status(200).send({
+        return res.status(204).send({
           status: 'success',
-          data: user.unwrap(),
         });
       }
   

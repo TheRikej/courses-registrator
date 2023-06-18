@@ -4,7 +4,7 @@ import {z} from "zod";
 import { NonexistentRecordError, DeletedRecordError } from '../../repositories/errors';
 
 const idSchema = z.object({
-    id: z
+    id: z.coerce
       .number({
         required_error: 'Id is required',
       })

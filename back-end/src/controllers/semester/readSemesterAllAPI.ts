@@ -32,6 +32,7 @@ const readSemesterAllAPI = async (req: Request, res: Response) => {
             error: e.errors,
         });
         }
+      if (e instanceof Error)
       return res.status(500).send({
         status: 'error',
         error: 'Internal Server Error',

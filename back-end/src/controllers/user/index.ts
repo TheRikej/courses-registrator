@@ -3,6 +3,8 @@ import readUserAll from "./readUserAllAPI"
 import readUserSpecific from "./readUsersSpecific"
 import deleteUser from "./deleteUserAPI"
 
+import login from "./loginAPI"
+
 import addCourseStudent from "./courseStudent/addCourseStudentAPI"
 import removeCourseStudent from "./courseStudent/removeCourseStudentAPI"
 
@@ -21,6 +23,7 @@ export default {
     readUserAll,
     readUserSpecific,
     deleteUser,
+    login,
     addCourseStudent,
     removeCourseStudent,
     addCourseTeacher,

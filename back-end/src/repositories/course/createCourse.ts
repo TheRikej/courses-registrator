@@ -9,6 +9,7 @@ import type { CourseResult } from './types/result';
  * @param data 
  * @returns 
  */
+// TODO: check faculty/guarantor exists
 const createCourse = async (data: CourseCreateData): CourseResult => {
   try {
     const code = data.id.toUpperCase();

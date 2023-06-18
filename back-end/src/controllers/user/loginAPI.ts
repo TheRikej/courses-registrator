@@ -22,9 +22,16 @@ const loginAPI = async (req: Request, res: Response) => {
       const userData = await UserSchema.parseAsync(req.body);
       const user = await loginUser(userData);
       if (user.isOk) {
-        return res.status(201).send({
+        const data = user.unwrap()
+        req.session.user = {
+            id: data.id,
+            student: data.student,
+            teacher: data.teacher,
+            admin: data.administrator
+        }
+        return res.status(200).send({
           status: 'success',
-          data: user.unwrap(),
+          message: "Logged in",
         });
       }
   

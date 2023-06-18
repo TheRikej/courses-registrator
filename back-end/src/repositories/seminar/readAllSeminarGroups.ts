@@ -29,8 +29,16 @@ const readAllSeminarGroups = async (
                     courseSemesterId: data.id
                 },
                 include: {
-                    teachers: true,
-                    students: true,
+                    teachers: {
+                        where: {
+                            deletedAt: null,
+                        },
+                      },
+                    students: {
+                        where: {
+                            deletedAt: null,
+                        },
+                    },
                 }
             })
             return semesters.map(semester => {return {...semester, currentCapacity: semester.students.length}})
