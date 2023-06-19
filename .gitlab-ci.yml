@@ -65,6 +65,7 @@ backend-test:
   before_script:
     - *backend-before-script
   script:
+    - pg_ctl start
     - npm run test
   tags:
     - shared-fi
