@@ -23,10 +23,11 @@ import DeleteUser from "./forms/DeleteUser";
 import RegisterForm from "./forms/RegisterForm";
 import LoginForm from "./forms/LoginForm";
 import Logout from "./components/Logout";
+import { RecoilRoot } from 'recoil';
 
 function App() {
   return (
-      <>
+      <RecoilRoot>
           <Header/>
           <div className="flex justify-center m-auto h-screen">
               <Routes>
@@ -67,7 +68,7 @@ function App() {
                   <Route path='*' element={<NotFound />}/>
               </Routes>
           </div>
-      </>
+      </RecoilRoot>
   )
 }
 
