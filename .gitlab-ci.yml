@@ -11,13 +11,15 @@ cache:
     - application/node_modules/
 
 .backend-before-script: &backend-before-script
-  - apt update && apt -y install docker-compose
   - cd back-end/
   - npm install
 
 .frontend-before-script: &frontend-before-script
   - cd application/
   - npm install
+
+services:
+  - docker:dind
 
 backend-lint:
   stage: lint
@@ -59,14 +61,21 @@ frontend-build:
   tags: 
     - shared-fi
 
+database:
+  stage: test
+  script:
+    - docker-compose up -d  # Spustí PostgreSQL server pomocí Docker Compose
+  tags:
+    - shared-fi
+
 backend-test:
   stage: test
   needs:
     - backend-build
+    - database
   before_script:
     - *backend-before-script
   script:
-    - docker-compose up -d
     - npm run test
   tags:
     - shared-fi
