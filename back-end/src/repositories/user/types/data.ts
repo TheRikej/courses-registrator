@@ -4,10 +4,7 @@ import { LoggedInUser } from "../../types";
   export type UserCreateData = {
     userName: string;
     email: string;
-    hashedPassword: string;
-    teacher: boolean,
-    student: boolean,
-    admin: boolean,
+    password: string;
   };
 
   export type UserDeleteData = {
