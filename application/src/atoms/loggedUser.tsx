@@ -9,5 +9,5 @@ export interface LoggedUser {
 
 export const loggedUserAtom = atom<LoggedUser | null>({
     key: 'TodoList',
-    default: null,
+    default: {id: 1, admin: false, teacher: false, student: true},
 });
