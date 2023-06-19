@@ -63,12 +63,11 @@ frontend-build:
 
 database:
   stage: test
+  image: docker
   needs:
     - backend-build
-  before_script:
-    - *backend-before-script
   script:
-    - docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=password -e POSTGRES_USER=courses_registrator -e POSTGRES_DB=courses_registrator -d postgres:latest
+    - cd back-end/ && docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=password -e POSTGRES_USER=courses_registrator -e POSTGRES_DB=courses_registrator -d postgres:latest
   tags:
     - shared-fi
 
