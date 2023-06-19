@@ -80,3 +80,17 @@ export interface AddSemesterCourseData {
         endMinute: number;
     } | undefined,
 }
+
+export interface SeminarGroupModel {
+    registrationStart: Date,
+    registrationEnd: Date,
+    capacity: number,
+    room: string,
+    timeslot: {
+        day: string;
+        startHour: number;
+        startMinute: number;
+        endHour: number;
+        endMinute: number,
+    }
+  }

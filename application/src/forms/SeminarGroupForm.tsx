@@ -5,8 +5,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {DateTimePicker, TimePicker} from "@mui/x-date-pickers";
 import workDays from "../utils/days";
-import {Link, useParams} from "react-router-dom";
+import {Link, useLocation, useParams} from "react-router-dom";
 import Select from "react-select";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { UserRequests } from '../services';
+import { SeminarRequests } from '../services';
+import { SeminarGroupModel } from '../services/models';
 
 const schema = z.object({
   capacity: z.number().min(1, "Capacity must be greater than 0.")
@@ -50,28 +54,78 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
     control,
     getValues,
     formState: { errors },
+    reset,
   } = useForm<SeminarGroupForm>({
     resolver: zodResolver(schema),
   });
   const { code, semester, group } = useParams();
 
-  //TODO: fetch users and set the logged in user as the default value in guarantor input
-  const users = [
-    { value: 1523, label: 'Jakub Judiny' },
-    { value: 835, label: 'David Kajan' },
-    { value: 3494, label: 'Michal Drobný' },
-    { value: 7671, label: 'Dalibor Švonavec' },
-  ]
+  const { data: usersQuery } = useQuery({
+    queryKey: ['seminarUsers'],
+    queryFn: () => UserRequests.getUsers(),
+  })
 
-  const onSubmit = () => {
+  const { state } = useLocation();
+
+  const users = usersQuery?.data.map(x => ({value: x.id, label: x.userName}));
+
+  const queryClient = useQueryClient();
+
+  const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
+
+  const { mutate: addSeminar } = useMutation({
+    mutationFn: async (info: {
+        id: string,
+        courseInfo: SeminarGroupModel,
+        teachers: [number] | null
+    }) => {
+      const seminar = SeminarRequests.createCourse(info.id, info.courseInfo)
+      console.log((await seminar).data.id)
+      const courseSemester = (await seminar).data.id
+      info.teachers?.forEach(teacher => {
+        //addTeacher({id: teacher, courseId: courseSemester})
+      })
+      return seminar
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['seminarGroups']);
+    },
+  });
+
+  const onSubmit = async () => {
     const values = getValues();
     console.log(values);
     const hoursFrom = values.timeHourFrom?.getHours();
     const minutesFrom = values.timeHourFrom?.getMinutes();
     const hoursTo = values.timeHourTo?.getHours();
     const minutesTo = values.timeHourTo?.getMinutes();
-    //TODO: send data (but beware difference between create/edit)
-  };
+    if (!props.isEdit) {
+      await addSeminar({
+        id: state.id,
+        courseInfo: {
+          registrationStart: values.registrationFrom,
+          registrationEnd: values.registrationTo,
+          capacity: values.capacity,
+          room: values.room,
+          timeslot: {
+            day: values.timeDay !== null ? days[values.timeDay] : days[0],
+            startHour: hoursFrom !== undefined ? hoursFrom : 0,
+            startMinute: minutesFrom !== undefined ? minutesFrom: 0,
+            endHour: hoursTo !== undefined ? hoursTo: 0,
+            endMinute: minutesTo !== undefined ? minutesTo : 0,
+          },
+        },
+        teachers: values.teachers,
+      });
+      reset();
+    }
+  }
+
+  if(users === undefined) {
+    return <></>
+  }
+
+  if (!users) return <>Loading...</>;
 
   return (
     <form
@@ -265,9 +319,11 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
       </FormHelperText>
 
         <div className="flex flex-col content-center justify-center m-auto">
-            <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
-                {props.isEdit ? "Submit" : "Create"}
-            </Button>
+            
+                <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
+                  {props.isEdit ? "Submit" : "Create"}
+                </Button>
+            
             <Link to={"/courses/" + code + "/" + semester?.toLowerCase() + "/"
                     + (props.isEdit ? ("seminars/" + group + "/") : "") + "show"}>
                 <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 2rem' }}>

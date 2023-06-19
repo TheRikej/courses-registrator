@@ -78,12 +78,12 @@ const CourseSemester = () => {
                 </div>
                 <div className="teachers-only mt-2">
                     <div className="flex flex-col lg:flex-row items-center justify-center block mx-auto">
-                        <Link to={"/courses/" + code + "/" + semester + "/seminars/create"}>
+                        <Link to={"/courses/" + code + "/" + semester + "/seminars/create"} state={{id: course.data.id}}>
                             <Button color="info" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                 Create seminar group
                             </Button>
                         </Link>
-                        <Link to={"/courses/" + code + "/" + semester + "/edit"}>
+                        <Link to={"/courses/" + code + "/" + semester + "/edit"} state={{id: course.data.id}}>
                             <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                 Edit
                             </Button>
