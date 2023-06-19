@@ -47,10 +47,10 @@ const SeminarGroup = () => {
                 <p><b>Room & Time</b>: {seminar.room}, {formatTime(seminar.timeslot)}</p>
                 <p><b>Capacity</b>: {seminar.capacity}/{seminar.maxCapacity}</p>
                 <p><b>Registration</b>: {seminar.registrationStart} – {seminar.registrationEnd}</p>
-                <p className="students-only hidden"><b>Status</b>:
+                <p className="students-only"><b>Status</b>:
                     {isEnrolled ? " Enrolled" : " Not enrolled"}
                 </p>
-                <div className="mx-auto students-only hidden">
+                <div className="mx-auto students-only">
                     <Button color={isEnrolled ? "error" : "success"} className="w-52"
                             type="submit" variant="outlined" sx={{ margin: '1rem' }}
                             onClick={enrol}

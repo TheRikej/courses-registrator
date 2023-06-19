@@ -68,7 +68,7 @@ const CourseSemester = () => {
                     </ul>
                 </div>
 
-                <div className="mx-auto students-only hidden mt-2">
+                <div className="mx-auto students-only mt-2">
                     <Button color={isEnrolled ? "error" : "success"} className="w-52"
                             type="submit" variant="outlined" sx={{ margin: '1rem' }}
                             onClick={enrol}
