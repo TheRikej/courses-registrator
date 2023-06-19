@@ -1,11 +1,17 @@
 import * as React from 'react';
 import {Button} from "@mui/material";
-import {Link, useParams} from "react-router-dom";
-import formatTime from "../utils/timeslot";
+import {Link, Navigate, useParams} from "react-router-dom";
 import { CourseRequests } from '../services';
 import { useQuery } from '@tanstack/react-query';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
 
 const Course = () => {
+    const loggedUser = useRecoilValue(loggedUserAtom);
+    if (loggedUser === null) {
+        return <Navigate to="/login"/>;
+    }
+
     const { code } = useParams();
 
     const { data: course } = useQuery({
@@ -18,6 +24,7 @@ const Course = () => {
     }
 
     if (!course) return <>Loading...</>;
+    //TODO: credits
 
     return (
         <div className="flex flex-col flex-start m-2">
@@ -29,7 +36,7 @@ const Course = () => {
                 <p><b>Faculty</b>: {course.data.faculty.name}</p>
                 <p><b>Description</b>: {course.data.description}</p>
                 <p><b>Guarantor</b>: {course.data.guarantor.userName}</p>
-                <p><b>Credits</b>: {course.data.credits}</p>
+                <p><b>Credits</b>: {}</p>
                 <p className="mt-2"><b>Listed in semesters</b>:</p>
                 <ul className="border-solid border-2 overflow-y-scroll max-h-44 lg:max-h-36">
                     {course.data.semesters.map(semester =>
@@ -40,25 +47,27 @@ const Course = () => {
                         </Link>
                     )}
                 </ul>
-                <div className="teachers-only">
-                    <div className="flex flex-row justify-center block mx-auto">
-                        <Link to={"/courses/" + code + "/list"}>
-                            <Button color="info" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
-                                List
-                            </Button>
-                        </Link>
-                        <Link to={"/courses/" + code + "/edit"} state={{id: code, course: course.data}}>
-                            <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
-                                Edit
-                            </Button>
-                        </Link>
-                        <Link to={"/courses/" + code + "/delete"}>
-                            <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
-                                Delete
-                            </Button>
-                        </Link>
+                {(loggedUser.admin || loggedUser.teacher) ?
+                    <div>
+                        <div className="flex flex-row justify-center block mx-auto">
+                            <Link to={"/courses/" + code + "/list"}>
+                                <Button color="info" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
+                                    List
+                                </Button>
+                            </Link>
+                            <Link to={"/courses/" + code + "/edit"} state={{id: code, course: course.data}}>
+                                <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
+                                    Edit
+                                </Button>
+                            </Link>
+                            <Link to={"/courses/" + code + "/delete"}>
+                                <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
+                                    Delete
+                                </Button>
+                            </Link>
+                        </div>
                     </div>
-                </div>
+                : <></>}
             </div>
             <div className="block mx-auto">
                 <Link to={"/"}>

@@ -1,10 +1,17 @@
 import * as React from 'react';
 import {Button} from "@mui/material";
-import {Link, useParams} from "react-router-dom";
+import {Link, Navigate, useParams} from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserRequests } from '../services';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
+import NotAuthorized from "../components/NotAuthorized";
 
 const User = () => {
+    const loggedUser = useRecoilValue(loggedUserAtom);
+    if (loggedUser === null) {
+        return <Navigate to="/login"/>;
+    }
 
     const queryClient = useQueryClient();
 
@@ -18,7 +25,7 @@ const User = () => {
     const { mutate: changeStatus } = useMutation({
         mutationFn: (info: {
             id: number,
-            student: boolean, 
+            student: boolean,
             teacher: boolean,
             administrator: boolean,
         }) => UserRequests.changeStudentStatus(
@@ -34,6 +41,10 @@ const User = () => {
     }
 
     if (!user) return <>Loading...</>;
+
+    if (!loggedUser.admin && loggedUser.id !== user?.data.id) {
+        return <NotAuthorized/>;
+    }
 
     return (
         <div className="flex flex-col flex-start m-2">

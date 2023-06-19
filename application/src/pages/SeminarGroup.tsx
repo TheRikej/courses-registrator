@@ -1,12 +1,21 @@
 import * as React from 'react';
 import SemesterItem from "../components/SemesterItem";
 import {Button} from "@mui/material";
-import {Link, useParams} from "react-router-dom";
+import {Link, Navigate, useParams} from "react-router-dom";
 import formatSemester from "../utils/semester";
 import formatTime from "../utils/timeslot";
+import NotAuthorized from "../components/NotAuthorized";
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
 
 const SeminarGroup = () => {
     const { code, semester, group } = useParams();
+
+    const loggedUser = useRecoilValue(loggedUserAtom);
+    if (loggedUser === null) {
+        return <Navigate to="/login"/>;
+    }
+
     //TODO: fetch for the given user
     const isEnrolled = false;
 
@@ -47,32 +56,38 @@ const SeminarGroup = () => {
                 <p><b>Room & Time</b>: {seminar.room}, {formatTime(seminar.timeslot)}</p>
                 <p><b>Capacity</b>: {seminar.capacity}/{seminar.maxCapacity}</p>
                 <p><b>Registration</b>: {seminar.registrationStart} – {seminar.registrationEnd}</p>
-                <p className="students-only hidden"><b>Status</b>:
-                    {isEnrolled ? " Enrolled" : " Not enrolled"}
-                </p>
-                <div className="mx-auto students-only hidden">
-                    <Button color={isEnrolled ? "error" : "success"} className="w-52"
-                            type="submit" variant="outlined" sx={{ margin: '1rem' }}
-                            onClick={enrol}
-                    >
-                        {!isEnrolled ? "Enrol in the group" : "Leave group"}
-                    </Button>
-                </div>
-                <div className="teachers-only">
-                    <p><b>Students</b>: {students.join(", ")}</p>
-                    <div className="flex flex-row justify-center block mx-auto mt-2">
-                        <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/edit"}>
-                            <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
-                                Edit
-                            </Button>
-                        </Link>
-                        <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/delete"}>
-                            <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
-                                Delete
-                            </Button>
-                        </Link>
+                {loggedUser.student ??
+                    <p className="students-only"><b>Status</b>:
+                        {isEnrolled ? " Enrolled" : " Not enrolled"}
+                    </p>
+                }
+                {loggedUser.student ??
+                    <div className="mx-auto students-only">
+                        <Button color={isEnrolled ? "error" : "success"} className="w-52"
+                                type="submit" variant="outlined" sx={{ margin: '1rem' }}
+                                onClick={enrol}
+                        >
+                            {!isEnrolled ? "Enrol in the group" : "Leave group"}
+                        </Button>
                     </div>
-                </div>
+                }
+                {(loggedUser.admin || loggedUser.teacher) ?
+                    <div className="teachers-only">
+                        <p><b>Students</b>: {students.join(", ")}</p>
+                        <div className="flex flex-row justify-center block mx-auto mt-2">
+                            <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/edit"}>
+                                <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
+                                    Edit
+                                </Button>
+                            </Link>
+                            <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/delete"}>
+                                <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
+                                    Delete
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
+                : <></>}
             </div>
             <div className="block mx-auto">
                 <Link to={"/courses/" + code + "/" + semester + "/show"}>

@@ -1,12 +1,23 @@
 import * as React from 'react';
 import SemesterItem from "../components/SemesterItem";
 import {Button} from "@mui/material";
-import {Link} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import formatSemester from "../utils/semester";
 import { useQuery } from '@tanstack/react-query';
 import { SemesterRequests } from '../services';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
+import NotAuthorized from "../components/NotAuthorized";
 
 const Semesters = () => {
+    const loggedUser = useRecoilValue(loggedUserAtom);
+    if (loggedUser === null) {
+        return <Navigate to="/login"/>;
+    }
+    if (!loggedUser.admin) {
+        return <NotAuthorized/>;
+    }
+
 
     const { data: sems } = useQuery({
         queryKey: ['semesters'],
