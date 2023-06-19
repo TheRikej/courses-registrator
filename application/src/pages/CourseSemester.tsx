@@ -75,33 +75,6 @@ const CourseSemester = () => {
                     </ul>
                 </div>
 
-<<<<<<< HEAD
-                <div className="mx-auto students-only mt-2">
-                    <Button color={isEnrolled ? "error" : "success"} className="w-52"
-                            type="submit" variant="outlined" sx={{ margin: '1rem' }}
-                            onClick={enrol}
-                    >
-                        {!isEnrolled ? "Enrol" : "Leave course"}
-                    </Button>
-                </div>
-                <div className="teachers-only mt-2">
-                    <div className="flex flex-col lg:flex-row items-center justify-center block mx-auto">
-                        <Link to={"/courses/" + code + "/" + semester + "/seminars/create"} state={{id: course.data.id}}>
-                            <Button color="info" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
-                                Create seminar group
-                            </Button>
-                        </Link>
-                        <Link to={"/courses/" + code + "/" + semester + "/edit"} state={{id: course.data.id}}>
-                            <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
-                                Edit
-                            </Button>
-                        </Link>
-                        <Link to={"/courses/" + code + "/" + semester + "/delete"} state={{id: course.data.id}} >
-                            <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
-                                Delete
-                            </Button>
-                        </Link>
-=======
                 {(loggedUser.student) ?
                     <div className="mx-auto students-only hidden mt-2">
                         <Button color={isEnrolled ? "error" : "success"} className="w-52"
@@ -110,7 +83,6 @@ const CourseSemester = () => {
                         >
                             {!isEnrolled ? "Enrol" : "Leave course"}
                         </Button>
->>>>>>> 30707bf656ecbeb18e5718c9295ea785451a9f3e
                     </div>
                 : <></>}
                 {(loggedUser.admin || loggedUser.teacher) ?
