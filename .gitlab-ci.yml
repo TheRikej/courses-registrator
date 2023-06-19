@@ -11,6 +11,7 @@ cache:
     - application/node_modules/
 
 .backend-before-script: &backend-before-script
+  - apk update && apk add docker-compose
   - cd back-end/
   - npm install
 
@@ -65,7 +66,7 @@ backend-test:
   before_script:
     - *backend-before-script
   script:
-    - pg_ctl start
+    - docker-compose up -d
     - npm run test
   tags:
     - shared-fi
