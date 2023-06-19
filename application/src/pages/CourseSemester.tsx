@@ -1,43 +1,24 @@
 import * as React from 'react';
 import {Button} from "@mui/material";
-import {Link, useParams} from "react-router-dom";
+import {Link, useLocation, useParams} from "react-router-dom";
 import formatTime from "../utils/timeslot";
 import SeminarGroupItem from "../components/SeminarGroupItem";
 import formatSemester from "../utils/semester";
+import { useQuery } from '@tanstack/react-query';
+import { CourseSemesterRequests } from '../services';
+
 
 const CourseSemester = () => {
     const { code, semester } = useParams();
 
     let isEnrolled = false;
 
-    //TODO: fetch coursesemester API
-    const course = {
-        course: {
-            code: "PB138",
-            name: "Modern markup languages",
-            description: "You will learn about technologies such as XML, XSLT, HTMl, CSS, Typescript, React, Docker" +
-                " and many more.. Modern web development is also included.",
-            guarantor: "Tomáš Pitner",
-            credits: 5,
-            faculty: "FI",
-        },
-        semester: "spring2022",
-        capacity: 329,
-        maxCapacity: 400,
-        registrationEnd: "Wed Jun 14 2023 00:00",
-        registrationStart: "Fri Jun 25 2023 00:00",
-        timeslot: {
-            day: "TUESDAY",
-            startHour: 16,
-            startMinute: 0,
-            endHour: 17,
-            endMinute: 40,
-        },
-        room: "B117",
-        teachers: ["Petr Švenda", "Roman Lacko", "Lukáš Ručka"],
-    };
+    const { state } = useLocation();
 
-    //TODO: fetch seminar group API
+    const { data: course } = useQuery({
+        queryKey: ['courseSemester2'],
+        queryFn: () => CourseSemesterRequests.getCourseSemester(state.id),
+    });
     const groups = [
         {
             groupNumber: 2,
@@ -158,21 +139,27 @@ const CourseSemester = () => {
         //TODO: enrol student (API call)
     };
 
+    if(course?.data === undefined) {
+        return <></>
+    }
+
+    if (!course) return <>Loading...</>;
+
     return (
         <div className="flex flex-col flex-start m-2">
             <h1 className="font-poppins text-2xl mx-6 my-3 font-bold text-blue-950">
                 Course {code?.toUpperCase()} in {semester?.toLowerCase()}
             </h1>
             <div className="flex flex-col rounded-lg border-solid border-2 mx-2 max-w-2xl gap-1 p-4">
-                <p><b>Name</b>: {course.course.name}</p>
-                <p><b>Faculty</b>: {course.course.faculty}</p>
-                <p><b>Description</b>: {course.course.description}</p>
-                <p><b>Credits</b>: {course.course.credits}</p>
-                <p><b>Teachers</b>: {course.teachers.join(", ")}</p>
-                <p><b>Guarantor</b>: {course.course.guarantor}</p>
-                <p><b>Lectures</b>: {course.room}, {formatTime(course.timeslot)}</p>
-                <p><b>Capacity</b>: {course.capacity}/{course.maxCapacity}</p>
-                <p><b>Registration</b>: {course.registrationStart} – {course.registrationEnd}</p>
+                <p><b>Name</b>: {course.data.course.name}</p>
+                <p><b>Faculty</b>: {course.data.course.faculty.name}</p>
+                <p><b>Description</b>: {course.data.course.description}</p>
+                <p><b>Credits</b>: {course.data.course.credits}</p>
+                <p><b>Teachers</b>: {course.data.teachers.join(", ")}</p>
+                <p><b>Guarantor</b>: {course.data.course.guarantor.userName}</p>
+                <p><b>Lectures</b>: {course.data.room}, {course.data.timeSlot !== undefined &&  course.data.timeSlot !== null ? formatTime(course?.data.timeSlot) : "No lectures held"}</p>
+                <p><b>Capacity</b>: {course.data.currentCapacity}/{course.data.capacity}</p>
+                <p><b>Registration</b>: {(new Date(course.data.registrationStart !== undefined ? course.data.registrationStart : 0).toDateString())} – {(new Date(course?.data.registrationEnd !== undefined ? course?.data.registrationEnd : 0).toDateString())}</p>
                 <p className="students-only"><b>Status</b>:
                     {isEnrolled ? " Enrolled" : " Not enrolled"}
                 </p>

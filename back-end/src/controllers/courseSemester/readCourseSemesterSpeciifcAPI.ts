@@ -60,7 +60,7 @@ const studentReadCourseSemesterSpecificAPI = async (req: Request, res: Response)
         data: {...semester.unwrap(), students: undefined},
         });
     }
-
+    console.log(semester.error.message)
     throw semester.error;
     } catch (e) {
         if (e instanceof z.ZodError) {

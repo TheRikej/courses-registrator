@@ -23,12 +23,16 @@ const readSpecificCourse = async (
             ...(data?.name !== undefined ? { name: data.name} : {}),
         },
         include: {
+          guarantor: {
+            select: {userName: true}
+          },
+          faculty: true,
           courseSemesters: {
             where: {
                 deletedAt: null,
             },
             include: {
-                semester: true
+                semester: true,
             }
           }
         },

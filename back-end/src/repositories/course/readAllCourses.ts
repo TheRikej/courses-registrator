@@ -17,6 +17,14 @@ const readAllCourse = async (
         where: {
             ...(data?.facultyId !== undefined ? { facultyId: data.facultyId} : {}),
         },
+        include: {
+          faculty: true,
+          guarantor: {
+            select: {
+              userName: true,
+            }
+          },
+        }
       });
       return Result.ok(course);
     } catch (e) {

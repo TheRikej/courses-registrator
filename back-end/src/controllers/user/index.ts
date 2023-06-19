@@ -3,6 +3,8 @@ import readUserAll from "./readUserAllAPI"
 import readUserSpecific from "./readUsersSpecific"
 import deleteUser from "./deleteUserAPI"
 
+import login from "./loginAPI"
+
 import addCourseStudent from "./courseStudent/addCourseStudentAPI"
 import removeCourseStudent from "./courseStudent/removeCourseStudentAPI"
 
@@ -14,6 +16,7 @@ import removeSeminarStudent from "./seminarStudent/removeSeminarStudentAPI"
 
 import addSeminarTeacher from "./seminarTeacher/addSeminarTeacherAPI"
 import removeSeminarTeacher from "./seminarTeacher/removeSeminarTeacherAPI"
+import updateUserStatus from "./updateUser"
 
 
 export default {
@@ -21,6 +24,7 @@ export default {
     readUserAll,
     readUserSpecific,
     deleteUser,
+    login,
     addCourseStudent,
     removeCourseStudent,
     addCourseTeacher,
@@ -29,4 +33,5 @@ export default {
     removeSeminarStudent,
     addSeminarTeacher,
     removeSeminarTeacher,
+    updateUserStatus,
 }

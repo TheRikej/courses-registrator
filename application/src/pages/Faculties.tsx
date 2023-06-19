@@ -4,6 +4,8 @@ import FacultyItem from "../components/FacultyItem";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { FacultyRequests } from '../services';
 
 const schema = z.object({
     name: z.string().nonempty("Faculty name cannot be empty.")
@@ -11,6 +13,9 @@ const schema = z.object({
 });
 
 const Faculties = () => {
+
+    const queryClient = useQueryClient();
+
     const {
         register,
         handleSubmit,
@@ -24,30 +29,32 @@ const Faculties = () => {
         }
     });
 
-    //TODO: fetch faculties API
-    const faculties = [
-        {
-            name: "FI"
+    const { data: faculties } = useQuery({
+        queryKey: ['faculties'],
+        queryFn: () => FacultyRequests.getFaculties(),
+    });
+
+    const { mutate: createFaculty } = useMutation({
+        mutationFn: (info: {
+            name: string,
+        }) => FacultyRequests.createFaculty(
+            info.name
+        ),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['faculties']);
         },
-        {
-            name: "PrF"
-        },
-        {
-            name: "LF"
-        },
-        {
-            name: "ESF"
-        },
-        {
-            name: "PřF"
-        },
-    ];
+    });
+
+    if(faculties?.data === undefined) {
+        return <></>
+    }
+
+    if (!faculties) return <>Loading...</>;
 
     const create = () => {
         const name = getValues().name;
         console.log(name);
-        //TODO: create faculty
-
+        createFaculty({name})
         reset();
     }
 
@@ -58,12 +65,12 @@ const Faculties = () => {
             </h1>
             <div className="rounded-lg border-solid border-2 mx-2">
                 <ul className="overflow-y-scroll max-h-96 lg:max-h-64">
-                    {faculties.map(faculty =>
+                    {faculties.data.map(faculty =>
                         <li
                             className="my-1 mx-1 rounded-lg border-solid border-4 p-0.5"
                             key={faculty.name}
                         >
-                            <FacultyItem name={faculty.name}/>
+                            <FacultyItem name={faculty.name} id={faculty.id}/>
                         </li>
                     )}
                 </ul>

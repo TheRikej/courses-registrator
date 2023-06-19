@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import createCourse from '../../repositories/course/createCourse';
 import {z} from "zod";
 import { Prisma } from '@prisma/client';
+import { DeletedRecordError, NonexistentRecordError } from '../../repositories/errors';
 
 const courseSchema = z.object({
     description: z
@@ -44,7 +45,7 @@ const createCourseAPI = async (req: Request, res: Response) => {
           data: course.unwrap(),
         });
       }
-  
+      console.log(course.error.message)
       throw course.error;
     } catch (e) {
       if (e instanceof z.ZodError) {
@@ -53,6 +54,18 @@ const createCourseAPI = async (req: Request, res: Response) => {
           error: e.errors,
         });
       }
+      if (e instanceof NonexistentRecordError) {
+        return res.status(404).send({
+            status: 'error',
+            error: e.message,
+        });
+    }
+    if (e instanceof DeletedRecordError) {
+        return res.status(410).send({
+            status: 'error',
+            error: e.message,
+        });
+    }
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         return res.status(409).send({
             status: 'error',

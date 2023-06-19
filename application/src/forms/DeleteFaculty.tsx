@@ -1,15 +1,25 @@
 import { Button } from '@mui/material';
 import React  from 'react';
-import {Link, useParams} from 'react-router-dom';
+import {Link, useLocation, useParams} from 'react-router-dom';
 import Warning from "../components/Warning";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { FacultyRequests } from '../services';
 
 export default function DeleteFaculty() {
     const { faculty } = useParams();
 
-    const remove = () => {
-        //TODO: delete faculty
-        // and then redirect to /faculties/
-    }
+    const { state } = useLocation();
+
+    const queryClient = useQueryClient();
+
+    const { mutate: remove } = useMutation({
+        mutationFn: (info: {
+            id: string,
+        }) => FacultyRequests.deleteFaculty( info.id ),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['faculties']);
+        },
+    });
 
     return (
         <div className="flex flex-col mx-auto max-w-2xl">
@@ -17,7 +27,7 @@ export default function DeleteFaculty() {
             <div className="flex flex-row items-center mx-auto">
                 <Button color="success" className="w-24 lg:w-40" type="submit"
                         variant="outlined" sx={{ margin: '1rem 1rem' }}
-                        onClick={remove}
+                        onClick={() => remove({id: state.id})}
                 >
                     Yes
                 </Button>

@@ -23,14 +23,37 @@ const readSpecificSemesterCourse = async (
                 deletedAt: null
             }
           },
-          teachers: true,
-          students: true,
+          teachers: {
+            where: {
+                deletedAt: null
+            },
+            select: {
+              userName: true
+            }
+          },
+          students: {
+            where: {
+                deletedAt: null
+            }
+          },
+          timeSlot: true,
+          semester: true,
+          course: {
+            include: {
+              faculty: true,
+              guarantor: {
+                select: {
+                  userName: true,
+                }
+              },
+            }
+          },
         },
       });
       if (course.deletedAt !== null) {
         throw new Error('The course semester has been deleted!');
       }
-      return Result.ok(course);
+      return Result.ok({...course, currentCapacity: course.students.length});
     } catch (e) {
       return Result.err(e as Error);
     }

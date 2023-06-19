@@ -69,7 +69,8 @@ const addCourseUser = async (data: addStudentCourseData): UserAddStudentCourseRe
               deletedAt: null,
             },
             include: {
-              student: true,
+              student: {
+              },
               course: true
             },
           });

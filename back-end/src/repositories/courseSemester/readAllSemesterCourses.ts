@@ -18,6 +18,7 @@ const readAllSemesterCourses = async (
           const courses = await transaction.course.findMany({
             where: {
               ...(data.facultyId !== undefined ? { facultyId: data.facultyId } : {}),
+              deletedAt: null
             },
           });
           const courseIds = courses.map(x => x.id);
@@ -28,12 +29,36 @@ const readAllSemesterCourses = async (
               courseId: { in: courseIds },
             },
             include: {
-              course: true,
-            //   teachers: true,
-            //   students: true,
+              semester: true,
+              course: {
+                include: {
+                  faculty: true,
+                }
+              },
+              teachers: true,
+              students: true,
             }
           });
-          return course;
+          const coursesWithCapacity = course.map(x => ({
+            course: {
+              code: x.course.id,
+              name: x.course.name,
+              description: x.course.description,
+              guarantor: x.course.guarantorId,
+              credits: x.course.credits,
+              faculty: x.course.faculty.name,
+            },
+            id: x.id,
+            semesterSeason: x.semester.season,
+            semesterYear: x.semester.year,
+            capacity: x.students.length,
+            maxCapacity: x.capacity,
+            registrationEnd: x.registrationEnd,
+            registrationStart: x.registrationStart,
+            room: x.room,
+            teachers: x.teachers.map(x => x.userName),
+          }));
+          return coursesWithCapacity;
         }),
       );
       

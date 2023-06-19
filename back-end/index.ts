@@ -1,5 +1,6 @@
 import prisma from './src/repositories/client';
-import createUser from './src/repositories/user/createUser';
+import addCourseSemester from './src/repositories/course/addCourseSemester';
+import addCourseUser from './src/repositories/user/courseUser/addCourseUser';
 
 // Here you can try prisma functions.
 
@@ -203,20 +204,35 @@ async function main() {
     id: "62905279-56ac-4c3a-a22d-6da9e1ae508a",
   })
   console.log(usr)*/
-  const user1 = await createUser({
+  /*const user1 = await createUser({
     userName: 'thehomelander',
     email: 'homer@vught.cdom',
     teacher: true,
     student: true,
     admin: true,
     hashedPassword: '10745cd9b0f85388c7dcf40453a398085563eff44c95e445c620dfdbdc5b87e6',
-  });
+  });*/
   /*const user2 = await login({
     id: user1.isOk ? user1.value.id : "fail",
     password: '10745cd9b0f85388c7dcf40453a398085563eff44c95e445c620dfdbdc5b87e6',
   });*/
-  console.log(user1)
-  //console.log(user2)
+  //console.log(user1)
+  //const users = await readAllSemester({});
+  //const faculty = await deleteFaculty({id: "bbb"});
+  //console.log(faculty)
+  /*const courseSemester = await addCourseSemester({
+    semesterId: "12dc17ee-4ad4-42ce-a4bf-ffd3bc7ff3dc",
+    id: "AD8",
+    registrationEnd: new Date("2025-01-16"),
+    registrationStart: new Date("2019-01-16"),
+    capacity: 277,
+  });
+  console.log(courseSemester);*/
+  const courseStudent = await addCourseUser({
+    id: 1,
+    enrollCourseId: "2594ce89-f0dd-42c1-b761-cd9330fbc847",
+  })
+  console.log(courseStudent);
 }
 
 main()

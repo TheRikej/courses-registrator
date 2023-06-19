@@ -4,13 +4,15 @@ import {Link} from "react-router-dom";
 interface CourseSemesterProps {
     course: {
         code: string,
-        guarantor: string,
+        guarantor: number,
         faculty: string,
         description: string,
         name: string,
         credits: number,
     },
-    semester: string,
+    id: string,
+    semesterYear: number,
+    semesterSeason: string,
     capacity: number,
     maxCapacity: number,
     teachers: string[],
@@ -18,11 +20,11 @@ interface CourseSemesterProps {
 
 const CourseSemesterItemCard = (props: {course: CourseSemesterProps}) => {
   return (
-    <Link to={"/courses/" + props.course.course.code + "/" + props.course.semester + "/show"}>
+    <Link to={"/courses/" + props.course.course.code + "/" + props.course.semesterYear + props.course.semesterSeason + "/show"} state={{id: props.course.id}}>
         <div className="flex flex-col m-1">
           <div className="ml-1 lg:mx-2 flex flex-col lg:flex-row">
               <p className="float-left lg:text-lg mb-1 lg:mr-8">
-                  <b>{props.course.course.faculty}:{props.course.course.code}/{props.course.semester}
+                  <b>{props.course.course.faculty}:{props.course.course.code}/{props.course.semesterYear + props.course.semesterSeason}
                   </b> – {props.course.course.name}
               </p>
               <p className="lg:text-lg mx-auto lg:ml-auto lg:mr-1">{props.course.capacity}/{props.course.maxCapacity}</p>

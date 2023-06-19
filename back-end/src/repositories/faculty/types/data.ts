@@ -10,3 +10,8 @@ export type ReadFacultyData = {
 export type DeleteData = {
   id: string;
 };
+
+export type UpdateData = {
+  id: string,
+  name: string,
+};

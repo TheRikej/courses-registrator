@@ -5,6 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Select from 'react-select';
 import {Link, useParams} from "react-router-dom";
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { CourseModel } from '../services/models';
+import { FacultyRequests, UserRequests, CourseRequests } from '../services';
 
 const schema = z.object({
   name: z.string().nonempty('Name is required.').max(40, "Name cannot be longer than 40 characters."),
@@ -32,45 +35,57 @@ const CourseForm = (props: {isEdit: boolean}) => {
     handleSubmit,
     control,
     getValues,
+    reset,
     formState: { errors },
   } = useForm<CourseForm>({
     resolver: zodResolver(schema),
   });
   const { code } = useParams();
 
-  //TODO: fetch faculties API
-  const faculties = [
-    {
-      name: "FI"
-    },
-    {
-      name: "PrF"
-    },
-    {
-      name: "LF"
-    },
-    {
-      name: "ESF"
-    },
-    {
-      name: "PřF"
-    },
-  ];
+  const { data: faculties } = useQuery({
+    queryKey: ['courseFaculties'],
+    queryFn: () => FacultyRequests.getFaculties(),
+  });
+ 
+  //TODO: set the logged in user as the default value in guarantor input
+  const { data: usersQuery } = useQuery({
+    queryKey: ['courseUsers'],
+    queryFn: () => UserRequests.getUsers(),
+  })
 
-  //TODO: fetch users and set the logged in user as the default value in guarantor input
-  const users = [
-    { value: 1523, label: 'Jakub Judiny' },
-    { value: 835, label: 'David Kajan' },
-    { value: 3494, label: 'Michal Drobný' },
-    { value: 7671, label: 'Dalibor Švonavec' },
-  ]
+  const users = usersQuery?.data.map(x => ({value: x.id, label: x.userName}));
+
+  const { mutate: createCourse } = useMutation({
+    mutationFn: (info: {
+        courseInfo: CourseModel,
+    }) => CourseRequests.createCourse(
+        info.courseInfo
+    ),
+});
 
 
   const onSubmit = () => {
     const values = getValues();
-    console.log(values);
-    //TODO: send data (but beware difference between create/edit)
+    if (!props.isEdit) {
+      createCourse({
+        courseInfo: {
+          id: values.code,
+          name: values.name,
+          description: values.description,
+          facultyId: values.faculty,
+          credits: values.credits,
+          guarantorId: values.guarantor,
+        }
+      });
+      reset();
+    }
   };
+
+  if(users === undefined) {
+    return <></>
+  }
+
+  if (!users) return <>Loading...</>;
 
   return (
       <form
@@ -128,10 +143,10 @@ const CourseForm = (props: {isEdit: boolean}) => {
               error={errors.faculty !== undefined}
               helperText={errors.faculty?.message}
           >
-            {faculties.map((option) => (
+            {faculties?.data.map((option) => (
                 <MenuItem
                     key={option.name}
-                    value={option.name}
+                    value={option.id}
                 >
                   {option.name}
                 </MenuItem>

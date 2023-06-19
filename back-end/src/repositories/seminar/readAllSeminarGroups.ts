@@ -24,15 +24,24 @@ const readAllSeminarGroups = async (
             if (course === null) {
                 throw new NonexistentRecordError("CourseSemester with given Id doesn't exist")
             }
-            return await prisma.seminarGroup.findMany({
+            const semesters =  await prisma.seminarGroup.findMany({
                 where: {
                     courseSemesterId: data.id
                 },
                 include: {
-                    teachers: true,
-                    students: true,
+                    teachers: {
+                        where: {
+                            deletedAt: null,
+                        },
+                      },
+                    students: {
+                        where: {
+                            deletedAt: null,
+                        },
+                    },
                 }
             })
+            return semesters.map(semester => {return {...semester, currentCapacity: semester.students.length}})
         })
       );
       

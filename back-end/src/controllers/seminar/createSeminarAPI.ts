@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import createSeminar from '../../repositories/seminar/createSeminarGroup';
 import {z} from "zod";
 import { TimeSlotSchema } from '../types';
-import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../../repositories/errors';
+import { AuthorizationFailedError, DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../../repositories/errors';
 
 const idSchema = z.object({
     id: z
@@ -41,9 +41,13 @@ const createUserAPI = async (req: Request, res: Response) => {
     try {
       const id = await idSchema.parseAsync(req.params)
       const seminarData = await SeminarSchema.parseAsync(req.body);
+      if (req.session?.user === undefined) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
       const seminar = await createSeminar({
         ...id,
-        ...seminarData
+        ...seminarData,
+        loggedInUser: req.session.user
       });
       if (seminar.isOk) {
         return res.status(201).send({
@@ -60,6 +64,12 @@ const createUserAPI = async (req: Request, res: Response) => {
           error: e.errors,
         });
       }
+      if (e instanceof AuthorizationFailedError) {
+        return res.status(403).send({
+            status: 'error',
+            error: e.message,
+        });
+    }
       if (e instanceof NonexistentRecordError) {
         return res.status(404).send({
             status: 'error',

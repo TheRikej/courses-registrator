@@ -4,7 +4,10 @@ import {TextField, Button, MenuItem} from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {DateTimePicker} from "@mui/x-date-pickers";
-import {Link, useParams} from "react-router-dom";
+import {Link, useLocation, useParams} from "react-router-dom";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { SemesterRequests } from '../services';
+import { SemesterCreateModel } from '../services/models';
 
 const schema = z.object({
   year: z.number().min(2000, "Year must be greater than 2000."),
@@ -16,30 +19,71 @@ const schema = z.object({
   path: ["semesterTo"],
 });
 
-interface SemesterForm {
+interface SemesterFormI {
     year: number,
     semesterFrom: Date,
     semesterTo: Date,
     season: "SPRING" | "FALL",
 }
 
-//TODO: default Values when editing ("defaultValue={...}")
 const SemesterForm = (props: {isEdit: boolean}) => {
   const {
     register,
     handleSubmit,
     control,
     getValues,
+    reset,
     formState: { errors },
-  } = useForm<SemesterForm>({
+  } = useForm<SemesterFormI>({
     resolver: zodResolver(schema),
   });
   const { semester } = useParams();
 
+  const queryClient = useQueryClient();
+
+  const { state } = useLocation();
+
+  const { mutate: updateSemester } = useMutation({
+      mutationFn: (info: {
+          id: string,
+          semesterInfo: SemesterCreateModel,
+      }) => SemesterRequests.updateSemester( info.id, info.semesterInfo ),
+      onSuccess: () => {
+          queryClient.invalidateQueries(['semesters']);
+      },
+  });
+
+  const { mutate: createSemester } = useMutation({
+    mutationFn: (info: {
+      semesterInfo: SemesterCreateModel,
+    }) => SemesterRequests.createSemester(
+        info.semesterInfo
+    ),
+});
+
   const onSubmit = () => {
     const values = getValues();
-    console.log(values);
-    //TODO: send data (but beware difference between create/edit)
+    if (props.isEdit) {
+      updateSemester({
+        id: state.id,
+        semesterInfo: {
+          season: values.season,
+          year: values.year,
+          semesterStart: values.semesterFrom,
+          semesterEnd: values.semesterTo
+        }
+      })
+    } else {
+      createSemester({
+        semesterInfo: {
+          season: values.season,
+          year: values.year,
+          semesterStart: values.semesterFrom,
+          semesterEnd: values.semesterTo
+        }
+      })
+    }
+    reset();
   };
 
   return (
@@ -59,7 +103,7 @@ const SemesterForm = (props: {isEdit: boolean}) => {
             className="w-60"
             select
             size="small"
-            defaultValue = "SPRING"
+            defaultValue = {props.isEdit ? state.semester.season : "SPRING"}
             inputProps={register('season')}
             error={errors.season !== undefined}
             helperText={errors.season?.message}
@@ -79,7 +123,7 @@ const SemesterForm = (props: {isEdit: boolean}) => {
           size="small"
           helperText={errors.year?.message}
           type="number"
-          defaultValue={2023}
+          defaultValue={props.isEdit ? state.semester.year : (new Date()).getFullYear()}
           InputProps={{
               inputProps: {
                   min: 2000,
@@ -91,7 +135,7 @@ const SemesterForm = (props: {isEdit: boolean}) => {
         <Controller
             name="semesterFrom"
             control={control}
-            defaultValue={new Date()}
+            defaultValue={props.isEdit ? new Date(state.semester.semesterStart) :  new Date()}
             render={({ field }) => (
               <DateTimePicker
                   label="Semester start *"
@@ -113,7 +157,7 @@ const SemesterForm = (props: {isEdit: boolean}) => {
         <Controller
             name="semesterTo"
             control={control}
-            defaultValue={new Date((new Date()).setMonth((new Date().getMonth()+1)))}
+            defaultValue={props.isEdit ? new Date(state.semester.semesterEnd) :  new Date((new Date()).setMonth((new Date().getMonth()+1)))}
             render={({ field }) => (
                 <DateTimePicker
                     label="Semester end *"

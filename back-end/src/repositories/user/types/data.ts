@@ -1,11 +1,10 @@
+import { LoggedInUser } from "../../types";
+
   
   export type UserCreateData = {
     userName: string;
     email: string;
-    hashedPassword: string;
-    teacher: boolean,
-    student: boolean,
-    admin: boolean,
+    password: string;
   };
 
   export type UserDeleteData = {
@@ -18,11 +17,13 @@
   };
 
   export type addTeacherCourseData = {
+    loggedInUser: LoggedInUser
     id: number;
     enrollCourseId: string;
   };
 
   export type addTeacherSeminarData = {
+    loggedInUser: LoggedInUser
     id: number;
     enrollSeminarId: string;
   };
@@ -38,11 +39,13 @@
   };
 
   export type removeTeacherData = {
+    loggedInUser: LoggedInUser
     id: number;
     courseId: string;
   };
 
   export type removeTeacherSeminarData = {
+    loggedInUser: LoggedInUser
     id: number;
     seminarId: string;
   };
@@ -59,4 +62,11 @@
   export type LoginData = {
     email: string;
     password: string;
+  };
+
+  export type UpdateData = {
+    id: number,
+    student: boolean,
+    administrator: boolean,
+    teacher: boolean,
   };

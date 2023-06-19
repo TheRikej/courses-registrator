@@ -2,7 +2,8 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { UpdateData } from './types/data';
 import type { CourseUpdateResult } from './types/result';
-import { DeletedRecordError, NonexistentRecordError } from '../errors';
+import { AuthorizationFailedError, DeletedRecordError, NonexistentRecordError } from '../errors';
+import { request } from 'express';
 
 
 const updateCourse = async (data: UpdateData): CourseUpdateResult => {
@@ -19,6 +20,9 @@ const updateCourse = async (data: UpdateData): CourseUpdateResult => {
         }
         if (course.deletedAt !== null) {
           throw new DeletedRecordError('The course has been deleted!');
+        }
+        if (course.guarantorId !== data.loggedInUser.id && !data.loggedInUser.admin) {
+            throw new AuthorizationFailedError("You don't have rights to update this course")
         }
         const update = await transaction.course.update({
           where: {

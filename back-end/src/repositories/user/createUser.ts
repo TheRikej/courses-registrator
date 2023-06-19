@@ -11,7 +11,7 @@ import type { UserCreateResult } from './types/result';
  * @returns 
  */
 const createUser = async (data: UserCreateData): UserCreateResult => {
-  const password = await hash(data.hashedPassword);
+  const password = await hash(data.password);
   try {
     return Result.ok(
       await prisma.user.create({
@@ -19,9 +19,9 @@ const createUser = async (data: UserCreateData): UserCreateResult => {
           userName: data.userName,
           email: data.email,
           hashedPassword: password,
-          teacher: data.teacher,
-          student: data.student,
-          administrator: data.admin,
+          teacher: false,
+          student: true,
+          administrator: false,
         },
       }),
     );
