@@ -36,7 +36,7 @@ const Course = () => {
                 <p><b>Faculty</b>: {course.data.faculty.name}</p>
                 <p><b>Description</b>: {course.data.description}</p>
                 <p><b>Guarantor</b>: {course.data.guarantor.userName}</p>
-                <p><b>Credits</b>: {}</p>
+                <p><b>Credits</b>: {course.data.credits}</p>
                 <p className="mt-2"><b>Listed in semesters</b>:</p>
                 <ul className="border-solid border-2 overflow-y-scroll max-h-44 lg:max-h-36">
                     {course.data.semesters.map(semester =>
