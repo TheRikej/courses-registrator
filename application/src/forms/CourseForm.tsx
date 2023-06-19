@@ -66,7 +66,6 @@ const CourseForm = (props: {isEdit: boolean}) => {
 
   const onSubmit = () => {
     const values = getValues();
-    console.log(values);
     if (!props.isEdit) {
       createCourse({
         courseInfo: {

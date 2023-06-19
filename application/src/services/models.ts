@@ -36,3 +36,38 @@ export interface CourseModel {
     name: string,
     facultyId: string,
 }
+
+export interface CourseSemesterModel {
+    course: {
+        code: string,
+        name: string,
+        description: string,
+        guarantor: number,
+        credits: number,
+        faculty: string,
+      },
+      id: string,
+      semesterSeason: string,
+      semesterYear: number,
+      capacity: number,
+      maxCapacity: number,
+      registrationEnd: Date,
+      registrationStart: Date,
+      room: string | null,
+      teachers: string[],
+}
+
+export interface AddSemesterCourseData {
+    semesterId: string,
+    registrationStart: Date,
+    registrationEnd: Date,
+    capacity: number,
+    room: string | undefined,
+    timeslot: {
+        day: string,
+        startHour: number;
+        startMinute: number;
+        endHour: number;
+        endMinute: number;
+    } | undefined,
+}

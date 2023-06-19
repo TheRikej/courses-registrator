@@ -1,6 +1,6 @@
 import prisma from './src/repositories/client';
-import deleteFaculty from './src/repositories/faculty/deleteFaculty';
-import readAllSemester from './src/repositories/semester/readAllSemester';
+import addCourseSemester from './src/repositories/course/addCourseSemester';
+import addCourseUser from './src/repositories/user/courseUser/addCourseUser';
 
 // Here you can try prisma functions.
 
@@ -217,9 +217,22 @@ async function main() {
     password: '10745cd9b0f85388c7dcf40453a398085563eff44c95e445c620dfdbdc5b87e6',
   });*/
   //console.log(user1)
-  const users = await readAllSemester({});
+  //const users = await readAllSemester({});
   //const faculty = await deleteFaculty({id: "bbb"});
   //console.log(faculty)
+  /*const courseSemester = await addCourseSemester({
+    semesterId: "12dc17ee-4ad4-42ce-a4bf-ffd3bc7ff3dc",
+    id: "AD8",
+    registrationEnd: new Date("2025-01-16"),
+    registrationStart: new Date("2019-01-16"),
+    capacity: 277,
+  });
+  console.log(courseSemester);*/
+  const courseStudent = await addCourseUser({
+    id: 1,
+    enrollCourseId: "2594ce89-f0dd-42c1-b761-cd9330fbc847",
+  })
+  console.log(courseStudent);
 }
 
 main()

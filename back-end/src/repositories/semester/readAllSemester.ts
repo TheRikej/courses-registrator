@@ -18,12 +18,8 @@ const readAllSemester = async (data: ReadAllSemesterData): SemesterReadAllResult
             ...(data?.year !== undefined ? { year: data.year} : {}),
         },
         orderBy: [
-          {
-            year: "desc",
-          },
-          {
-            season: "desc"
-          }
+            {year: "desc",},
+            {season: "desc",},
         ],
       });
       return Result.ok(semester);
