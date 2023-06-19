@@ -1,30 +1,30 @@
 import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { UpdateData } from './types/data';
-import type { CourseUpdateResult } from './types/result';
+import type { SeminarUpdateResult } from './types/result';
 import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../errors';
 
 
-const updateSeminar = async (data: UpdateData): CourseUpdateResult => {
+const updateSeminar = async (data: UpdateData): SeminarUpdateResult => {
   try {
     return Result.ok(
       await prisma.$transaction(async (transaction) => {
-        const course = await transaction.seminarGroup.findUnique({
+        const seminar = await transaction.seminarGroup.findUnique({
           where: {
             id: data.id,
           },
         });
-        if (course === null) {
+        if (seminar === null) {
           throw new NonexistentRecordError('No seminar group found');
         }
-        if (course.deletedAt !== null) {
+        if (seminar.deletedAt !== null) {
           throw new DeletedRecordError('The seminar group has been deleted!');
         }
         const seminarGroup = await transaction.seminarGroup.findFirst({
             where: {
                 ...(data.groupNumber !== undefined ? { groupNumber: data.groupNumber } : { groupNumber: -1 }),
               deletedAt: null,
-              courseSemesterId: course.courseSemesterId,
+              courseSemesterId: seminar.courseSemesterId,
             },
           });
           if (seminarGroup !== null && seminarGroup.id !== data.id) {

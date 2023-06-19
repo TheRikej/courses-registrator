@@ -1,7 +1,7 @@
 import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { CreateSeminar } from './types/data';
-import type { CourseCreateResult } from './types/result';
+import type { SeminarCreateResult } from './types/result';
 import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../errors';
 
 /**
@@ -12,7 +12,7 @@ import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from
  * @returns 
  */ 
 
-const createSeminarGroup = async (data: CreateSeminar): CourseCreateResult => {
+const createSeminarGroup = async (data: CreateSeminar): SeminarCreateResult => {
   try {
     return Result.ok(
       await prisma.$transaction(async (transaction) => {
