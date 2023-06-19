@@ -68,7 +68,7 @@ database:
   before_script:
     - *backend-before-script
   script:
-    - docker compose up -d  # Spustí PostgreSQL server pomocí Docker Compose
+    - docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=password -e POSTGRES_USER=courses_registrator -e POSTGRES_DB=courses_registrator -d postgres:latest
   tags:
     - shared-fi
 
