@@ -5,7 +5,7 @@ import formatTime from "../utils/timeslot";
 import SeminarGroupItem from "../components/SeminarGroupItem";
 import formatSemester from "../utils/semester";
 import { useQuery } from '@tanstack/react-query';
-import { CourseSemesterRequests } from '../services';
+import { CourseSemesterRequests, SeminarRequests } from '../services';
 
 
 const CourseSemester = () => {
@@ -19,127 +19,18 @@ const CourseSemester = () => {
         queryKey: ['courseSemester2'],
         queryFn: () => CourseSemesterRequests.getCourseSemester(state.id),
     });
-    const groups = [
-        {
-            groupNumber: 2,
-            capacity: 12,
-            maxCapacity: 15,
-            registrationEnd: "Wed Jun 14 2023 00:00",
-            registrationStart: "Fri Jun 25 2023 00:00",
-            timeslot: {
-                day: "MONDAY",
-                startHour: 13,
-                startMinute: 0,
-                endHour: 14,
-                endMinute: 50,
-            },
-            room: "B116",
-            teachers: ["Random Teacher"],
-        },
-        {
-            groupNumber: 4,
-            capacity: 14,
-            maxCapacity: 15,
-            registrationEnd: "Wed Jun 14 2023 00:00",
-            registrationStart: "Fri Jun 25 2023 00:00",
-            timeslot: {
-                day: "TUESDAY",
-                startHour: 13,
-                startMinute: 0,
-                endHour: 14,
-                endMinute: 50,
-            },
-            room: "B130",
-            teachers: ["Petr Švenda"],
-        },
-        {
-            groupNumber: 6,
-            capacity: 14,
-            maxCapacity: 15,
-            registrationEnd: "Wed Jun 14 2023 00:00",
-            registrationStart: "Fri Jun 25 2023 00:00",
-            timeslot: {
-                day: "WEDNESDAY",
-                startHour: 13,
-                startMinute: 0,
-                endHour: 14,
-                endMinute: 50,
-            },
-            room: "B130",
-            teachers: ["Lukáš Ručka"],
-        },
-        {
-            groupNumber: 11,
-            capacity: 14,
-            maxCapacity: 15,
-            registrationEnd: "Wed Jun 14 2023 00:00",
-            registrationStart: "Fri Jun 25 2023 00:00",
-            timeslot: {
-                day: "WEDNESDAY",
-                startHour: 16,
-                startMinute: 0,
-                endHour: 17,
-                endMinute: 50,
-            },
-            room: "B130",
-            teachers: ["Lukáš Ručka"],
-        },
-        {
-            groupNumber: 5,
-            capacity: 1,
-            maxCapacity: 15,
-            registrationEnd: "Wed Jun 14 2023 00:00",
-            registrationStart: "Fri Jun 25 2023 00:00",
-            timeslot: {
-                day: "THURSDAY",
-                startHour: 13,
-                startMinute: 0,
-                endHour: 14,
-                endMinute: 50,
-            },
-            room: "B116",
-            teachers: ["Roman Lacko"],
-        },
-        {
-            groupNumber: 8,
-            capacity: 9,
-            maxCapacity: 15,
-            registrationEnd: "Wed Jun 14 2023 00:00",
-            registrationStart: "Fri Jun 25 2023 00:00",
-            timeslot: {
-                day: "FRIDAY",
-                startHour: 13,
-                startMinute: 0,
-                endHour: 14,
-                endMinute: 50,
-            },
-            room: "B117",
-            teachers: ["Luděk Bártek"],
-        },
-        {
-            groupNumber: 8,
-            capacity: 9,
-            maxCapacity: 15,
-            registrationEnd: "Wed Jun 14 2023 00:00",
-            registrationStart: "Fri Jun 25 2023 00:00",
-            timeslot: {
-                day: "FRIDAY",
-                startHour: 15,
-                startMinute: 0,
-                endHour: 16,
-                endMinute: 50,
-            },
-            room: "B116",
-            teachers: ["Luděk Bártek"],
-        },
-    ];
+
+    const { data: groups } = useQuery({
+        queryKey: ['seminarGroups'],
+        queryFn: () => SeminarRequests.getSeminars(state.id),
+    });
 
     const enrol = () => {
         isEnrolled = !isEnrolled;
         //TODO: enrol student (API call)
     };
 
-    if(course?.data === undefined) {
+    if(course?.data === undefined || groups?.data === undefined) {
         return <></>
     }
 
@@ -166,7 +57,7 @@ const CourseSemester = () => {
                 <p className="mt-4 text-blue-950 text-xl"><b>Seminar groups</b></p>
                 <div className="rounded-lg border-solid border-2">
                     <ul className="overflow-y-scroll max-h-64 lg:max-h-60">
-                        {groups.map(group =>
+                        {groups.data.map((group) =>
                             <li
                                 className="my-1 mx-1 rounded-lg border-solid border-4 p-0.5"
                                 key={group.groupNumber}

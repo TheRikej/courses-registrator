@@ -8,7 +8,6 @@ const idSchema = z.object({
       .string({
         required_error: 'Id is required',
       }),
-    is_teacher: z.boolean()
     })
 
 const deleteCourseAPI = async (req: Request, res: Response) => {
@@ -25,6 +24,7 @@ const deleteCourseAPI = async (req: Request, res: Response) => {
       throw semester.error;
     } catch (e) {
         if (e instanceof z.ZodError) {
+          console.log(e.errors)
             return res.status(400).send({
                 status: 'error',
                 error: e.errors,

@@ -2,14 +2,22 @@ import { Button } from '@mui/material';
 import React  from 'react';
 import {Link, useParams} from 'react-router-dom';
 import Warning from "../components/Warning";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { CourseRequests } from '../services';
 
 export default function DeleteCourse() {
     const { code } = useParams();
 
-    const remove = () => {
-        //TODO: delete the course
-        // and then redirect to /
-    }
+    const queryClient = useQueryClient();
+
+    const { mutate: remove } = useMutation({
+        mutationFn: (info: {
+            id: string,
+        }) => CourseRequests.deleteCourse( info.id ),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['faculties']);
+        },
+    });
 
     return (
         <div className="flex flex-col mx-auto max-w-2xl">
@@ -17,7 +25,7 @@ export default function DeleteCourse() {
             <div className="flex flex-row items-center mx-auto">
                 <Button color="success" className="w-24 lg:w-40" type="submit"
                         variant="outlined" sx={{ margin: '1rem 1rem' }}
-                        onClick={remove}
+                        onClick={() => remove({id: code !== undefined ? code : ""})}
                 >
                     Yes
                 </Button>

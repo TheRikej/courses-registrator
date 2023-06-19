@@ -12,3 +12,11 @@ export const getCourseSemester = async (id: string): Promise<ResponseSingle<Cour
     const response = await axiosInstance.get(`/courseSemester/${id}`);
     return response.data;
 }
+
+export const addTeacherCourse = async (id: number, courseId: string): Promise<ResponseSingle<{id: string}>> => {
+    const response = await axiosInstance.put(`/courseSemester/${courseId}/teacher/${id}`, {
+        id,
+        enrollCourseId: courseId,
+    });
+    return response.data;
+}

@@ -4,7 +4,7 @@ import {TextField, Button, MenuItem, FormHelperText} from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Select from 'react-select';
-import {Link, useParams} from "react-router-dom";
+import {Link, useLocation, useParams} from "react-router-dom";
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { CourseModel } from '../services/models';
 import { FacultyRequests, UserRequests, CourseRequests } from '../services';
@@ -28,7 +28,6 @@ interface CourseForm {
   guarantor: number,
 }
 
-//TODO: default Values when editing ("defaultValue={...}")
 const CourseForm = (props: {isEdit: boolean}) => {
   const {
     register,
@@ -41,6 +40,8 @@ const CourseForm = (props: {isEdit: boolean}) => {
     resolver: zodResolver(schema),
   });
   const { code } = useParams();
+
+  const { state } = useLocation();
 
   const { data: faculties } = useQuery({
     queryKey: ['courseFaculties'],
@@ -55,13 +56,21 @@ const CourseForm = (props: {isEdit: boolean}) => {
 
   const users = usersQuery?.data.map(x => ({value: x.id, label: x.userName}));
 
+  const { mutate: updateCourse } = useMutation({
+    mutationFn: (info: {
+        courseInfo: CourseModel,
+    }) => CourseRequests.updateCourse(
+        info.courseInfo
+    ),
+});
+
   const { mutate: createCourse } = useMutation({
     mutationFn: (info: {
         courseInfo: CourseModel,
     }) => CourseRequests.createCourse(
         info.courseInfo
     ),
-});
+  });
 
 
   const onSubmit = () => {
@@ -77,8 +86,19 @@ const CourseForm = (props: {isEdit: boolean}) => {
           guarantorId: values.guarantor,
         }
       });
-      reset();
+    } else {
+      updateCourse({
+        courseInfo: {
+          id: values.code,
+          name: values.name,
+          description: values.description,
+          facultyId: values.faculty,
+          credits: values.credits,
+          guarantorId: values.guarantor,
+        }
+      });
     }
+    reset();
   };
 
   if(users === undefined) {
@@ -105,6 +125,7 @@ const CourseForm = (props: {isEdit: boolean}) => {
             {...register('code')}
             error={errors.code !== undefined}
             size="small"
+            defaultValue = {props.isEdit ? state.id : null}
             helperText={errors.code?.message}
         />
         <TextField
@@ -115,6 +136,7 @@ const CourseForm = (props: {isEdit: boolean}) => {
             {...register('name')}
             error={errors.name !== undefined}
             size="small"
+            defaultValue = {props.isEdit ? state.course.name : null}
             multiline
             helperText={errors.name?.message}
         />
@@ -128,6 +150,7 @@ const CourseForm = (props: {isEdit: boolean}) => {
             {...register('description')}
             error={errors.description !== undefined}
             size="small"
+            defaultValue = {props.isEdit ? state.course.description : null}
             helperText={errors.description?.message}
         />
 
@@ -165,7 +188,7 @@ const CourseForm = (props: {isEdit: boolean}) => {
             size="small"
             helperText={errors.credits?.message}
             type="number"
-            defaultValue={5}
+            defaultValue = {props.isEdit ? state.course.credits : 5}
             InputProps={{
               inputProps: {
                 min: 0,

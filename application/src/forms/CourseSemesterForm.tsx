@@ -11,6 +11,8 @@ import Select from "react-select";
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { CourseRequests, SemesterRequests, UserRequests } from '../services';
 import { AddSemesterCourseData } from '../services/models';
+import { CourseSemesterRequests } from '../services';
+import { useState } from 'react';
 
 const schema = z.object({
   semester: z.string().nonempty('Semester is required.'),
@@ -71,17 +73,31 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
   const users = usersQuery?.data.map(x => ({value: x.id, label: x.userName}));
 
   const { mutate: addSemCOurse } = useMutation({
-    mutationFn: (info: {
+    mutationFn: async (info: {
         id: string,
         courseInfo: AddSemesterCourseData,
-    }) => CourseRequests.addCourseSemester(
-        info.id, info.courseInfo
-    ),
+        teachers: [number] | null
+    }) => {
+      const course = CourseRequests.addCourseSemester(info.id, info.courseInfo)
+      console.log((await course).data.id)
+      const courseSemester = (await course).data.id
+      info.teachers?.forEach(teacher => {
+        addTeacher({id: teacher, courseId: courseSemester})
+      })
+      return course
+    }
+  });
+
+  const { mutate: addTeacher } = useMutation({
+    mutationFn: (info: {
+        id: number,
+        courseId: string,
+    }) => CourseSemesterRequests.addTeacherCourse(info.id, info.courseId)
   });
 
   const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     const values = getValues();
     console.log(values);
     const hoursFrom = values.timeHourFrom?.getHours();
@@ -90,7 +106,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
     const minutesTo = values.timeHourTo?.getMinutes();
     const hasTimeslot = hoursFrom === undefined || minutesFrom === undefined || hoursTo === undefined || minutesTo === undefined || values.timeDay === null
     if (!props.isEdit) {
-      addSemCOurse({
+      await addSemCOurse({
         id: code !== undefined ? code : "",
         courseInfo: {
           semesterId: values.semester,
@@ -105,7 +121,8 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
             endHour: hoursTo,
             endMinute: minutesTo,
           },
-        }
+        },
+        teachers: values.teachers,
       });
       reset();
     }

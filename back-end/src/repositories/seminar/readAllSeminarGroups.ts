@@ -29,7 +29,12 @@ const readAllSeminarGroups = async (
                     courseSemesterId: data.id
                 },
                 include: {
-                    teachers: true,
+                    timeSlot: true,
+                    teachers: {
+                      select: {
+                        userName: true
+                      }
+                    },
                     students: true,
                 }
             })

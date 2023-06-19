@@ -1,6 +1,9 @@
 import prisma from './src/repositories/client';
 import addCourseSemester from './src/repositories/course/addCourseSemester';
 import addCourseUser from './src/repositories/user/courseUser/addCourseUser';
+import createUser from './src/repositories/user/createUser';
+import createSeminarGroup from './src/repositories/seminar/createSeminarGroup';
+import { Day } from '@prisma/client';
 
 // Here you can try prisma functions.
 
@@ -228,11 +231,26 @@ async function main() {
     capacity: 277,
   });
   console.log(courseSemester);*/
-  const courseStudent = await addCourseUser({
+  /*const courseStudent = await addCourseUser({
     id: 1,
     enrollCourseId: "2594ce89-f0dd-42c1-b761-cd9330fbc847",
-  })
-  console.log(courseStudent);
+  })*/
+  const seminar = await createSeminarGroup({
+    id: "86adeee3-90e9-4d00-89f3-96038b41a5b8",
+    registrationEnd: new Date("2025-01-16"),
+    registrationStart: new Date("2019-01-16"),
+    capacity: 10,
+    room: "B154",
+    groupNumber: 5,
+    timeslot: {
+      day: Day.MONDAY,
+      endHour: 2,
+      endMinute: 15,
+      startHour: 6,
+      startMinute: 4,
+    }
+    });
+    console.log(seminar)
 }
 
 main()

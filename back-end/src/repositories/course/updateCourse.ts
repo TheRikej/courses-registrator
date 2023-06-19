@@ -25,6 +25,7 @@ const updateCourse = async (data: UpdateData): CourseUpdateResult => {
             id: data.id.toUpperCase(),
           },
           data: {
+            id: data.id.toUpperCase(),
             ...(data.credits !== undefined ? { credits: data.credits } : {}),
             ...(data.description !== undefined ? { description: data.description } : {}),
             ...(data.name !== undefined ? { name: data.name } : {}),

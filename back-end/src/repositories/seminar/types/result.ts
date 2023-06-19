@@ -1,5 +1,6 @@
 import type { SeminarGroup, User, GroupStudent, CourseSemester, TimeSlot } from '@prisma/client';
 import type { AsyncResult } from '../../types';
+import { type } from 'os';
 
 export type CourseCreateResult = AsyncResult<SeminarGroup & {
     courseSemester: CourseSemester;
@@ -12,11 +13,14 @@ export type CourseUpdateResult = AsyncResult<SeminarGroup & {
     students: GroupStudent[];
 }>;
 
-export type CourseReadAllResult = AsyncResult<(SeminarGroup & {
-    teachers: User[];
+export type ReadAllResult = SeminarGroup & {
+    timeSlot: TimeSlot;
+    teachers: {userName: string}[];
     students: GroupStudent[];
     currentCapacity: number;
-})[]>;
+}
+
+export type CourseReadAllResult = AsyncResult<(ReadAllResult)[]>;
 
 
 export type SeminarDeleteResult = AsyncResult<SeminarGroup & {

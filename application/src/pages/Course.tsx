@@ -47,7 +47,7 @@ const Course = () => {
                                 List
                             </Button>
                         </Link>
-                        <Link to={"/courses/" + code + "/edit"}>
+                        <Link to={"/courses/" + code + "/edit"} state={{id: code, course: course.data}}>
                             <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                 Edit
                             </Button>
