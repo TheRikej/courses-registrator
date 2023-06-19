@@ -11,7 +11,7 @@ cache:
     - application/node_modules/
 
 .backend-before-script: &backend-before-script
-  - apk update && apk add docker-compose
+  - apt update && apt install docker-compose
   - cd back-end/
   - npm install
 
