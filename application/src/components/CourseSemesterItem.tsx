@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 interface CourseSemesterProps {
     course: {
         code: string,
-        guarantor: number,
+        guarantor: string,
         faculty: string,
         description: string,
         name: string,
