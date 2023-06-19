@@ -36,7 +36,6 @@ export const addCourseSemester = async ( id: string, data: AddSemesterCourseData
 }
 
 export const deleteCourse = async (id: string): Promise<ResponseSingle<CourseModel>> => {
-    console.log(id);
     const response = await axiosInstance.delete(`/course/${id}`);
     return response.data;
 }

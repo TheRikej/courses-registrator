@@ -88,7 +88,7 @@ const CourseSemester = () => {
                                 Edit
                             </Button>
                         </Link>
-                        <Link to={"/courses/" + code + "/" + semester + "/delete"}>
+                        <Link to={"/courses/" + code + "/" + semester + "/delete"} state={{id: course.data.id}} >
                             <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                 Delete
                             </Button>
