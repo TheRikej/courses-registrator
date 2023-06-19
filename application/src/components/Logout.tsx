@@ -1,7 +1,14 @@
 import React  from 'react';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
+import {Navigate} from "react-router-dom";
 
-// Image source:
 export default function Logout() {
+    const loggedUser = useRecoilValue(loggedUserAtom);
+    if (loggedUser === null) {
+        return <Navigate to="/login"/>;
+    }
+
     //TODO: logout user
 
     return (

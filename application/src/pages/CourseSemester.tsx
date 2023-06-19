@@ -1,14 +1,21 @@
 import * as React from 'react';
 import {Button} from "@mui/material";
-import {Link, useLocation, useParams} from "react-router-dom";
+import {Link, Navigate, useLocation, useParams} from "react-router-dom";
 import formatTime from "../utils/timeslot";
 import SeminarGroupItem from "../components/SeminarGroupItem";
 import formatSemester from "../utils/semester";
 import { useQuery } from '@tanstack/react-query';
 import { CourseSemesterRequests, SeminarRequests } from '../services';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
 
 
 const CourseSemester = () => {
+    const loggedUser = useRecoilValue(loggedUserAtom);
+    if (loggedUser === null) {
+        return <Navigate to="/login"/>;
+    }
+
     const { code, semester } = useParams();
 
     let isEnrolled = false;
@@ -68,6 +75,7 @@ const CourseSemester = () => {
                     </ul>
                 </div>
 
+<<<<<<< HEAD
                 <div className="mx-auto students-only mt-2">
                     <Button color={isEnrolled ? "error" : "success"} className="w-52"
                             type="submit" variant="outlined" sx={{ margin: '1rem' }}
@@ -93,8 +101,39 @@ const CourseSemester = () => {
                                 Delete
                             </Button>
                         </Link>
+=======
+                {(loggedUser.student) ?
+                    <div className="mx-auto students-only hidden mt-2">
+                        <Button color={isEnrolled ? "error" : "success"} className="w-52"
+                                type="submit" variant="outlined" sx={{ margin: '1rem' }}
+                                onClick={enrol}
+                        >
+                            {!isEnrolled ? "Enrol" : "Leave course"}
+                        </Button>
+>>>>>>> 30707bf656ecbeb18e5718c9295ea785451a9f3e
                     </div>
-                </div>
+                : <></>}
+                {(loggedUser.admin || loggedUser.teacher) ?
+                    <div className="teachers-only mt-2">
+                        <div className="flex flex-col lg:flex-row items-center justify-center block mx-auto">
+                            <Link to={"/courses/" + code + "/" + semester + "/seminars/create"}>
+                                <Button color="info" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
+                                    Create seminar group
+                                </Button>
+                            </Link>
+                            <Link to={"/courses/" + code + "/" + semester + "/edit"}>
+                                <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
+                                    Edit
+                                </Button>
+                            </Link>
+                            <Link to={"/courses/" + code + "/" + semester + "/delete"} state={{id: course.data.id}} >
+                                <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
+                                    Delete
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
+                : <></>}
             </div>
             <div className="block mx-auto">
                 <Link to={"/"}>

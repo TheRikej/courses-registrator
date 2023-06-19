@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Button, Checkbox, FormControlLabel, FormGroup, MenuItem, TextField} from "@mui/material";
-import {Link} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import formatSemester from "../utils/semester";
 import {useState} from "react";
 import {Clear} from "@mui/icons-material";
@@ -9,8 +9,15 @@ import CourseItem from "../components/CourseItem";
 import CourseSemesterItem from "../components/CourseSemesterItem";
 import { useQuery } from '@tanstack/react-query';
 import { FacultyRequests, CourseSemesterRequests, CourseRequests, SemesterRequests } from '../services';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
 
 const Courses = () => {
+    const loggedUser = useRecoilValue(loggedUserAtom);
+    if (loggedUser === null) {
+        return <Navigate to="/login"/>;
+    }
+
     const [enrolledOnly, setEnrolledOnly] = useState<boolean>(false);
     const [teachingOnly, setTeachingOnly] = useState<boolean>(false);
 
@@ -157,15 +164,17 @@ const Courses = () => {
                 </ul>
             </div>
 
-            <div className="teachers-only mt-2">
-                <div className="flex flex-col lg:flex-row items-center justify-center block mx-auto">
-                    <Link to="/courses/create">
-                        <Button color="info" className="w-60" type="button" variant="outlined" sx={{ margin: '1rem' }}>
-                            Create new course
-                        </Button>
-                    </Link>
+            {(loggedUser.admin || loggedUser.teacher) ??
+                <div className="mt-2">
+                    <div className="flex flex-col lg:flex-row items-center justify-center block mx-auto">
+                        <Link to="/courses/create">
+                            <Button color="info" className="w-60" type="button" variant="outlined" sx={{ margin: '1rem' }}>
+                                Create new course
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
-            </div>
+            }
         </div>
     );
 };
