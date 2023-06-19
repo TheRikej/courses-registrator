@@ -39,3 +39,7 @@ export type CreateSeminar = {
   export type ReadAllSeminar = {
     id: string
   }
+
+  export type ReadSpecificSeminar = {
+    id: string
+  }

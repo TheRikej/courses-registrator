@@ -1,7 +1,7 @@
 import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { ReadAllSeminar } from './types/data';
-import type { CourseReadAllResult } from './types/result';
+import type { SeminarReadAllResult } from './types/result';
 import { NonexistentRecordError } from '../errors';
 
 /**
@@ -12,7 +12,7 @@ import { NonexistentRecordError } from '../errors';
  */
 const readAllSeminarGroups = async (
     data: ReadAllSeminar,
-  ): CourseReadAllResult => {
+  ): SeminarReadAllResult => {
     try {
       return Result.ok(
         await prisma.$transaction(async (transaction) => {
