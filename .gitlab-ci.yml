@@ -63,6 +63,10 @@ frontend-build:
 
 database:
   stage: test
+  needs:
+    - backend-build
+  before_script:
+    - *backend-before-script
   script:
     - docker-compose up -d  # Spustí PostgreSQL server pomocí Docker Compose
   tags:
