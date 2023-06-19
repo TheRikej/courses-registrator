@@ -1,7 +1,7 @@
 import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { CourseCreateData } from './types/data';
-import type { CourseResult } from './types/result';
+import type { CreateResult } from './types/result';
 
 /**
  * Creates new course.
@@ -9,8 +9,7 @@ import type { CourseResult } from './types/result';
  * @param data 
  * @returns 
  */
-// TODO: check faculty/guarantor exists
-const createCourse = async (data: CourseCreateData): CourseResult => {
+const createCourse = async (data: CourseCreateData): CreateResult => {
   try {
     const code = data.id.toUpperCase();
     return Result.ok(

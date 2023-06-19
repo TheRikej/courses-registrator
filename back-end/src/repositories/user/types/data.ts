@@ -66,3 +66,10 @@ import { LoggedInUser } from "../../types";
     email: string;
     password: string;
   };
+
+  export type UpdateData = {
+    id: number,
+    student: boolean,
+    administrator: boolean,
+    teacher: boolean,
+  };

@@ -2,40 +2,48 @@ import type { User, Course, Semester, CourseSemester, Faculty } from '@prisma/cl
 
 const usersData: User[] = [
     {
-        "id": "14c458ce-57be-433c-98b0-9888d14f41af",
+        "id": 1,
         "userName": "john",
         "email": "j.hill@scada.org",
         "createdAt": new Date('2023-03-17T13:00:06.000Z'),
         "hashedPassword": "9f45cd50672132537264050cd666e6ae5dcc00de78361c2ecdbb6d1847cfe63e",
-        "salt": "JOA0c7xtMB7pV4oPCjnG1djDo7wbhn16zsreKt7wKnOd4o9mXSDg7q2hnX7858ONB2JPg6Y4WR4ambujo175Af6UCKVR3495AE92r47BL5q5nKl6DM802dwI5w85b4JJ",
-        "deletedAt": null
+        "deletedAt": null,
+        "teacher": true,
+        "student": true,
+        "administrator": true,
     },
     {
-        "id": "e33e2798-649f-4e33-905c-cb72e3d52b4c",
+        "id": 2,
         "userName": "john",
-        "email": "j.hill@scada.org",
+        "email": "j.hill@scada2.org",
         "createdAt": new Date('2023-03-17T13:00:06.000Z'),
         "hashedPassword": "9f45cd50672132537264050cd666e6ae5dcc00de78361c2ecdbb6d1847cfe63e",
-        "salt": "JOA0c7xtMB7pV4oPCjnG1djDo7wbhn16zsreKt7wKnOd4o9mXSDg7q2hnX7858ONB2JPg6Y4WR4ambujo175Af6UCKVR3495AE92r47BL5q5nKl6DM802dwI5w85b4JJ",
-        "deletedAt": null
+        "deletedAt": null,
+        "teacher": true,
+        "student": true,
+        "administrator": true,
     },
     {
-        "id": "464c8d3a-8c3c-43d3-8a67-09554c81dfa6",
+        "id": 3,
         "userName": "john",
-        "email": "j.hill@scada.org",
+        "email": "j.hill@scada3.org",
         "createdAt": new Date('2023-03-17T13:00:06.000Z'),
         "hashedPassword": "9f45cd50672132537264050cd666e6ae5dcc00de78361c2ecdbb6d1847cfe63e",
-        "salt": "JOA0c7xtMB7pV4oPCjnG1djDo7wbhn16zsreKt7wKnOd4o9mXSDg7q2hnX7858ONB2JPg6Y4WR4ambujo175Af6UCKVR3495AE92r47BL5q5nKl6DM802dwI5w85b4JJ",
-        "deletedAt": null
+        "deletedAt": null,
+        "teacher": true,
+        "student": true,
+        "administrator": true,
     },
     {
-        "id": "ee905e1d-3ab1-448d-99cb-f6f4be0d45d1",
+        "id": 4,
         "userName": "john",
-        "email": "j.hill@scada.org",
+        "email": "j.hill@scada4.org",
         "createdAt": new Date('2023-03-17T13:00:06.000Z'),
         "hashedPassword": "9f45cd50672132537264050cd666e6ae5dcc00de78361c2ecdbb6d1847cfe63e",
-        "salt": "JOA0c7xtMB7pV4oPCjnG1djDo7wbhn16zsreKt7wKnOd4o9mXSDg7q2hnX7858ONB2JPg6Y4WR4ambujo175Af6UCKVR3495AE92r47BL5q5nKl6DM802dwI5w85b4JJ",
-        "deletedAt": null
+        "deletedAt": new Date('2023-03-17T13:00:06.000Z'),
+        "teacher": true,
+        "student": true,
+        "administrator": true,
     }
 ]
 
@@ -59,25 +67,31 @@ const facultyData: Faculty[] = [
 
 const coursesData: Course[] = [
     {
-        "id": "92d2defd-49e9-401e-ae14-6e10c986d3d1",
+        "id": "PB11",
         "description": "Moderni Znackovaci Jazyky",
         "name": "PB138",
         "deletedAt": null,
-        "facultyId": "aaa"
+        "facultyId": "aaa",
+        "credits": 5,
+        "guarantorId": 1,
     },
     {
         "id": "a8b45ee3-f110-4265-a527-6fba4447d2c8",
         "description": "Algoritmy",
         "name": "IB001",
         "deletedAt": null,
-        "facultyId": "bbb"
+        "facultyId": "bbb",
+        "credits": 5,
+        "guarantorId": 1,
     },
     {
         "id": "49c1af40-35d9-48a4-9695-d7f164071f30",
         "description": "Matematika 1",
         "name": "MB144",
         "deletedAt": null,
-        "facultyId": "ccc"
+        "facultyId": "ccc",
+        "credits": 5,
+        "guarantorId": 1,
     }
 ]
 
@@ -114,9 +128,22 @@ const courseSemesterData: CourseSemester[] = [
         "registrationStart": new Date('2023-03-17T13:00:06.000Z'),
         "registrationEnd": new Date('2023-03-17T13:00:06.000Z'),
         "capacity": 200,
-        "courseId": "92d2defd-49e9-401e-ae14-6e10c986d3d1",
+        "courseId": "PB11",
         "semesterId": "42e0cd59-ae5b-46af-9fdb-aa0f642e1dc1",
-        "deletedAt": null
+        "deletedAt": null,
+        "room": "a",
+        "timeSlotId": null,
+    },
+    {
+        "id": "86bdeee3-90e9-4d00-89f3-96038b41a5b8",
+        "registrationStart": new Date('2023-03-17T13:00:06.000Z'),
+        "registrationEnd": new Date('2023-03-17T13:00:06.000Z'),
+        "capacity": 200,
+        "courseId": "PB11",
+        "semesterId": "99e68201-76a5-4b02-9379-4277deda8a70",
+        "deletedAt": new Date('2023-03-17T13:00:06.000Z'),
+        "room": "a",
+        "timeSlotId": null,
     }
 ]
 

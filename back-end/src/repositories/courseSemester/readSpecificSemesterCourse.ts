@@ -25,13 +25,28 @@ const readSpecificSemesterCourse = async (
           },
           teachers: {
             where: {
-                deletedAt: null,
+                deletedAt: null
             },
+            select: {
+              userName: true
+            }
           },
           students: {
             where: {
-                deletedAt: null,
-            },
+                deletedAt: null
+            }
+          },
+          timeSlot: true,
+          semester: true,
+          course: {
+            include: {
+              faculty: true,
+              guarantor: {
+                select: {
+                  userName: true,
+                }
+              },
+            }
           },
         },
       });

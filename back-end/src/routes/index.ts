@@ -15,9 +15,10 @@ return res.status(200).send({
 router.get("/", home);
 
 router.get("/user", auth({admin: true}), API.user.readUserAll)
-router.post("/user", auth({admin: true}), auth({}), API.user.createUser)
+router.post("/user", API.user.createUser)
 router.get("/user/:id", auth({}), API.user.readUserSpecific)
 router.delete("/user/:id", auth({admin: true}), API.user.deleteUser)
+router.put("/user/:id", auth({admin: true}), API.user.updateUserStatus)
 
 router.post("/course", auth({teacher: true}), API.course.createCourse)
 router.get("/course", API.course.readCourseAll)
@@ -36,11 +37,13 @@ router.post("/faculty", auth({admin: true}), API.faculty.createFaculty)
 router.get("/faculty", API.faculty.readFacultyAll)
 router.get("/faculty/:id", API.faculty.readFacultySpecific)
 router.delete("/faculty/:id", auth({admin: true}), API.faculty.deleteFaculty)
+router.put("/faculty/:id", auth({admin: true}), API.faculty.updateFacultyAPI)
 
 router.post("/semester", auth({admin: true}), API.semester.createSemester)
 router.get("/semester", API.semester.readSemesterAll)
 router.get("/semester/:id", API.semester.readSemesterSpecific)
 router.delete("/semester/:id", auth({admin: true}), API.semester.deleteSemester)
+router.put("/semester/:id", auth({admin: true}), API.semester.updateSemesterAPI)
 
 router.post("/courseSemester/:id/seminar", auth({teacher: true}), API.seminar.createSeminar)
 router.get("/courseSemester/:id/seminar/teacher", auth({teacher: true}), API.seminar.readAllSeminar.readSeminarAllAPI)

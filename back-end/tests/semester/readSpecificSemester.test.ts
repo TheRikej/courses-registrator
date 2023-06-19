@@ -1,5 +1,5 @@
-import readSpecificSemester from '../../src/repositories/semester/readSpecificSemester';
 import prisma from '../../src/repositories/client';
+import createSemester from '../../src/repositories/semester/createSemester';
 
 describe('semester.readSpecificSemester test suite', () => {
   beforeEach(async () => {
@@ -8,18 +8,18 @@ describe('semester.readSpecificSemester test suite', () => {
 
   test('[Success]: Create semester.', async () => {
     const expected = {
-        year: 2025,
+        year: 2027,
         season: "SPRING",
-        semesterStart: new Date(2025, 2, 15),
-        semesterEnd: new Date(2025, 5, 22),
+        semesterStart: new Date(2027, 2, 15),
+        semesterEnd: new Date(2027, 5, 22),
         deletedAt: null,
     }
     
     const actual = await createSemester({
-        year: 2025,
+        year: 2027,
         season: "SPRING",
-        semesterStart: new Date(2025, 2, 15),
-        semesterEnd: new Date(2025, 5, 22),
+        semesterStart: new Date(2027, 2, 15),
+        semesterEnd: new Date(2027, 5, 22),
     });
 
     if (actual.isErr) {

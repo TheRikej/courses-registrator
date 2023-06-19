@@ -16,6 +16,7 @@ import removeSeminarStudent from "./seminarStudent/removeSeminarStudentAPI"
 
 import addSeminarTeacher from "./seminarTeacher/addSeminarTeacherAPI"
 import removeSeminarTeacher from "./seminarTeacher/removeSeminarTeacherAPI"
+import updateUserStatus from "./updateUser"
 
 
 export default {
@@ -32,4 +33,5 @@ export default {
     removeSeminarStudent,
     addSeminarTeacher,
     removeSeminarTeacher,
+    updateUserStatus,
 }

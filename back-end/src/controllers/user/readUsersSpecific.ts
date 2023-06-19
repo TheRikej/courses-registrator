@@ -14,7 +14,8 @@ const idSchema = z.object({
 const readUserSpecificAPI = async (req: Request, res: Response) => {
     try {
       const data = await idSchema.parseAsync(req.params)
-      const user = await readSpecificUser(data);
+      const id: number = +data.id
+      const user = await readSpecificUser({id});
       if (user.isOk) {
         return res.status(200).send({
           status: 'success',

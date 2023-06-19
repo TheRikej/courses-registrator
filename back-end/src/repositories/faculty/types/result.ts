@@ -10,3 +10,5 @@ export type FacultyReadResult = AsyncResult<Faculty & {
 export type FacultyReadAllResult = AsyncResult<Required<Faculty[]>>;
 
 export type FacultyDeleteResult = AsyncResult<Faculty>;
+
+export type FacultyUpdateResult = AsyncResult<Faculty>;

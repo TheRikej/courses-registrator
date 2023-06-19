@@ -23,12 +23,16 @@ const readSpecificCourse = async (
             ...(data?.name !== undefined ? { name: data.name} : {}),
         },
         include: {
+          guarantor: {
+            select: {userName: true}
+          },
+          faculty: true,
           courseSemesters: {
             where: {
                 deletedAt: null,
             },
             include: {
-                semester: true
+                semester: true,
             }
           }
         },
@@ -36,7 +40,7 @@ const readSpecificCourse = async (
       if (course.deletedAt !== null) {
         throw new DeletedRecordError('The course has been deleted!');
       }
-      let res = {...course, semesters: course.courseSemesters.map(x => 
+      const res = {...course, semesters: course.courseSemesters.map(x => 
         x.semester.year + x.semester.season)}
       return Result.ok(res);
     } catch (e) {

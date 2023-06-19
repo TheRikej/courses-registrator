@@ -1,30 +1,6 @@
 import prisma from './src/repositories/client';
-import readAllCourse from "./src/repositories/course/readAllCourses";
-import readSpecificSemesterCourse from "./src/repositories/courseSemester/readSpecificSemesterCourse";
-import readSpecificCourse from "./src/repositories/course/readSpecificCourse";
-import addSeminarUser from './src/repositories/user/seminarUser/addSeminarUser';
-import removeSeminarUser from './src/repositories/user/seminarUser/removeSeminarUser';
-import createSeminarGroup from './src/repositories/seminar/createSeminarGroup';
-import addCourseUser from './src/repositories/user/courseUser/addCourseUser';
 import addCourseSemester from './src/repositories/course/addCourseSemester';
-import deleteSeminarGroup from './src/repositories/seminar/deleteSeminarGroup';
-import deleteCourse from './src/repositories/course/deleteCourse';
-import deleteFaculty from './src/repositories/faculty/deleteFaculty';
-import readAllSemesterCourses from './src/repositories/courseSemester/readAllSemesterCourses';
-import createCourse from './src/repositories/course/createCourse';
-import createFaculty from './src/repositories/faculty/createFaculty';
-import createUser from './src/repositories/user/createUser';
-import readSpecificFaculty from './src/repositories/faculty/readSpecificFaculty';
-import readSpecificUser from './src/repositories/user/readSpecificUser';
-import { SemesterSeason } from '@prisma/client';
-import createSemester from './src/repositories/semester/createSemester';
-import deleteSemester from './src/repositories/semester/deleteSemester';
-import { Day } from '@prisma/client'; 
-import updateCourse from './src/repositories/course/updateCourse';
-import updateCourseSemester from './src/repositories/courseSemester/updateSemesterCourse';
-import updateSeminar from './src/repositories/seminar/updateSeminarGroup';
-import deleteUser from './src/repositories/user/deleteUser';
-import login from './src/repositories/user/loginUser';
+import addCourseUser from './src/repositories/user/courseUser/addCourseUser';
 
 // Here you can try prisma functions.
 
@@ -228,20 +204,35 @@ async function main() {
     id: "62905279-56ac-4c3a-a22d-6da9e1ae508a",
   })
   console.log(usr)*/
-  const user1 = await createUser({
+  /*const user1 = await createUser({
     userName: 'thehomelander',
     email: 'homer@vught.cdom',
     teacher: true,
     student: true,
     admin: true,
     hashedPassword: '10745cd9b0f85388c7dcf40453a398085563eff44c95e445c620dfdbdc5b87e6',
-  });
-  const user2 = await login({
+  });*/
+  /*const user2 = await login({
     id: user1.isOk ? user1.value.id : "fail",
     password: '10745cd9b0f85388c7dcf40453a398085563eff44c95e445c620dfdbdc5b87e6',
+  });*/
+  //console.log(user1)
+  //const users = await readAllSemester({});
+  //const faculty = await deleteFaculty({id: "bbb"});
+  //console.log(faculty)
+  /*const courseSemester = await addCourseSemester({
+    semesterId: "12dc17ee-4ad4-42ce-a4bf-ffd3bc7ff3dc",
+    id: "AD8",
+    registrationEnd: new Date("2025-01-16"),
+    registrationStart: new Date("2019-01-16"),
+    capacity: 277,
   });
-  console.log(user1)
-  console.log(user2)
+  console.log(courseSemester);*/
+  const courseStudent = await addCourseUser({
+    id: 1,
+    enrollCourseId: "2594ce89-f0dd-42c1-b761-cd9330fbc847",
+  })
+  console.log(courseStudent);
 }
 
 main()
