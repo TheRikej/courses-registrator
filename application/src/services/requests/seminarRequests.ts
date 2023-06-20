@@ -1,7 +1,7 @@
 import { UserModel, CourseModel, AddSemesterCourseData, CourseModelUndefined, SeminarGroupModel } from "../models";
 import axiosInstance from "../base";
 import { ResponseMulti, ResponseSingle } from "../responses";
-import type { ReadResult } from "../../../../back-end/src/repositories/seminar/types/result"
+import type { ReadResult, SeminarReadSpecificResult } from "../../../../back-end/src/repositories/seminar/types/result"
 
 export const getSeminars = async (id: string): Promise<ResponseMulti<ReadResult>> => {
     const response = await axiosInstance.get(`/courseSemester/${id}/seminar`);
@@ -21,5 +21,15 @@ export const addTeacherSeminar = async (id: number, courseId: string): Promise<R
         id,
         enrollSeminarId: courseId,
     });
+    return response.data;
+}
+
+export const getSeminarStudent = async (id: string): Promise<ResponseSingle<ReadResult>> => {
+    const response = await axiosInstance.get(`/seminar/${id}`);
+    return response.data;
+}
+
+export const getSeminar = async (id: string): Promise<ResponseSingle<ReadResult>> => {
+    const response = await axiosInstance.get(`/seminar/${id}/teacher`);
     return response.data;
 }

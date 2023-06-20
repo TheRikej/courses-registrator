@@ -9,7 +9,7 @@ const updateSeminar = async (data: UpdateData): SeminarReadSpecificResult => {
   try {
       const seminar =  await prisma.seminarGroup.findFirst({
           where: {
-              courseSemesterId: data.id
+              id: data.id
             },
             include: {
                 timeSlot: true,
