@@ -69,6 +69,7 @@ router.post("/login", API.user.login)
 //router.get("/logout", API.user.login)
 
 router.post("/logout", async (req, res) => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     req.session.destroy(() => {});
     res.json({ message: 'Logged out' });
 })
