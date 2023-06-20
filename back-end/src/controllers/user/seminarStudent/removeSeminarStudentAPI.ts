@@ -4,8 +4,8 @@ import {z} from "zod";
 import { DeletedRecordError, NonexistentRecordError } from '../../../repositories/errors';
 
 const idSchema = z.object({
-    id: z
-      .string({
+    id: z.coerce
+      .number({
         required_error: 'Id is required',
       }),
     seminarId: z
@@ -16,12 +16,14 @@ const idSchema = z.object({
 
 const removeSeminarStudentAPI = async (req: Request, res: Response) => {
     try {
-      const data = await idSchema.parseAsync(req.params)
-      const user = await removeSeminarStudent({id: +data.id, seminarId: data.seminarId});
+      const data = await idSchema.parseAsync(req.params);
+      if (data.id !== req.session.user?.id && !req.session.user?.admin) {
+        return res.status(403).json({ message: "You don't have rights to make operations with this user" });
+      }
+      const user = await removeSeminarStudent(data);
       if (user.isOk) {
-        return res.status(200).send({
+        return res.status(204).send({
           status: 'success',
-          data: user.unwrap(),
         });
       }
   

@@ -1,4 +1,5 @@
 import type { Day } from '@prisma/client';
+import { LoggedInUser } from '../../types';
 
 export type CourseCreateData = {
     description: string,
@@ -10,6 +11,7 @@ export type CourseCreateData = {
   };
 
   export type AddCreateSemesterData = {
+    loggedInUser: LoggedInUser,
     id: string,
     semesterId: string,
     registrationEnd: Date,
@@ -35,10 +37,12 @@ export type CourseCreateData = {
   }
 
   export type DeleteData = {
+    loggedInUser: LoggedInUser,
     id: string;
   };
 
   export type UpdateData = {
+    loggedInUser: LoggedInUser,
     id: string,
     description?:      string,
     name?:             string,

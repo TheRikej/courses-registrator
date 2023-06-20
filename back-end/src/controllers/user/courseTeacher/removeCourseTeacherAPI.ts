@@ -1,10 +1,10 @@
 import type { Request, Response } from 'express';
 import removeCourseTeacher from '../../../repositories/user/courseTeacher/removeCourseTeacher';
 import {z} from "zod";
-import { DeletedRecordError, MissingRelationError, NonexistentRecordError } from '../../../repositories/errors';
+import { AuthorizationFailedError, DeletedRecordError, MissingRelationError, NonexistentRecordError } from '../../../repositories/errors';
 
 const idSchema = z.object({
-    id: z
+    id: z.coerce
       .number({
         required_error: 'Id is required',
       }),
@@ -17,20 +17,29 @@ const idSchema = z.object({
 const removeCourseTeacherAPI = async (req: Request, res: Response) => {
     try {
       const data = await idSchema.parseAsync(req.params)
-      const user = await removeCourseTeacher(data);
+      if (req.session?.user === undefined) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      const user = await removeCourseTeacher({...data, loggedInUser: req.session.user});
+      
       if (user.isOk) {
-        return res.status(200).send({
+        return res.status(204).send({
           status: 'success',
-          data: user.unwrap(),
         });
       }
   
       throw user.error;
     } catch (e) {
         if (e instanceof z.ZodError) {
-            return res.status(404).send({
+            return res.status(400).send({
                 status: 'error',
                 error: e.errors,
+            });
+        }
+        if (e instanceof AuthorizationFailedError) {
+            return res.status(403).send({
+                status: 'error',
+                error: e.message,
             });
         }
         if (e instanceof NonexistentRecordError) {
@@ -48,7 +57,7 @@ const removeCourseTeacherAPI = async (req: Request, res: Response) => {
         if (e instanceof MissingRelationError) {
             return res.status(204).send({
                 status: 'success',
-                error: e.message,
+                message: e.message,
             });
         }         
   

@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import deleteCourse from '../../repositories/course/deleteCourse';
 import {z} from "zod";
-import { DeletedRecordError, NonexistentRecordError } from '../../repositories/errors';
+import { AuthorizationFailedError, DeletedRecordError, NonexistentRecordError, } from '../../repositories/errors';
 
 const idSchema = z.object({
     id: z
@@ -13,7 +13,11 @@ const idSchema = z.object({
 const deleteCourseAPI = async (req: Request, res: Response) => {
     try {
       const data = await idSchema.parseAsync(req.params)
-      const semester = await deleteCourse(data);
+      if (req.session?.user === undefined) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      const semester = await deleteCourse({...data, loggedInUser: req.session.user});
+      
       if (semester.isOk) {
         return res.status(200).send({
           status: 'success',
@@ -28,6 +32,12 @@ const deleteCourseAPI = async (req: Request, res: Response) => {
             return res.status(400).send({
                 status: 'error',
                 error: e.errors,
+            });
+        }
+        if (e instanceof AuthorizationFailedError) {
+            return res.status(403).send({
+                status: 'error',
+                error: e.message,
             });
         }
         if (e instanceof NonexistentRecordError) {

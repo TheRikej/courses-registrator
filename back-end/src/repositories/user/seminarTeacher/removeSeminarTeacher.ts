@@ -2,7 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../../client';
 import type { removeTeacherSeminarData } from '../types/data';
 import type { UserRemoveTeacherResult } from '../types/result';
-import { DeletedRecordError, MissingRelationError, NonexistentRecordError } from '../../errors';
+import { AuthorizationFailedError, DeletedRecordError, MissingRelationError, NonexistentRecordError } from '../../errors';
 
 /**
  * Removes existing teacher from course that they teach.
@@ -33,6 +33,15 @@ const removeSeminarTeacher = async (data: removeTeacherSeminarData): UserRemoveT
             where: {
               id: data.seminarId,
             },
+            include: {
+                teachers: true,
+                courseSemester: {
+                    include: {
+                        teachers: true,
+                        course: true,
+                    }
+                },
+            },
           });
           if (seminar === null) {
             throw new NonexistentRecordError('No Seminar found');
@@ -40,6 +49,12 @@ const removeSeminarTeacher = async (data: removeTeacherSeminarData): UserRemoveT
           if (seminar.deletedAt !== null) {
             throw new DeletedRecordError('The Seminar has already been deleted!');
           }
+          if ( !data.loggedInUser.admin
+            && !seminar.teachers.map(x => x.id).includes(data.loggedInUser.id)
+            && seminar.courseSemester.course.guarantorId !== data.loggedInUser.id
+            && !seminar.courseSemester.teachers.map(x => x.id).includes(data.loggedInUser.id)) {
+           throw new AuthorizationFailedError("You don't have rights to delete this seminar")
+        }     
           const taughtGroupsIds = user.taughtGroups.map(x => x.id);
           if (taughtGroupsIds.indexOf(data.seminarId) === -1){
             throw new MissingRelationError('The user does not teach this seminar!');

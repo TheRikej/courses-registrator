@@ -2,7 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { AddCreateSemesterData } from './types/data';
 import type { AddCourseSemesterResult } from './types/result';
-import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../errors';
+import { AuthorizationFailedError, DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../errors';
 
 /**
  * Creates CourseSemester for semester and course
@@ -27,6 +27,9 @@ const addCourseSemester = async (data: AddCreateSemesterData): AddCourseSemester
         if (course?.deletedAt !== null) {
           throw new DeletedRecordError('The course has already been deleted!');
         }
+        if (course.guarantorId !== data.loggedInUser.id && !data.loggedInUser.admin) {
+            throw new AuthorizationFailedError("You don't have rights to assign this course to new semester")
+        }
         let timeslot = undefined;
         if (data.timeslot !== undefined){
           timeslot = await transaction.timeSlot.create({
@@ -42,10 +45,10 @@ const addCourseSemester = async (data: AddCreateSemesterData): AddCourseSemester
         });
         
         if (semseter === null) {
-          throw new Error('No semester found');
+          throw new NonexistentRecordError('No semester found');
         }
         if (semseter?.deletedAt !== null) {
-          throw new Error('The semester has already been deleted!');
+          throw new DeletedRecordError('The semester has already been deleted!');
         }
 
         const query = await transaction.courseSemester.findFirst({

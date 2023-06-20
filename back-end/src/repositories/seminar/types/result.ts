@@ -9,8 +9,6 @@ export type SeminarCreateResult = AsyncResult<SeminarGroup & {
 
 export type SeminarUpdateResult = AsyncResult<SeminarGroup & {
     timeSlot: TimeSlot;
-    teachers: User[];
-    students: GroupStudent[];
 }>;
 
 export type ReadResult = SeminarGroup & {

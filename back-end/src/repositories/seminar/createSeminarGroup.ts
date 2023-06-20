@@ -2,7 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { CreateSeminar } from './types/data';
 import type { SeminarCreateResult } from './types/result';
-import { DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../errors';
+import { AuthorizationFailedError, DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../errors';
 
 /**
  * 
@@ -16,11 +16,26 @@ const createSeminarGroup = async (data: CreateSeminar): SeminarCreateResult => {
   try {
     return Result.ok(
       await prisma.$transaction(async (transaction) => {
-        const course = await transaction.courseSemester.findUnique({
+        const courseSemester = await transaction.courseSemester.findUnique({
           where: {
             id: data.id,
           },
+          include: {
+            course: true,
+            teachers: true,
+          },
         });
+        if (courseSemester === null) {
+          throw new NonexistentRecordError('No course found');
+        }
+        if (courseSemester?.deletedAt !== null) {
+          throw new DeletedRecordError('The semster course has already been deleted!');
+        }
+        if ( !data.loggedInUser.admin
+             && courseSemester.course.guarantorId !== data.loggedInUser.id
+             && !courseSemester.teachers.map(x => x.id).includes(data.loggedInUser.id)) {
+            throw new AuthorizationFailedError("You don't have rights to create seminars for this course")
+        }
 
         const seminarGroup = await transaction.seminarGroup.findFirst({
           where: {
@@ -31,12 +46,6 @@ const createSeminarGroup = async (data: CreateSeminar): SeminarCreateResult => {
         });
         if (seminarGroup !== null) {
           throw new DuplicateRecordError('Seminar group with this number already exists!');
-        }
-        if (course === null) {
-          throw new NonexistentRecordError('No course found');
-        }
-        if (course?.deletedAt !== null) {
-          throw new DeletedRecordError('The semaster course has already been deleted!');
         }
         const timeslot = await transaction.timeSlot.create({
           data: {

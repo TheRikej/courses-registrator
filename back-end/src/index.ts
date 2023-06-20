@@ -1,20 +1,34 @@
 import express from 'express';
 import cors from 'cors';
-// import { config as configEnvVariables } from 'dotenv';
+import { config } from 'dotenv';
 import { env } from 'process';
 import type { ApiResponse } from './controllers/types';
 import router from './routes';
+import cookieParser from 'cookie-parser';
+import session from './middleware/sessionMiddleware';
 
-// configEnvVariables(); TODO check
+declare module 'express-session' {
+    interface SessionData { user: { 
+        id: number, 
+        admin: boolean, 
+        teacher: boolean, 
+        student: boolean 
+    }}
+}
+
+config();
 const app = express();
 const port = env.PORT ?? 4000;
 
 // middlware
 app.use(cors());
+app.use(cookieParser());
 app.use(express.json());
 
 // parse URL encoded strings
 app.use(express.urlencoded({ extended: true }));
+app.use(session());
+
 
 app.use(router);
 
