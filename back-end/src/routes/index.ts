@@ -67,4 +67,9 @@ router.delete("/seminar/:seminarId/student/:id", auth({student: true}), API.user
 
 router.post("/login", API.user.login)
 
+router.post("/logout", async (req, res) => {
+    req.session.destroy(() => {});
+    res.json({ message: 'Logged out' });
+})
+
 export default router;
