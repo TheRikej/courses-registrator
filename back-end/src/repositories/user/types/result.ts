@@ -13,7 +13,7 @@ export type UserDeleteResult = AsyncResult<User & {
 export type UserReadSpecificType = AsyncResult<User & {
     taughtCourses: CourseSemester[];
     taughtGroups: SeminarGroup[];
-    studiedCourses: CourseStudent[];
+    studiedCourses: (CourseStudent & {course: CourseSemester})[];
     studiedGroups: GroupStudent[];
     guarantedCourses: Course[];
 }>;

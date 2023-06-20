@@ -1,7 +1,7 @@
 import * as React from 'react';
 import SemesterItem from "../components/SemesterItem";
 import {Button} from "@mui/material";
-import {Link, Navigate, useParams} from "react-router-dom";
+import {Link, Navigate, useLocation, useParams} from "react-router-dom";
 import formatSemester from "../utils/semester";
 import formatTime from "../utils/timeslot";
 import NotAuthorized from "../components/NotAuthorized";
@@ -10,6 +10,8 @@ import {loggedUserAtom} from "../atoms/loggedUser";
 
 const SeminarGroup = () => {
     const { code, semester, group } = useParams();
+
+    const { state } = useLocation();
 
     const loggedUser = useRecoilValue(loggedUserAtom);
     if (loggedUser === null) {
@@ -90,7 +92,7 @@ const SeminarGroup = () => {
                 : <></>}
             </div>
             <div className="block mx-auto">
-                <Link to={"/courses/" + code + "/" + semester + "/show"}>
+                <Link to={"/courses/" + code + "/" + semester + "/show"} state={{id: state.id}}>
                     <Button type="button" variant="outlined" sx={{ margin: '1.5rem 2rem 1rem' }}>
                         Back to {code?.toUpperCase()}
                     </Button>

@@ -36,8 +36,16 @@ const readAllSemesterCourses = async (
                   faculty: true,
                 }
               },
-              teachers: true,
-              students: true,
+              teachers: {
+                where: {
+                  deletedAt: null
+                }
+              },
+              students: {
+                where: {
+                  deletedAt: null
+                }
+              },
             }
           });
           const coursesWithCapacity = course.map(x => ({

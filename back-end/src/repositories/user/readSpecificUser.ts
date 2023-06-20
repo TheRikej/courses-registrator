@@ -22,17 +22,20 @@ const readSpecific = async (
           guarantedCourses: {
             where: {
               deletedAt: null,
-            }
+            },
           },
           studiedCourses: {
             where: {
               deletedAt: null,
+            },
+            include: {
+              course: true,
             }
           },
           studiedGroups: {
             where: {
               deletedAt: null,
-            }
+            },
           },
           taughtCourses:{
             where: {

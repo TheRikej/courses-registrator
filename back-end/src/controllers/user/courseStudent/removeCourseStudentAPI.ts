@@ -4,7 +4,7 @@ import {z} from "zod";
 
 const idSchema = z.object({
     id: z
-      .number({
+      .string({
         required_error: 'Id is required',
       }),
     enrollCourseId: z
@@ -16,7 +16,7 @@ const idSchema = z.object({
 const removeCourseStudentAPI = async (req: Request, res: Response) => {
     try {
       const data = await idSchema.parseAsync(req.params)
-      const user = await removeCourseStudent(data);
+      const user = await removeCourseStudent({ id: +data.id, enrollCourseId: data.enrollCourseId });
       if (user.isOk) {
         return res.status(200).send({
           status: 'success',
@@ -27,6 +27,7 @@ const removeCourseStudentAPI = async (req: Request, res: Response) => {
       throw user.error;
     } catch (e) {
         if (e instanceof z.ZodError) {
+          console.log(e.message)
             return res.status(404).send({
                 status: 'error',
                 error: e.errors,

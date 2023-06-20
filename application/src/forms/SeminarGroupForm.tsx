@@ -13,6 +13,8 @@ import { SeminarRequests } from '../services';
 import { SeminarGroupModel } from '../services/models';
 
 const schema = z.object({
+  groupNumber: z.number().min(1, "Group number must be greater than 0.")
+      .max(1000, "Group number cannot be greater than 200."),
   capacity: z.number().min(1, "Capacity must be greater than 0.")
       .max(200, "Capacity cannot be greater than 200."),
   registrationFrom: z.date(),
@@ -36,6 +38,7 @@ const schema = z.object({
 });
 
 interface SeminarGroupForm {
+  groupNumber: number,
   registrationFrom: Date,
   registrationTo: Date,
   capacity: number,
@@ -65,6 +68,13 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
     queryFn: () => UserRequests.getUsers(),
   })
 
+  const { mutate: addTeacher } = useMutation({
+    mutationFn: (info: {
+        id: number,
+        courseId: string,
+    }) => SeminarRequests.addTeacherSeminar(info.id, info.courseId)
+  });
+
   const { state } = useLocation();
 
   const users = usersQuery?.data.map(x => ({value: x.id, label: x.userName}));
@@ -83,7 +93,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
       console.log((await seminar).data.id)
       const courseSemester = (await seminar).data.id
       info.teachers?.forEach(teacher => {
-        //addTeacher({id: teacher, courseId: courseSemester})
+        addTeacher({id: teacher, courseId: courseSemester})
       })
       return seminar
     },
@@ -103,6 +113,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
       await addSeminar({
         id: state.id,
         courseInfo: {
+          groupNumber: values.groupNumber,
           registrationStart: values.registrationFrom,
           registrationEnd: values.registrationTo,
           capacity: values.capacity,
@@ -138,6 +149,26 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
             "Create a seminar group for " + code?.toUpperCase() + " (" + semester?.toLowerCase() + ")"
             : "Edit seminar " + group + " (" + code?.toUpperCase() + ", " + semester?.toLowerCase() + ")"}
       </h1>
+
+      <TextField
+          id="groupNumber"
+          className="w-64"
+          label="Group number *"
+          variant="outlined"
+          sx={{ margin: '1rem 1rem 0' }}
+          {...register('groupNumber', { valueAsNumber: true })}
+          error={errors.groupNumber !== undefined}
+          size="small"
+          helperText={errors.groupNumber?.message}
+          type="number"
+          defaultValue="1"
+          InputProps={{
+            inputProps: {
+              min: 0,
+              max: 1000,
+            },
+          }}
+      />
 
       <TextField
           id="capacity"
@@ -325,7 +356,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
                 </Button>
             
             <Link to={"/courses/" + code + "/" + semester?.toLowerCase() + "/"
-                    + (props.isEdit ? ("seminars/" + group + "/") : "") + "show"}>
+                    + (props.isEdit ? ("seminars/" + group + "/") : "") + "show"} state={{id: state.id}}>
                 <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 2rem' }}>
                     {"Back to " + code + (props.isEdit ? "/"+group : "")}
                 </Button>

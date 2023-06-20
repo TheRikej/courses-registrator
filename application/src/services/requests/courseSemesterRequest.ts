@@ -21,6 +21,19 @@ export const addTeacherCourse = async (id: number, courseId: string): Promise<Re
     return response.data;
 }
 
+export const addStudentCourse = async (id: number, courseId: string): Promise<ResponseSingle<{id: string}>> => {
+    const response = await axiosInstance.put(`/courseSemester/${courseId}/student/${id}`, {
+        id,
+        enrollCourseId: courseId,
+    });
+    return response.data;
+}
+
+export const removeStudentCourse = async (id: number, courseId: string): Promise<ResponseSingle<{id: string}>> => {
+    const response = await axiosInstance.delete(`/courseSemester/${courseId}/student/${id}`);
+    return response.data;
+}
+
 export const deleteCourse = async (id: string): Promise<ResponseSingle<CourseSemesterModel>> => {
     console.log(5)
     const response = await axiosInstance.delete(`/courseSemester/${id}`);

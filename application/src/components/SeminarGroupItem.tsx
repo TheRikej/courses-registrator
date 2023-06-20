@@ -19,13 +19,14 @@ interface SeminarGroupProps {
     teachers: {userName: string}[]
 }
 
-const SeminarGroupItemCard = (props: {group: SeminarGroupProps, code: string, semester: string}) => {
+const SeminarGroupItemCard = (props: {group: SeminarGroupProps, code: string, semester: string, id: string}) => {
+  const usernames = props.group.teachers.map((teacher) => teacher.userName).toString();
   return (
-    <Link to={"/courses/" + props.code + "/" + props.semester + "/seminars/" + props.group.groupNumber + "/show"}>
+    <Link to={"/courses/" + props.code + "/" + props.semester + "/seminars/" + props.group.groupNumber + "/show"} state={{id: props.id}}>
         <div className="flex flex-col lg:flex-row items-center w-full">
           <p className="m-0 lg:ml-2 float-left">
               <b>Group {props.group.groupNumber}</b> ({props.group.room}, {formatTime(props.group.timeSlot)}):
-              {" " + props.group.teachers.join(", ")}
+              {" " + usernames}
           </p>
           <div className="lg:ml-auto mr-4">
               <p>{props.group.currentCapacity}/{props.group.capacity}</p>

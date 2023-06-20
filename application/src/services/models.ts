@@ -6,6 +6,12 @@ export interface UserModel {
     teacher: boolean,
     student: boolean,
     administrator: boolean,
+    studiedCourses: {
+        id: string,
+        course: {
+            id: string
+        }
+    }[]
 }
 
 export interface SemesterModel {
@@ -82,6 +88,7 @@ export interface AddSemesterCourseData {
 }
 
 export interface SeminarGroupModel {
+    groupNumber: number,
     registrationStart: Date,
     registrationEnd: Date,
     capacity: number,

@@ -4,10 +4,11 @@ import {Link, Navigate, useLocation, useParams} from "react-router-dom";
 import formatTime from "../utils/timeslot";
 import SeminarGroupItem from "../components/SeminarGroupItem";
 import formatSemester from "../utils/semester";
-import { useQuery } from '@tanstack/react-query';
-import { CourseSemesterRequests, SeminarRequests } from '../services';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { CourseSemesterRequests, SeminarRequests, UserRequests } from '../services';
 import {useRecoilValue} from "recoil";
 import {loggedUserAtom} from "../atoms/loggedUser";
+import { useState } from 'react';
 
 
 const CourseSemester = () => {
@@ -16,11 +17,18 @@ const CourseSemester = () => {
         return <Navigate to="/login"/>;
     }
 
+    const { data: user } = useQuery({
+        queryKey: ['userForCourse'],
+        queryFn: () => UserRequests.getUser(loggedUser.id.toString()),
+    })
+
+    const queryClient = useQueryClient();
+
     const { code, semester } = useParams();
 
-    let isEnrolled = false;
-
     const { state } = useLocation();
+
+    const enrolledCOurses = user?.data.studiedCourses.map(x => x.course.id);
 
     const { data: course } = useQuery({
         queryKey: ['courseSemester2'],
@@ -32,9 +40,53 @@ const CourseSemester = () => {
         queryFn: () => SeminarRequests.getSeminars(state.id),
     });
 
+    const { mutate: addStudent } = useMutation({
+        mutationFn: async (info: {
+            id: number,
+            courseId: string,
+        }) => { 
+            const courseRet = CourseSemesterRequests.addStudentCourse(info.id, info.courseId);
+            if ((await courseRet).status === 'success') {
+                setEnrolled(!isEnrolled)
+            }
+            return courseRet
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['courseSemester2']);
+        },
+      });
+
+      const { mutate: removeStudent } = useMutation({
+        mutationFn: async (info: {
+            id: number,
+            courseId: string,
+        }) => { 
+            const courseRet = CourseSemesterRequests.removeStudentCourse(info.id, info.courseId);
+            if ((await courseRet).status === 'success') {
+                setEnrolled(!isEnrolled)
+            }
+            return courseRet
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['courseSemester2']);
+        },
+      });
+
+    const isEnrolledBegining = enrolledCOurses?.includes(state.id);
+    const [isEnrolled, setEnrolled] = useState<boolean>(isEnrolledBegining !== undefined ? isEnrolledBegining : true );
+
     const enrol = () => {
-        isEnrolled = !isEnrolled;
-        //TODO: enrol student (API call)
+        if (!isEnrolled) {
+            addStudent({
+              id: loggedUser.id,
+              courseId: state.id,
+            });
+          } else {
+            removeStudent({
+                id: loggedUser.id,
+                courseId: state.id,
+              });
+          }
     };
 
     if(course?.data === undefined || groups?.data === undefined) {
@@ -53,7 +105,7 @@ const CourseSemester = () => {
                 <p><b>Faculty</b>: {course.data.course.faculty.name}</p>
                 <p><b>Description</b>: {course.data.course.description}</p>
                 <p><b>Credits</b>: {course.data.course.credits}</p>
-                <p><b>Teachers</b>: {course.data.teachers.join(", ")}</p>
+                <p><b>Teachers</b>: {course.data.teachers.map((teacher) => teacher.userName).toString()}</p>
                 <p><b>Guarantor</b>: {course.data.course.guarantor.userName}</p>
                 <p><b>Lectures</b>: {course.data.room}, {course.data.timeSlot !== undefined &&  course.data.timeSlot !== null ? formatTime(course?.data.timeSlot) : "No lectures held"}</p>
                 <p><b>Capacity</b>: {course.data.currentCapacity}/{course.data.capacity}</p>
@@ -69,14 +121,14 @@ const CourseSemester = () => {
                                 className="my-1 mx-1 rounded-lg border-solid border-4 p-0.5"
                                 key={group.groupNumber}
                             >
-                                <SeminarGroupItem group={group} semester={semester!} code={code!}/>
+                                <SeminarGroupItem group={group} semester={semester!} code={code!} id={group.id}/>
                             </li>
                         )}
                     </ul>
                 </div>
 
                 {(loggedUser.student) ?
-                    <div className="mx-auto students-only hidden mt-2">
+                    <div className="mx-auto students-only mt-2">
                         <Button color={isEnrolled ? "error" : "success"} className="w-52"
                                 type="submit" variant="outlined" sx={{ margin: '1rem' }}
                                 onClick={enrol}
@@ -88,7 +140,7 @@ const CourseSemester = () => {
                 {(loggedUser.admin || loggedUser.teacher) ?
                     <div className="teachers-only mt-2">
                         <div className="flex flex-col lg:flex-row items-center justify-center block mx-auto">
-                            <Link to={"/courses/" + code + "/" + semester + "/seminars/create"}>
+                            <Link to={"/courses/" + code + "/" + semester + "/seminars/create"} state={{id: state.id}}>
                                 <Button color="info" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                     Create seminar group
                                 </Button>

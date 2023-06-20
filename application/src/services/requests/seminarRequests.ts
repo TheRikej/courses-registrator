@@ -15,3 +15,11 @@ export const createCourse = async (id: string, courseData: SeminarGroupModel): P
      });
     return response.data;
 }
+
+export const addTeacherSeminar = async (id: number, courseId: string): Promise<ResponseSingle<{id: string}>> => {
+    const response = await axiosInstance.put(`/seminar/${courseId}/teacher/${id}`, {
+        id,
+        enrollSeminarId: courseId,
+    });
+    return response.data;
+}
