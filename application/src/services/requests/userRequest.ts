@@ -36,10 +36,8 @@ export const createUser = async (userData: UserCreateModel): Promise<ResponseSin
 }
 
 export const loginUser = async (userData: UserLoginModel): Promise<ResponseSingle<UserModel>> => {
-    console.log(userData)
     const response = await axiosInstance.post(`/login`, {
         ...userData
      });
-     console.log(response.data)
     return response.data;
 }
