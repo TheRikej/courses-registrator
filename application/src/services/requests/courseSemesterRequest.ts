@@ -1,4 +1,4 @@
-import { CourseSemesterModel } from "../models";
+import { AddSemesterCourseData, CourseSemesterModel } from "../models";
 import axiosInstance from "../base";
 import { ResponseMulti, ResponseSingle } from "../responses";
 import type { CourseSpecific } from "../../../../back-end/src/repositories/courseSemester/types/result"
@@ -21,6 +21,11 @@ export const addTeacherCourse = async (id: number, courseId: string): Promise<Re
     return response.data;
 }
 
+export const removeTeacherCourse = async (id: number, courseId: string): Promise<ResponseSingle<{id: string}>> => {
+    const response = await axiosInstance.delete(`/courseSemester/${courseId}/teacher/${id}`);
+    return response.data;
+}
+
 export const addStudentCourse = async (id: number, courseId: string): Promise<ResponseSingle<{id: string}>> => {
     const response = await axiosInstance.put(`/courseSemester/${courseId}/student/${id}`, {
         id,
@@ -35,7 +40,14 @@ export const removeStudentCourse = async (id: number, courseId: string): Promise
 }
 
 export const deleteCourse = async (id: string): Promise<ResponseSingle<CourseSemesterModel>> => {
-    console.log(5)
     const response = await axiosInstance.delete(`/courseSemester/${id}`);
+    return response.data;
+}
+
+export const editCourseSemester = async ( id: string, data: AddSemesterCourseData ): Promise<ResponseSingle<CourseSemesterModel>> => {
+    console.log(data)
+    const response = await axiosInstance.post(`/courseSemester/${id}`, {
+        ...data
+     });
     return response.data;
 }

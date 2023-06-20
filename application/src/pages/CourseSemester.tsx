@@ -145,7 +145,7 @@ const CourseSemester = () => {
                                     Create seminar group
                                 </Button>
                             </Link>
-                            <Link to={"/courses/" + code + "/" + semester + "/edit"}>
+                            <Link to={"/courses/" + code + "/" + semester + "/edit"} state={{id: course.data.id}}>
                                 <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                     Edit
                                 </Button>

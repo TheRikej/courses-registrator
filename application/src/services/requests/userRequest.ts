@@ -43,3 +43,8 @@ export const loginUser = async (userData: UserLoginModel): Promise<ResponseSingl
      console.log(response.data)
     return response.data;
 }
+
+export const logout = async (): Promise<ResponseSingle<null>> => {
+    const response = await axiosInstance.get(`/logout`);
+    return response.data;
+}

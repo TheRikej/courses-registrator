@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { ReadCourseSemesterData } from './types/data';
 import type { CourseSemesterResult } from './types/result';
+import { id } from 'date-fns/locale';
 
 /**
  * Returns SemesterCourse and all its seminar groups.
@@ -28,7 +29,8 @@ const readSpecificSemesterCourse = async (
                 deletedAt: null
             },
             select: {
-              userName: true
+              userName: true,
+              id: true,
             }
           },
           students: {

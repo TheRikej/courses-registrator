@@ -8,7 +8,7 @@ import {DateTimePicker, TimePicker} from "@mui/x-date-pickers";
 import workDays from "../utils/days";
 import {Link, useLocation, useParams} from "react-router-dom";
 import Select from "react-select";
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CourseRequests, SemesterRequests, UserRequests } from '../services';
 import { AddSemesterCourseData } from '../services/models';
 import { CourseSemesterRequests } from '../services';
@@ -60,6 +60,10 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
   });
   const { code, semester } = useParams();
 
+  const queryClient = useQueryClient();
+
+  const { state } = useLocation();
+
   const { data: semesters } = useQuery({
     queryKey: ['semestersCreateCourse'],
     queryFn: () => SemesterRequests.getSemesters(),
@@ -69,6 +73,14 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
     queryKey: ['courseUsers'],
     queryFn: () => UserRequests.getUsers(),
   })
+
+  const { data: courseSemester } = useQuery({
+    queryKey: ['courseSemesterForForm'],
+    queryFn: () => CourseSemesterRequests.getCourseSemester(state.id),
+    enabled: props.isEdit,
+  });
+
+  const currentTeachers = courseSemester?.data.teachers.map(x => x.id);
 
   const users = usersQuery?.data.map(x => ({value: x.id, label: x.userName}));
 
@@ -88,12 +100,36 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
     }
   });
 
+  const { mutate: editSemCourse } = useMutation({
+    mutationFn: async (info: {
+        id: string,
+        courseInfo: AddSemesterCourseData,
+        teachers: [number] | null
+    }) => {
+      const course = CourseSemesterRequests.editCourseSemester(info.id, info.courseInfo)
+      changeTeachers(info.teachers === null ? [] : info.teachers, currentTeachers === undefined ? [] : currentTeachers, info.id)
+      return course
+    }
+  });
+
   const { mutate: addTeacher } = useMutation({
     mutationFn: (info: {
         id: number,
         courseId: string,
     }) => CourseSemesterRequests.addTeacherCourse(info.id, info.courseId)
   });
+
+  const { mutate: removeTeacher } = useMutation({
+    mutationFn: (info: {
+        id: number,
+        courseId: string,
+    }) => CourseSemesterRequests.removeTeacherCourse(info.id, info.courseId)
+  });
+
+  const changeTeachers = (currentTeachers: number[], teachers: number[], courseSemId: string) => {
+    teachers.filter(x => !currentTeachers.includes(x)).forEach(x => addTeacher({id: x, courseId: courseSemId}));
+    currentTeachers.filter(x => !teachers.includes(x)).forEach(x => removeTeacher({id: x, courseId: courseSemId}));
+  };
 
   const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]
 
@@ -105,27 +141,31 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
     const hoursTo = values.timeHourTo?.getHours();
     const minutesTo = values.timeHourTo?.getMinutes();
     const hasTimeslot = hoursFrom === undefined || minutesFrom === undefined || hoursTo === undefined || minutesTo === undefined || values.timeDay === null
-    if (!props.isEdit) {
-      await addSemCOurse({
-        id: code !== undefined ? code : "",
-        courseInfo: {
-          semesterId: values.semester,
-          registrationStart: values.registrationFrom,
-          registrationEnd: values.registrationTo,
-          capacity: values.capacity,
-          room: values.room,
-          timeslot: hasTimeslot || values.timeDay === null ? undefined : {
-            day: days[values.timeDay],
-            startHour: hoursFrom,
-            startMinute: minutesFrom,
-            endHour: hoursTo,
-            endMinute: minutesTo,
-          },
+    const courseData = {
+      id: code !== undefined ? code : "",
+      courseInfo: {
+        semesterId: values.semester,
+        registrationStart: values.registrationFrom,
+        registrationEnd: values.registrationTo,
+        capacity: values.capacity,
+        room: values.room,
+        timeslot: hasTimeslot || values.timeDay === null ? undefined : {
+          day: days[values.timeDay],
+          startHour: hoursFrom,
+          startMinute: minutesFrom,
+          endHour: hoursTo,
+          endMinute: minutesTo,
         },
-        teachers: values.teachers,
-      });
-      reset();
+      },
+      teachers: values.teachers,
     }
+    if (!props.isEdit) {
+      await addSemCOurse(courseData);
+      reset();
+    } else {
+      await editSemCourse(courseData);
+    }
+    reset();
   };
 
   if(users === undefined) {

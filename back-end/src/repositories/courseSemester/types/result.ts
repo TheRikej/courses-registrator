@@ -3,7 +3,7 @@ import type { AsyncResult } from '../../types';
 import { SemesterSeason } from '@prisma/client';
 
 export type CourseSpecific = CourseSemester & {
-    teachers: {userName: string}[];
+    teachers: {userName: string, id: number}[];
     students: CourseStudent[];
     seminarGroups: SeminarGroup[];
     currentCapacity: number;
