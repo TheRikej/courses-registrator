@@ -6,13 +6,16 @@ import { z } from 'zod';
 import formatSemester from "../utils/semester";
 import {DateTimePicker, TimePicker} from "@mui/x-date-pickers";
 import workDays from "../utils/days";
-import {Link, useLocation, useParams} from "react-router-dom";
+import {Link, Navigate, useLocation, useParams} from "react-router-dom";
 import Select from "react-select";
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { CourseRequests, SemesterRequests, UserRequests } from '../services';
 import { AddSemesterCourseData } from '../services/models';
 import { CourseSemesterRequests } from '../services';
 import { useState } from 'react';
+import NotAuthorized from "../components/NotAuthorized";
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
 
 const schema = z.object({
   semester: z.string().nonempty('Semester is required.'),
@@ -48,6 +51,14 @@ interface CourseSemesterForm {
 
 //TODO: default Values when editing ("defaultValue={...}")
 const CourseSemesterForm = (props: {isEdit: boolean}) => {
+  const loggedUser = useRecoilValue(loggedUserAtom);
+  if (loggedUser === null) {
+    return <Navigate to="/login"/>;
+  }
+  if (!loggedUser.admin && !loggedUser.teacher) {
+    return <NotAuthorized/>;
+  }
+
   const {
     register,
     handleSubmit,

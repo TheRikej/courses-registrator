@@ -4,10 +4,13 @@ import {TextField, Button, MenuItem} from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {DateTimePicker} from "@mui/x-date-pickers";
-import {Link, useLocation, useParams} from "react-router-dom";
+import {Link, Navigate, useLocation, useParams} from "react-router-dom";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { SemesterRequests } from '../services';
 import { SemesterCreateModel } from '../services/models';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
+import NotAuthorized from "../components/NotAuthorized";
 
 const schema = z.object({
   year: z.number().min(2000, "Year must be greater than 2000."),
@@ -27,6 +30,14 @@ interface SemesterFormI {
 }
 
 const SemesterForm = (props: {isEdit: boolean}) => {
+  const loggedUser = useRecoilValue(loggedUserAtom);
+  if (loggedUser === null) {
+    return <Navigate to="/login"/>;
+  }
+  if (!loggedUser.admin) {
+    return <NotAuthorized/>;
+  }
+
   const {
     register,
     handleSubmit,
