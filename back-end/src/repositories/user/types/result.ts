@@ -14,7 +14,7 @@ export type UserReadSpecificType = AsyncResult<User & {
     taughtCourses: CourseSemester[];
     taughtGroups: SeminarGroup[];
     studiedCourses: (CourseStudent & {course: CourseSemester})[];
-    studiedGroups: GroupStudent[];
+    studiedGroups: (GroupStudent & {group: SeminarGroup})[];
     guarantedCourses: Course[];
 }>;
 

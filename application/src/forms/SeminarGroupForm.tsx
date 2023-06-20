@@ -90,7 +90,6 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
         teachers: [number] | null
     }) => {
       const seminar = SeminarRequests.createCourse(info.id, info.courseInfo)
-      console.log((await seminar).data.id)
       const courseSemester = (await seminar).data.id
       info.teachers?.forEach(teacher => {
         addTeacher({id: teacher, courseId: courseSemester})
@@ -104,7 +103,6 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
 
   const onSubmit = async () => {
     const values = getValues();
-    console.log(values);
     const hoursFrom = values.timeHourFrom?.getHours();
     const minutesFrom = values.timeHourFrom?.getMinutes();
     const hoursTo = values.timeHourTo?.getHours();

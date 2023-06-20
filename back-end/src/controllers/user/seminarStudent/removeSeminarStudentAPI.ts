@@ -5,7 +5,7 @@ import { DeletedRecordError, NonexistentRecordError } from '../../../repositorie
 
 const idSchema = z.object({
     id: z
-      .number({
+      .string({
         required_error: 'Id is required',
       }),
     seminarId: z
@@ -17,7 +17,7 @@ const idSchema = z.object({
 const removeSeminarStudentAPI = async (req: Request, res: Response) => {
     try {
       const data = await idSchema.parseAsync(req.params)
-      const user = await removeSeminarStudent(data);
+      const user = await removeSeminarStudent({id: +data.id, seminarId: data.seminarId});
       if (user.isOk) {
         return res.status(200).send({
           status: 'success',
@@ -28,7 +28,8 @@ const removeSeminarStudentAPI = async (req: Request, res: Response) => {
       throw user.error;
     } catch (e) {
         if (e instanceof z.ZodError) {
-            return res.status(404).send({
+          console.log(e.message)
+            return res.status(400).send({
                 status: 'error',
                 error: e.errors,
             });

@@ -78,15 +78,15 @@ const CourseSemester = () => {
     const enrol = () => {
         if (!isEnrolled) {
             addStudent({
-              id: loggedUser.id,
-              courseId: state.id,
+                id: loggedUser.id,
+                courseId: state.id,
             });
-          } else {
+        } else {
             removeStudent({
                 id: loggedUser.id,
                 courseId: state.id,
-              });
-          }
+            });
+        }
     };
 
     if(course?.data === undefined || groups?.data === undefined) {
@@ -121,7 +121,7 @@ const CourseSemester = () => {
                                 className="my-1 mx-1 rounded-lg border-solid border-4 p-0.5"
                                 key={group.groupNumber}
                             >
-                                <SeminarGroupItem group={group} semester={semester!} code={code!} id={group.id}/>
+                                <SeminarGroupItem group={group} semester={semester!} code={code!} id={group.id} courseSemesterId={state.id}/>
                             </li>
                         )}
                     </ul>

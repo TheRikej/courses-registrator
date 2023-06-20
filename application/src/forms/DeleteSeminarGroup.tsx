@@ -1,15 +1,25 @@
 import { Button } from '@mui/material';
 import React  from 'react';
-import {Link, useParams} from 'react-router-dom';
+import {Link, useLocation, useParams} from 'react-router-dom';
 import Warning from "../components/Warning";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { SeminarRequests } from '../services';
 
 export default function DeleteSeminarGroup() {
     const { code, semester, group } = useParams();
 
-    const remove = () => {
-        //TODO: delete the seminar group
-        // and then redirect to /courses/:code/:semester/show
-    }
+    const queryClient = useQueryClient();
+
+    const { state } = useLocation();
+
+    const { mutate: remove } = useMutation({
+        mutationFn: (info: {
+            id: string,
+        }) => SeminarRequests.deleteSeminar( info.id ),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['seminarGroups']);
+        },
+    });
 
     return (
         <div className="flex flex-col mx-auto max-w-2xl">
@@ -18,11 +28,11 @@ export default function DeleteSeminarGroup() {
             <div className="flex flex-row items-center mx-auto">
                 <Button color="success" className="w-24 lg:w-40" type="submit"
                         variant="outlined" sx={{ margin: '1rem 1rem' }}
-                        onClick={remove}
+                        onClick={() => remove({id: state.id})}
                 >
                     Yes
                 </Button>
-                <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/show"}>
+                <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/show"} state={{id: state.id}}>
                     <Button color="error" className="w-24 lg:w-40" type="submit" variant="outlined" sx={{ margin: '1rem 1rem' }}>
                         No
                     </Button>

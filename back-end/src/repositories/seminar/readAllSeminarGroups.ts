@@ -19,6 +19,7 @@ const readAllSeminarGroups = async (
             const course = await transaction.courseSemester.findFirst({
               where: {
                 id: data.id,
+                deletedAt: null
               },
             });
             if (course === null) {
@@ -26,7 +27,8 @@ const readAllSeminarGroups = async (
             }
             const semesters =  await prisma.seminarGroup.findMany({
                 where: {
-                    courseSemesterId: data.id
+                    courseSemesterId: data.id,
+                    deletedAt: null
                 },
                 include: {
                     timeSlot: true,
@@ -35,14 +37,16 @@ const readAllSeminarGroups = async (
                         userName: true
                       }
                     },
-                    students: true,
+                    students: {
+                      where: {
+                        deletedAt: null
+                      }
+                    },
                 }
             })
             return semesters.map(semester => {return {...semester, currentCapacity: semester.students.length}})
         })
       );
-      
-      //return Result.ok(course);
     } catch (e) {
       return Result.err(e as Error);
     }

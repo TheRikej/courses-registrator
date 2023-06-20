@@ -7,18 +7,31 @@ import formatTime from "../utils/timeslot";
 import NotAuthorized from "../components/NotAuthorized";
 import {useRecoilValue} from "recoil";
 import {loggedUserAtom} from "../atoms/loggedUser";
-import { useQuery } from '@tanstack/react-query';
-import { SeminarRequests } from '../services';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { SeminarRequests, UserRequests } from '../services';
+import { useState } from 'react';
 
 const SeminarGroup = () => {
     const { code, semester, group } = useParams();
 
     const { state } = useLocation();
 
+    const queryClient = useQueryClient()
+
     const loggedUser = useRecoilValue(loggedUserAtom);
     if (loggedUser === null) {
         return <Navigate to="/login"/>;
     }
+
+    const { data: user } = useQuery({
+        queryKey: ['userForSeminar'],
+        queryFn: () => UserRequests.getUser(loggedUser.id.toString()),
+    })
+
+    const enrolledSeminars = user?.data.studiedGroups.map(x => x.group.id);
+
+    const isEnrolledBegining = enrolledSeminars?.includes(state.id);
+    const [isEnrolled, setEnrolled] = useState<boolean>(isEnrolledBegining !== undefined ? isEnrolledBegining : true );
 
     const { data: seminar } = useQuery({
         queryKey: ['seminarGroup'],
@@ -30,11 +43,50 @@ const SeminarGroup = () => {
         },
     });
 
-    //TODO: fetch for the given user
-    const isEnrolled = false;
+    const { mutate: addStudent } = useMutation({
+        mutationFn: async (info: {
+            id: number,
+            seminarId: string,
+        }) => { 
+            const seminarRet = SeminarRequests.addStudentSeminar(info.id, info.seminarId);
+            if ((await seminarRet).status === 'success') {
+                setEnrolled(!isEnrolled)
+            }
+            return seminarRet
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['seminarGroup']);
+        },
+      });
+
+      const { mutate: removeStudent } = useMutation({
+        mutationFn: async (info: {
+            id: number,
+            seminarId: string,
+        }) => { 
+            const seminarRet = SeminarRequests.removeStudentSeminar(info.id, info.seminarId);
+            if ((await seminarRet).status === 'success') {
+                setEnrolled(!isEnrolled)
+            }
+            return seminarRet
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['seminarGroup']);
+        },
+      });
 
     const enrol = () => {
-        //TODO: enrol student (API call)
+        if (!isEnrolled) {
+            addStudent({
+                id: loggedUser.id,
+                seminarId: state.id,
+            });
+        } else {
+            removeStudent({
+                id: loggedUser.id,
+                seminarId: state.id,
+            });
+        }
     };
 
     if(seminar?.data === undefined) {
@@ -59,7 +111,7 @@ const SeminarGroup = () => {
                         {isEnrolled ? " Enrolled" : " Not enrolled"}
                     </p>
                 }
-                {loggedUser.student ??
+                {loggedUser.student ?
                     <div className="mx-auto students-only">
                         <Button color={isEnrolled ? "error" : "success"} className="w-52"
                                 type="submit" variant="outlined" sx={{ margin: '1rem' }}
@@ -68,17 +120,17 @@ const SeminarGroup = () => {
                             {!isEnrolled ? "Enrol in the group" : "Leave group"}
                         </Button>
                     </div>
-                }
+                : <></>}
                 {(loggedUser.admin || loggedUser.teacher) ?
                     <div className="teachers-only">
                         <p><b>Students</b>: {seminar.data.students === undefined ? null : seminar.data.students.map(x => x.studentId).toString()}</p>
                         <div className="flex flex-row justify-center block mx-auto mt-2">
-                            <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/edit"}>
+                            <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/edit"} state={{id: state.id, courseSemesterId: code}}>
                                 <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                     Edit
                                 </Button>
                             </Link>
-                            <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/delete"}>
+                            <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/delete"} state={{id: state.id, courseSemesterId: code}}>
                                 <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                     Delete
                                 </Button>
@@ -88,7 +140,7 @@ const SeminarGroup = () => {
                 : <></>}
             </div>
             <div className="block mx-auto">
-                <Link to={"/courses/" + code + "/" + semester + "/show"} state={{id: state.id}}>
+                <Link to={"/courses/" + code + "/" + semester + "/show"} state={{id: state.courseSemesterId}}>
                     <Button type="button" variant="outlined" sx={{ margin: '1.5rem 2rem 1rem' }}>
                         Back to {code?.toUpperCase()}
                     </Button>

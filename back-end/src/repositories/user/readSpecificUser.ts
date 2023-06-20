@@ -36,6 +36,9 @@ const readSpecific = async (
             where: {
               deletedAt: null,
             },
+            include: {
+              group: true
+            }
           },
           taughtCourses:{
             where: {

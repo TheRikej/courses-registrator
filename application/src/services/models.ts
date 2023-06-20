@@ -11,6 +11,12 @@ export interface UserModel {
         course: {
             id: string
         }
+    }[],
+    studiedGroups: {
+        id: string,
+        group: {
+            id: string
+        }
     }[]
 }
 

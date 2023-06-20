@@ -18,7 +18,11 @@ const updateSeminar = async (data: UpdateData): SeminarReadSpecificResult => {
                     userName: true
                   }
                 },
-                students: true,
+                students: {
+                  where: {
+                    deletedAt: null
+                  }
+                },
             }
         })
         if (seminar === null) {

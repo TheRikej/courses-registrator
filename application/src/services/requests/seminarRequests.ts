@@ -33,3 +33,21 @@ export const getSeminar = async (id: string): Promise<ResponseSingle<ReadResult>
     const response = await axiosInstance.get(`/seminar/${id}/teacher`);
     return response.data;
 }
+
+export const deleteSeminar = async (id: string): Promise<ResponseSingle<ReadResult>> => {
+    const response = await axiosInstance.delete(`/seminar/${id}`);
+    return response.data;
+}
+
+export const addStudentSeminar = async (id: number, seminarId: string): Promise<ResponseSingle<{id: string}>> => {
+    const response = await axiosInstance.put(`/seminar/${seminarId}/student/${id}`, {
+        id,
+        enrollSeminarId: seminarId,
+    });
+    return response.data;
+}
+
+export const removeStudentSeminar = async (id: number, seminarId: string): Promise<ResponseSingle<{id: string}>> => {
+    const response = await axiosInstance.delete(`/seminar/${seminarId}/student/${id}`);
+    return response.data;
+}
