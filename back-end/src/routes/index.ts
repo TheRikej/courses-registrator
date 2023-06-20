@@ -65,6 +65,6 @@ router.delete("/seminar/:seminarId/teacher/:id", auth({teacher: true}), API.user
 router.put("/seminar/:enrollSeminarId/student/:id", auth({student: true}), API.user.addSeminarStudent)
 router.delete("/seminar/:seminarId/student/:id", auth({student: true}), API.user.removeSeminarStudent)
 
-router.get("/login", API.user.login)
+router.post("/login", API.user.login)
 
 export default router;

@@ -235,7 +235,7 @@ async function main() {
     id: 1,
     enrollCourseId: "2594ce89-f0dd-42c1-b761-cd9330fbc847",
   })*/
-  const seminar = await createSeminarGroup({
+  /*const seminar = await createSeminarGroup({
     id: "86adeee3-90e9-4d00-89f3-96038b41a5b8",
     registrationEnd: new Date("2025-01-16"),
     registrationStart: new Date("2019-01-16"),
@@ -250,7 +250,7 @@ async function main() {
       startMinute: 4,
     }
     });
-    console.log(seminar)
+    console.log(seminar)*/
 }
 
 main()

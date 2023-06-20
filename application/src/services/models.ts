@@ -20,6 +20,17 @@ export interface UserModel {
     }[]
 }
 
+export interface UserCreateModel {
+    userName: string,
+    email: string,
+    password: string,
+}
+
+export interface UserLoginModel {
+    email: string,
+    password: string,
+}
+
 export interface SemesterModel {
     id: string,
     year: number,

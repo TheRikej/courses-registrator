@@ -1,4 +1,4 @@
-import { UserModel } from "../models";
+import { UserModel, UserCreateModel, UserLoginModel } from "../models";
 import axiosInstance from "../base";
 import { ResponseMulti, ResponseSingle } from "../responses";
 
@@ -25,5 +25,21 @@ export const deleteUser = async (id: string): Promise<ResponseSingle<UserModel>>
         student,
         administrator,
      });
+    return response.data;
+}
+
+export const createUser = async (userData: UserCreateModel): Promise<ResponseSingle<UserModel>> => {
+    const response = await axiosInstance.post(`/user`, {
+        ...userData
+     });
+    return response.data;
+}
+
+export const loginUser = async (userData: UserLoginModel): Promise<ResponseSingle<UserModel>> => {
+    console.log(userData)
+    const response = await axiosInstance.post(`/login`, {
+        ...userData
+     });
+     console.log(response.data)
     return response.data;
 }

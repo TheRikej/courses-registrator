@@ -4,6 +4,9 @@ import {TextField, Button} from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {Link} from "react-router-dom";
+import { useMutation } from '@tanstack/react-query';
+import { UserCreateModel } from '../services/models';
+import { UserRequests } from '../services';
 
 const schema = z.object({
   userName: z.string().nonempty("Name is required."),
@@ -37,10 +40,24 @@ const RegisterForm = () => {
     resolver: zodResolver(schema),
   });
 
+  const { mutate: createUser } = useMutation({
+    mutationFn: (info: {
+        userInfo: UserCreateModel,
+    }) => UserRequests.createUser(
+        info.userInfo
+    ),
+  });
+
   const onSubmit = () => {
     const values = getValues();
     console.log(values);
-    //TODO: register user
+    createUser({
+      userInfo: {
+        email: values.email,
+        userName: values.userName,
+        password: values.password,
+      }
+    });
   };
 
   return (

@@ -24,13 +24,15 @@ import RegisterForm from "./forms/RegisterForm";
 import LoginForm from "./forms/LoginForm";
 import Logout from "./components/Logout";
 
+//<Route path="/" element={<Homepage/>}/>
+
 function App() {
   return (
       <>
           <Header/>
           <div className="flex justify-center m-auto h-screen">
               <Routes>
-                  <Route path="/" element={<Homepage/>}/>
+                  <Route path="/" element={<LoginForm/>}/>
                   <Route path="/courses/" element={<Homepage/>}/>
 
                   <Route path="/courses/:code/list" element={<CourseSemesterForm isEdit={false}/>} />
