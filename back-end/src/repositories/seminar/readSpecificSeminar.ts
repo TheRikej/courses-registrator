@@ -1,11 +1,11 @@
 import { Result } from '@badrap/result';
 import prisma from '../client';
-import type { UpdateData } from './types/data';
+import type { ReadSpecificSeminar } from './types/data';
 import type { SeminarReadSpecificResult, } from './types/result';
 import { DeletedRecordError, NonexistentRecordError } from '../errors';
 
 
-const updateSeminar = async (data: UpdateData): SeminarReadSpecificResult => {
+const readSpecificSeminar = async (data: ReadSpecificSeminar): SeminarReadSpecificResult => {
   try {
       const seminar =  await prisma.seminarGroup.findFirst({
           where: {
@@ -37,4 +37,4 @@ const updateSeminar = async (data: UpdateData): SeminarReadSpecificResult => {
   }
 };
 
-export default updateSeminar;
+export default readSpecificSeminar;
