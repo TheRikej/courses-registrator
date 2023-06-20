@@ -21,7 +21,10 @@ const app = express();
 const port = env.PORT ?? 4000;
 
 // middlware
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  }));
 app.use(cookieParser());
 app.use(express.json());
 
