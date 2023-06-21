@@ -49,7 +49,6 @@ interface CourseSemesterForm {
   teachers: [number] | null,
 }
 
-//TODO: default Values when editing ("defaultValue={...}")
 const CourseSemesterForm = (props: {isEdit: boolean}) => {
   const loggedUser = useRecoilValue(loggedUserAtom);
   if (loggedUser === null) {

@@ -82,6 +82,15 @@ export interface CourseModel {
     credits: number,
 }
 
+export interface CourseCreateModel {
+    id: string,
+    guarantorId: number,
+    facultyId: string,
+    description: string,
+    name: string,
+    credits: number,
+}
+
 export interface CourseModelUndefined {
     newId: string | undefined,
     id: string | undefined,

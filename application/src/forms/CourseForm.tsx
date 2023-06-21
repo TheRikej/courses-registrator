@@ -5,8 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Select from 'react-select';
 import {Link, Navigate, useLocation, useParams} from "react-router-dom";
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { CourseModel, CourseModelUndefined } from '../services/models';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { CourseCreateModel, CourseModel, CourseModelUndefined } from '../services/models';
 import { FacultyRequests, UserRequests, CourseRequests } from '../services';
 import {useRecoilValue} from "recoil";
 import {loggedUserAtom} from "../atoms/loggedUser";
@@ -59,7 +59,8 @@ const CourseForm = (props: {isEdit: boolean}) => {
     queryFn: () => FacultyRequests.getFaculties(),
   });
 
-  //TODO: set the logged in user as the default value in guarantor input
+  const queryClient = useQueryClient();
+
   const { data: usersQuery } = useQuery({
     queryKey: ['courseUsers'],
     queryFn: () => UserRequests.getUsers(),
@@ -73,14 +74,20 @@ const CourseForm = (props: {isEdit: boolean}) => {
     }) => CourseRequests.updateCourse(
         info.courseInfo
     ),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['HomepageCourseSemester']);
+  },
 });
 
   const { mutate: createCourse } = useMutation({
     mutationFn: (info: {
-        courseInfo: CourseModel,
+        courseInfo: CourseCreateModel,
     }) => CourseRequests.createCourse(
         info.courseInfo
     ),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['HomepageCourseSemester']);
+  },
   });
 
 
@@ -213,6 +220,7 @@ const CourseForm = (props: {isEdit: boolean}) => {
         <Controller
             control={control}
             name="guarantor"
+            defaultValue={loggedUser.id}
             render={({ field, }) => (
                 <Select
                     ref={field.ref}
