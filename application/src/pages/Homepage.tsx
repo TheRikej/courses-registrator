@@ -9,8 +9,11 @@ import CourseItem from "../components/CourseItem";
 import CourseSemesterItem from "../components/CourseSemesterItem";
 import { useQuery } from '@tanstack/react-query';
 import { FacultyRequests, CourseSemesterRequests, CourseRequests, SemesterRequests } from '../services';
-import {useRecoilValue} from "recoil";
+import {useRecoilValue, useSetRecoilState} from "recoil";
 import {loggedUserAtom} from "../atoms/loggedUser";
+import { coursesAtom, coursesSemesterAtom, filterDataAtom } from '../atoms/filterCourse';
+import { CoursesFilterData, defaultCoursesFilterData } from '../services/models';
+import { coursesSemesterToShowSelector, coursesToShowSelector } from '../selectors/filterCourse';
 
 const Courses = () => {
     const loggedUser = useRecoilValue(loggedUserAtom);
@@ -20,16 +23,36 @@ const Courses = () => {
 
     const [enrolledOnly, setEnrolledOnly] = useState<boolean>(false);
     const [teachingOnly, setTeachingOnly] = useState<boolean>(false);
+    const [filtering, setFiltering] = useState<boolean>(false);
+    const globalFilterData = useRecoilValue(filterDataAtom);
+    const setGlobalFilterData = useSetRecoilState(filterDataAtom);
+    const setCoursesSemester = useSetRecoilState(coursesSemesterAtom);
+    const setCourses = useSetRecoilState(coursesAtom);
+    const [localFilterData, setLocalFilterData] = React.useState<CoursesFilterData>(
+        {
+            ...globalFilterData,
+        }
+    );
 
-    const { data: coursesNoSemester } = useQuery({
+    const { data: coursesNoSemesterResponse } = useQuery({
         queryKey: ['HomepageCourseSemester'],
         queryFn: () => CourseRequests.getCourses(),
     });
+    React.useEffect(() => {
+        setCourses(coursesNoSemesterResponse?.data === undefined ? [] : coursesNoSemesterResponse.data);
+    }, []);
+    const coursesNoSemester = useRecoilValue(coursesToShowSelector);
 
-    const { data: courses } = useQuery({
+
+    const { data: coursesResponse } = useQuery({
         queryKey: ['HomepageCourseSemesters'],
         queryFn: () => CourseSemesterRequests.getCourseSemesters(),
     });
+    React.useEffect(() => {
+        setCoursesSemester(coursesResponse?.data === undefined ? [] : coursesResponse.data);
+    }, []);
+    const courses = useRecoilValue(coursesSemesterToShowSelector);
+
 
     const { data: semesters } = useQuery({
         queryKey: ['HomepageSemesters'],
@@ -41,6 +64,30 @@ const Courses = () => {
         queryFn: () => FacultyRequests.getFaculties(),
     });
 
+    console.log(coursesNoSemester);
+    console.log(coursesResponse);
+
+    React.useEffect(() => {
+        if (filtering) {
+            setFiltering(false);
+        } else {
+            setLocalFilterData({ ...globalFilterData });
+        }
+    }, [globalFilterData]);
+
+    React.useEffect(() => {
+        if (filtering) {
+            setGlobalFilterData(
+                {
+                    ...localFilterData,
+                    endrolled: enrolledOnly,
+                    teaching: teachingOnly
+                }
+            );
+        }
+    }, [filtering]);
+
+
     const changeEnrolledOnly = () => {
         setEnrolledOnly(!enrolledOnly);
     }
@@ -50,18 +97,15 @@ const Courses = () => {
     }
 
     const handleFilter = () => {
-        //TODO:
+        setFiltering(true);
     };
 
     const clearFilter = () => {
-        //TODO:
+        setFiltering(false);
+        setGlobalFilterData({...defaultCoursesFilterData});
+        setEnrolledOnly(false);
+        setTeachingOnly(false);
     };
-
-    if(coursesNoSemester?.data === undefined) {
-        return <></>
-    }
-
-    if (!coursesNoSemester) return <>Loading...</>;
 
     return (
         <div className="flex flex-col flex-start m-2">
@@ -77,12 +121,23 @@ const Courses = () => {
                             select
                             fullWidth
                             size="small"
-                            defaultValue = "None"
+                            defaultValue = "_None_"
+                            onChange={
+                                (event: React.ChangeEvent<HTMLInputElement>) => {
+                                    setLocalFilterData((prev) => ({
+                                        ...prev,
+                                        semester: event.target.value
+                                    }));
+                                }
+                            }
+                            value={
+                                localFilterData.semester
+                            }
                         >
-                            <MenuItem key={0} value={"None"}>
+                            <MenuItem key={0} value={"_None_"}>
                                 None
                             </MenuItem>
-                            <MenuItem key={1} value={"Any"}>
+                            <MenuItem key={1} value={"_Any_"}>
                                 Any semester
                             </MenuItem>
                             {semesters?.data.map((option) => (
@@ -103,6 +158,17 @@ const Courses = () => {
                             fullWidth
                             size="small"
                             defaultValue = "_All_"
+                            onChange={
+                                (event: React.ChangeEvent<HTMLInputElement>) => {
+                                    setLocalFilterData((prev) => ({
+                                        ...prev,
+                                        faculty: event.target.value
+                                    }));
+                                }
+                            }
+                            value={
+                                localFilterData.faculty
+                            }
                         >
                             <MenuItem key={0} value={"_All_"}>
                                 All faculties
@@ -125,6 +191,17 @@ const Courses = () => {
                     className="textboxWide"
                     size="small"
                     multiline
+                    onChange={
+                        (event: React.ChangeEvent<HTMLInputElement>) => {
+                            setLocalFilterData((prev) => ({
+                                ...prev,
+                                nameCode: event.target.value
+                            }));
+                        }
+                    }
+                    value={
+                        localFilterData.nameCode === null ? '' : localFilterData.nameCode
+                    }
                 />
                 <FormGroup className="mt-3">
                     <FormControlLabel control={<Checkbox onChange={changeEnrolledOnly} disableRipple style={{padding: '0 0.5rem'}}/>}
@@ -145,7 +222,7 @@ const Courses = () => {
             </div>
             <div className="rounded-lg border-solid border-2 mt-4 lg:mx-10 extra-wide">
                 <ul className="overflow-y-scroll max-h-80 lg:max-h-96">
-                    {courses?.data.map(course =>
+                    {courses?.map(course =>
                         <li
                             className="my-1 mx-1 rounded-lg border-solid border-4 p-0.5"
                             key={course.course.code + course.semesterYear + "/" + course.semesterSeason}
@@ -153,7 +230,7 @@ const Courses = () => {
                             <CourseSemesterItem course={course}/>
                         </li>
                     )}
-                    {coursesNoSemester?.data.map(course =>
+                    {coursesNoSemester?.map(course =>
                         <li
                             className="my-1 mx-1 rounded-lg border-solid border-4 p-0.5"
                             key={course.id}
