@@ -19,7 +19,7 @@ interface SeminarGroupProps {
     teachers: {userName: string, id: number}[]
 }
 
-const SeminarGroupItemCard = (props: {group: SeminarGroupProps, code: string, semester: string, id: string, courseSemesterId: string}) => {
+const SeminarGroupItemCard = (props: {group: SeminarGroupProps, code: string, semester: string, id: string, courseSemesterId: string, isEnrolled: boolean}) => {
   const usernames = props.group.teachers.map((teacher) => teacher.userName).toString();
   return (
     <Link to={"/courses/" + props.code + "/" + props.semester + "/seminars/" + props.group.groupNumber + "/show"} state={{id: props.id, courseSemesterId: props.courseSemesterId}}>

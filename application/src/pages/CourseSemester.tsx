@@ -89,7 +89,7 @@ const CourseSemester = () => {
     };
 
 
-    if(course?.data === undefined || groups?.data === undefined) {
+    if(course?.data === undefined || groups?.data === undefined || user?.data === undefined) {
         return <></>
     }
 
@@ -121,7 +121,7 @@ const CourseSemester = () => {
                                 className="my-1 mx-1 rounded-lg border-solid border-4 p-0.5"
                                 key={group.groupNumber}
                             >
-                                <SeminarGroupItem group={group} semester={semester!} code={code!} id={group.id} courseSemesterId={state.id}/>
+                                <SeminarGroupItem group={group} semester={semester!} code={code!} id={group.id} courseSemesterId={state.id} isEnrolled={user?.data.studiedGroups.filter(x => x.group.id === group.id).length > 1}/>
                             </li>
                         )}
                     </ul>

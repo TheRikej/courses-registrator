@@ -297,7 +297,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
             size="small"
             helperText={errors.room?.message}
         />
-        <div className="flex flex-col lg:flex-row lg:flex-row gap-4 lg:gap-0 mt-2 mb-4 mx-4">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-0 mt-2 mb-4 mx-4">
           <div>
             <TextField
                 id="timeDay"

@@ -1,5 +1,5 @@
 import React  from 'react';
-import {useRecoilState, useRecoilValue} from "recoil";
+import {useRecoilState} from "recoil";
 import {loggedUserAtom} from "../atoms/loggedUser";
 import {Navigate} from "react-router-dom";
 

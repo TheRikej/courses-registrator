@@ -8,11 +8,10 @@ import {DateTimePicker, TimePicker} from "@mui/x-date-pickers";
 import workDays from "../utils/days";
 import {Link, Navigate, useLocation, useParams} from "react-router-dom";
 import Select from "react-select";
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { CourseRequests, SemesterRequests, UserRequests } from '../services';
 import { AddSemesterCourseData } from '../services/models';
 import { CourseSemesterRequests } from '../services';
-import { useState } from 'react';
 import NotAuthorized from "../components/NotAuthorized";
 import {useRecoilValue} from "recoil";
 import {loggedUserAtom} from "../atoms/loggedUser";
@@ -303,7 +302,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
             size="small"
             helperText={errors.room?.message}
         />
-        <div className="flex flex-col lg:flex-row lg:flex-row gap-4 lg:gap-0 mt-2 mb-4 mx-4">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-0 mt-2 mb-4 mx-4">
           <div>
             <TextField
                 id="timeDay"
