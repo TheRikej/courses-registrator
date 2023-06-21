@@ -4,10 +4,13 @@ import {TextField, Button, MenuItem, FormHelperText} from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Select from 'react-select';
-import {Link, useLocation, useParams} from "react-router-dom";
+import {Link, Navigate, useLocation, useParams} from "react-router-dom";
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { CourseModel, CourseModelUndefined } from '../services/models';
 import { FacultyRequests, UserRequests, CourseRequests } from '../services';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
+import NotAuthorized from "../components/NotAuthorized";
 
 const schema = z.object({
   name: z.string().nonempty('Name is required.').max(40, "Name cannot be longer than 40 characters."),
@@ -29,6 +32,14 @@ interface CourseForm {
 }
 
 const CourseForm = (props: {isEdit: boolean}) => {
+  const loggedUser = useRecoilValue(loggedUserAtom);
+  if (loggedUser === null) {
+    return <Navigate to="/login"/>;
+  }
+  if (!loggedUser.admin && !loggedUser.teacher) {
+    return <NotAuthorized/>;
+  }
+
   const {
     register,
     handleSubmit,
@@ -47,7 +58,7 @@ const CourseForm = (props: {isEdit: boolean}) => {
     queryKey: ['courseFaculties'],
     queryFn: () => FacultyRequests.getFaculties(),
   });
- 
+
   //TODO: set the logged in user as the default value in guarantor input
   const { data: usersQuery } = useQuery({
     queryKey: ['courseUsers'],

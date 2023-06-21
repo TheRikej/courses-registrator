@@ -32,7 +32,7 @@ function App() {
           <Header/>
           <div className="flex justify-center m-auto h-screen">
               <Routes>
-                  <Route path="/" element={<LoginForm/>}/>
+                  <Route path="/" element={<Homepage/>}/>
                   <Route path="/courses/" element={<Homepage/>}/>
 
                   <Route path="/courses/:code/list" element={<CourseSemesterForm isEdit={false}/>} />

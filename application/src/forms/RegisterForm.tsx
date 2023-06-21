@@ -7,6 +7,8 @@ import {Link} from "react-router-dom";
 import { useMutation } from '@tanstack/react-query';
 import { UserCreateModel } from '../services/models';
 import { UserRequests } from '../services';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
 
 const schema = z.object({
   userName: z.string().nonempty("Name is required."),
@@ -31,6 +33,11 @@ interface RegisterForm {
 }
 
 const RegisterForm = () => {
+  const loggedUser = useRecoilValue(loggedUserAtom);
+  if (loggedUser !== null) {
+    return <h1>Please log out first.</h1>;
+  }
+
   const {
     register,
     handleSubmit,

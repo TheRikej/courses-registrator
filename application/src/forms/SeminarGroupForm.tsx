@@ -5,12 +5,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {DateTimePicker, TimePicker} from "@mui/x-date-pickers";
 import workDays from "../utils/days";
-import {Link, useLocation, useParams} from "react-router-dom";
+import {Link, Navigate, useLocation, useParams} from "react-router-dom";
 import Select from "react-select";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { UserRequests } from '../services';
 import { SeminarRequests } from '../services';
 import { SeminarGroupModel } from '../services/models';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
+import NotAuthorized from "../components/NotAuthorized";
 
 const schema = z.object({
   groupNumber: z.number().min(1, "Group number must be greater than 0.")
@@ -51,6 +54,14 @@ interface SeminarGroupForm {
 
 //TODO: default Values when editing ("defaultValue={...}")
 const SeminarGroupForm = (props: {isEdit: boolean}) => {
+  const loggedUser = useRecoilValue(loggedUserAtom);
+  if (loggedUser === null) {
+    return <Navigate to="/login"/>;
+  }
+  if (!loggedUser.admin && !loggedUser.teacher) {
+    return <NotAuthorized/>;
+  }
+
   const {
     register,
     handleSubmit,
@@ -349,11 +360,11 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
       </FormHelperText>
 
         <div className="flex flex-col content-center justify-center m-auto">
-            
+
                 <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
                   {props.isEdit ? "Submit" : "Create"}
                 </Button>
-            
+
             <Link to={"/courses/" + code + "/" + semester?.toLowerCase() + "/"
                     + (props.isEdit ? ("seminars/" + group + "/") : "") + "show"} state={{id: state.id}}>
                 <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 2rem' }}>

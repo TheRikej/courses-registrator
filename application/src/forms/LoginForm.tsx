@@ -3,10 +3,12 @@ import {useForm} from 'react-hook-form';
 import {TextField, Button} from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import {Link} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import { UserLoginModel } from '../services/models';
 import { UserRequests } from '../services';
 import { useMutation } from '@tanstack/react-query';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
 
 const schema = z.object({
   email: z.string().nonempty("Please enter email."),
@@ -19,6 +21,11 @@ interface LoginForm {
 }
 
 const LoginForm = () => {
+  const loggedUser = useRecoilValue(loggedUserAtom);
+  if (loggedUser !== null) {
+    return <h1>Please log out first.</h1>;
+  }
+
   const {
     register,
     handleSubmit,
