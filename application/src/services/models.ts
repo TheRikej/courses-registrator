@@ -1,3 +1,19 @@
+export interface CoursesFilterData {
+	semester: string;
+	faculty: string;
+	nameCode: string;
+	endrolled: boolean;
+	teaching: boolean;
+}
+  
+export const defaultCoursesFilterData: CoursesFilterData = {
+	semester: "_None_",
+	faculty: "_All_",
+	nameCode: "",
+	endrolled: false,
+	teaching: false,
+};
+
 export interface UserModel {
     id: number,
     userName: string,
@@ -53,11 +69,17 @@ export interface FacultyModel {
 
 export interface CourseModel {
     id: string,
-    credits: number,
+    guarantor: {
+      userName: string,
+    },
+    faculty: {
+      id: string;
+      name: string;
+      deletedAt: Date | null;
+    },
     description: string,
-    guarantorId: number,
     name: string,
-    facultyId: string,
+    credits: number,
 }
 
 export interface CourseModelUndefined {
