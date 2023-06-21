@@ -30,7 +30,6 @@ const deleteFacultyAPI = async (req: Request, res: Response) => {
             });
         }
         if (e instanceof NonexistentRecordError) {
-          console.log(e.message)
             return res.status(404).send({
                 status: 'error',
                 error: e.message,

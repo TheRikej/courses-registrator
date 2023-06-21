@@ -5,12 +5,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Select from 'react-select';
 import {Link, Navigate, useLocation, useParams} from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CourseCreateModel, CourseModelUndefined } from '../services/models';
 import { FacultyRequests, UserRequests, CourseRequests } from '../services';
 import {useRecoilValue} from "recoil";
 import {loggedUserAtom} from "../atoms/loggedUser";
 import NotAuthorized from "../components/NotAuthorized";
+import { useState } from 'react';
+import { queryAtom } from '../atoms/queryClient';
 
 const schema = z.object({
   name: z.string().nonempty('Name is required.').max(40, "Name cannot be longer than 40 characters."),
@@ -31,7 +33,7 @@ interface CourseForm {
   guarantor: number,
 }
 
-const CourseForm = (props: {isEdit: boolean}) => {
+const CourseForm = (props: {isEdit: boolean, client: QueryClient}) => {
   const loggedUser = useRecoilValue(loggedUserAtom);
   if (loggedUser === null) {
     return <Navigate to="/login"/>;
@@ -54,12 +56,14 @@ const CourseForm = (props: {isEdit: boolean}) => {
 
   const { state } = useLocation();
 
+  const [success, setSuccess] = useState<boolean>(false);
+
   const { data: faculties } = useQuery({
     queryKey: ['courseFaculties'],
     queryFn: () => FacultyRequests.getFaculties(),
   });
 
-  const queryClient = useQueryClient();
+  //const queryClient = useQueryClient();
 
   const { data: usersQuery } = useQuery({
     queryKey: ['courseUsers'],
@@ -69,24 +73,34 @@ const CourseForm = (props: {isEdit: boolean}) => {
   const users = usersQuery?.data.map(x => ({value: x.id, label: x.userName}));
 
   const { mutate: updateCourse } = useMutation({
-    mutationFn: (info: {
+    mutationFn: async (info: {
         courseInfo: CourseModelUndefined,
-    }) => CourseRequests.updateCourse(
-        info.courseInfo
-    ),
+    }) => {
+      const courseResult = CourseRequests.updateCourse(info.courseInfo)
+      if ((await courseResult).status === 'success') {
+        setSuccess(true)
+      }
+      return courseResult
+    
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries(['HomepageCourse']);
+      props.client.invalidateQueries({queryKey: ['HomepageCourse']});
   },
 });
 
   const { mutate: createCourse } = useMutation({
-    mutationFn: (info: {
+    mutationFn: async (info: {
         courseInfo: CourseCreateModel,
-    }) => CourseRequests.createCourse(
-        info.courseInfo
-    ),
+    }) => {
+      const courseResult = CourseRequests.createCourse(info.courseInfo)
+      if ((await courseResult).status === 'success') {
+        setSuccess(true)
+      }
+      return courseResult
+    
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries(['HomepageCourse']);
+      props.client.invalidateQueries({queryKey: ['HomepageCourse']});
   },
   });
 
@@ -119,6 +133,10 @@ const CourseForm = (props: {isEdit: boolean}) => {
     }
     reset();
   };
+
+  if (success) {
+    return <Navigate to={"/courses"}/>
+  }
 
   if(users === undefined) {
     return <></>

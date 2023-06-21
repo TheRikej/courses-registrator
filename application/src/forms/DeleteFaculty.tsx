@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import React  from 'react';
+import React, { useState }  from 'react';
 import {Link, Navigate, useLocation, useParams} from 'react-router-dom';
 import Warning from "../components/Warning";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -9,6 +9,8 @@ import {loggedUserAtom} from "../atoms/loggedUser";
 import NotAuthorized from "../components/NotAuthorized";
 
 export default function DeleteFaculty() {
+    const [success, setSuccess] = useState<boolean>(false);
+
     const loggedUser = useRecoilValue(loggedUserAtom);
     if (loggedUser === null) {
         return <Navigate to="/login"/>;
@@ -24,13 +26,23 @@ export default function DeleteFaculty() {
     const queryClient = useQueryClient();
 
     const { mutate: remove } = useMutation({
-        mutationFn: (info: {
+        mutationFn: async (info: {
             id: string,
-        }) => FacultyRequests.deleteFaculty( info.id ),
+        }) => {
+            const facResult = FacultyRequests.deleteFaculty( info.id )
+            if ((await facResult).status === 'success') {
+                setSuccess(true)
+              }
+            return facResult
+        },
         onSuccess: () => {
             queryClient.invalidateQueries(['faculties']);
         },
     });
+
+    if (success) {
+        return <Navigate to={"/faculties"}/>
+    }
 
     return (
         <div className="flex flex-col mx-auto max-w-2xl">

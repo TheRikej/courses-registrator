@@ -11,6 +11,7 @@ import { SemesterCreateModel } from '../services/models';
 import {useRecoilValue} from "recoil";
 import {loggedUserAtom} from "../atoms/loggedUser";
 import NotAuthorized from "../components/NotAuthorized";
+import { useState } from 'react';
 
 const schema = z.object({
   year: z.number().min(2000, "Year must be greater than 2000."),
@@ -54,22 +55,34 @@ const SemesterForm = (props: {isEdit: boolean}) => {
 
   const { state } = useLocation();
 
+  const [success, setSuccess] = useState<boolean>(false);
+
   const { mutate: updateSemester } = useMutation({
-      mutationFn: (info: {
+      mutationFn: async (info: {
           id: string,
           semesterInfo: SemesterCreateModel,
-      }) => SemesterRequests.updateSemester( info.id, info.semesterInfo ),
+      }) => {
+        const semester = SemesterRequests.updateSemester( info.id, info.semesterInfo );
+        if ((await semester).status === 'success') {
+          setSuccess(true)
+        }
+        return semester
+      },
       onSuccess: () => {
           queryClient.invalidateQueries(['semesters']);
       },
   });
 
   const { mutate: createSemester } = useMutation({
-    mutationFn: (info: {
+    mutationFn: async (info: {
       semesterInfo: SemesterCreateModel,
-    }) => SemesterRequests.createSemester(
-        info.semesterInfo
-    ),
+    }) => {
+      const semester = SemesterRequests.createSemester(info.semesterInfo)
+      if ((await semester).status === 'success') {
+        setSuccess(true)
+      }
+      return semester
+    }
 });
 
   const onSubmit = () => {
@@ -96,6 +109,10 @@ const SemesterForm = (props: {isEdit: boolean}) => {
     }
     reset();
   };
+
+  if (success) {
+    return <Navigate to={"/semesters"}/>
+  }
 
   return (
     <form
