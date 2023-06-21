@@ -1,15 +1,16 @@
 import React  from 'react';
-import {useRecoilValue} from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import {loggedUserAtom} from "../atoms/loggedUser";
 import {Navigate} from "react-router-dom";
 
 export default function Logout() {
-    const loggedUser = useRecoilValue(loggedUserAtom);
+    const [loggedUser, setLoggedUser] = useRecoilState(loggedUserAtom);
+
+    setLoggedUser(null)
+
     if (loggedUser === null) {
         return <Navigate to="/login"/>;
     }
-
-    //TODO: logout user
 
     return (
         <div className="flex flex-col items-center mx-4 max-w-2xl">

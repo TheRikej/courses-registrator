@@ -7,7 +7,7 @@ import {Link, Navigate} from "react-router-dom";
 import { UserLoginModel } from '../services/models';
 import { UserRequests } from '../services';
 import { useMutation } from '@tanstack/react-query';
-import {useRecoilValue} from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import {loggedUserAtom} from "../atoms/loggedUser";
 
 const schema = z.object({
@@ -21,10 +21,7 @@ interface LoginForm {
 }
 
 const LoginForm = () => {
-  const loggedUser = useRecoilValue(loggedUserAtom);
-  if (loggedUser !== null) {
-    return <h1>Please log out first.</h1>;
-  }
+  const [loggedUser, setLoggedUser] = useRecoilState(loggedUserAtom);
 
   const {
     register,
@@ -36,11 +33,15 @@ const LoginForm = () => {
   });
 
   const { mutate: loginUser } = useMutation({
-    mutationFn: (info: {
+    mutationFn: async (info: {
         userInfo: UserLoginModel,
-    }) => UserRequests.loginUser(
-        info.userInfo
-    ),
+    }) => {
+      const loggedUserData = UserRequests.loginUser(info.userInfo);
+      const arrivedData = (await loggedUserData).data;
+      setLoggedUser({ id: arrivedData.id, admin: arrivedData.administrator, 
+        teacher: arrivedData.teacher, student: arrivedData.student, name: arrivedData.userName });
+      return loggedUserData;
+    }
   });
 
   const onSubmit = () => {
@@ -53,6 +54,10 @@ const LoginForm = () => {
       }
     });
   };
+
+  if (loggedUser !== null) {
+    return <Link to={"/register"}></Link>
+  }
 
   return (
     <form

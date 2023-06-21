@@ -68,7 +68,6 @@ const CourseSemester = () => {
             if ((await courseRet).status === 'success') {
                 setEnrolled(!isEnrolled)
             }
-            console.log((await courseRet).status)
             return courseRet
         },
         onSuccess: () => {

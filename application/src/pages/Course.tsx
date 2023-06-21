@@ -50,7 +50,7 @@ const Course = () => {
                 {(loggedUser.admin || loggedUser.teacher) ?
                     <div>
                         <div className="flex flex-row justify-center block mx-auto">
-                            <Link to={"/courses/" + code + "/list"}>
+                            <Link to={"/courses/" + code + "/list"} state={{id: code, course: course.data}}>
                                 <Button color="info" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                     List
                                 </Button>
