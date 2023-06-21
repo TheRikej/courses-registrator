@@ -1,13 +1,16 @@
 import { selector } from 'recoil';
 import { coursesAtom, coursesSemesterAtom, filterDataAtom } from '../atoms/filterCourse';
 import { CourseModel, CourseSemesterModel } from '../services/models';
+import { useQuery } from '@tanstack/react-query';
+import { UserRequests } from '../services';
+import { loggedUserAtom } from '../atoms/loggedUser';
 
 export const coursesSemesterToShowSelector = selector<CourseSemesterModel[]>({
     key: 'coursesSemesterToShow',
     get: ({ get }) => {
-        const courses = get(coursesSemesterAtom)
+        const courses = get(coursesSemesterAtom);
         const filterData = get(filterDataAtom);
-        
+
         const filteredSemesterCourses = courses.filter(
             (course) =>
                 (filterData.nameCode === "" || course.course.code.toLowerCase().includes(filterData.nameCode) || course.course.name.toLowerCase().includes(filterData.nameCode)) &&

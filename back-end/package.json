@@ -11,7 +11,7 @@
     "test": "prisma migrate reset --force && ts-node src/seed/seed.ts && jest",
     "migrate": "prisma migrate dev",
     "seed": "prisma migrate reset --force && ts-node src/seed/seed.ts",
-    "build": "tsc && vite build"
+    "build": "tsc"
   },
   "author": "xsvonav xkajan xjudiny xdrobny",
   "license": "ISC",
