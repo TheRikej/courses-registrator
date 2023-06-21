@@ -79,11 +79,26 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
     queryFn: () => UserRequests.getUsers(),
   })
 
+  const { data: seminar } = useQuery({
+    queryKey: ['courseSemesterForForm'],
+    queryFn: () => SeminarRequests.getSeminar(state.id),
+    enabled: props.isEdit,
+  });
+
+  const currentTeachers = seminar?.data.teachers.map(x => x.id);
+
   const { mutate: addTeacher } = useMutation({
     mutationFn: (info: {
         id: number,
         courseId: string,
     }) => SeminarRequests.addTeacherSeminar(info.id, info.courseId)
+  });
+
+  const { mutate: removeTeacher } = useMutation({
+    mutationFn: (info: {
+        id: number,
+        courseId: string,
+    }) => SeminarRequests.removeTeacherSeminar(info.id, info.courseId)
   });
 
   const { state } = useLocation();
@@ -119,10 +134,15 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
         teachers: [number] | null
     }) => {
       const seminar = SeminarRequests.editSeminarGroup(info.id, info.courseInfo)
-      //changeTeachers(currentTeachers === undefined ? [] : currentTeachers, info.teachers === null ? [] : info.teachers, info.id)
+      changeTeachers(currentTeachers === undefined ? [] : currentTeachers, info.teachers === null ? [] : info.teachers, info.id)
       return seminar
     }
   });
+
+  const changeTeachers = (currentTeachers: number[], teachers: number[], courseSemId: string) => {
+    teachers.filter(x => !currentTeachers.includes(x)).forEach(x => addTeacher({id: x, courseId: courseSemId}));
+    currentTeachers.filter(x => !teachers.includes(x)).forEach(x => removeTeacher({id: x, courseId: courseSemId}));
+  };
 
   const onSubmit = async () => {
     const values = getValues();
