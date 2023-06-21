@@ -12,7 +12,6 @@ import {useRecoilValue} from "recoil";
 import {loggedUserAtom} from "../atoms/loggedUser";
 import NotAuthorized from "../components/NotAuthorized";
 import { useState } from 'react';
-import { queryAtom } from '../atoms/queryClient';
 
 const schema = z.object({
   name: z.string().nonempty('Name is required.').max(40, "Name cannot be longer than 40 characters."),
