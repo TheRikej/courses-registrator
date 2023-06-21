@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Button} from "@mui/material";
 import {Link, Navigate, useParams} from "react-router-dom";
-import { CourseRequests } from '../services';
+import { CourseRequests, UserRequests } from '../services';
 import { useQuery } from '@tanstack/react-query';
 import {useRecoilValue} from "recoil";
 import {loggedUserAtom} from "../atoms/loggedUser";
@@ -19,12 +19,16 @@ const Course = () => {
         queryFn: () => CourseRequests.getCourse(code !== undefined ? code: ""),
     });
 
-    if(course?.data === undefined) {
+    const { data: userInfo } = useQuery({
+        queryKey: ['CourseUser'],
+        queryFn: () => UserRequests.getUser(loggedUser?.id === undefined ? "0" : String(loggedUser.id)),
+    });
+
+    if(course?.data === undefined || userInfo?.data === undefined) {
         return <></>
     }
 
     if (!course) return <>Loading...</>;
-    //TODO: credits
 
     return (
         <div className="flex flex-col flex-start m-2">
@@ -39,10 +43,11 @@ const Course = () => {
                 <p><b>Credits</b>: {course.data.credits}</p>
                 <p className="mt-2"><b>Listed in semesters</b>:</p>
                 <ul className="border-solid border-2 overflow-y-scroll max-h-44 lg:max-h-36">
-                    {course.data.semesters.map(semester =>
-                        <Link key={semester} to={"/courses/" + code + "/" + semester + "/show"}>
+                    {course.data.courseSemesters.map(semester =>
+                        <Link key={semester.id} to={"/courses/" + code + "/" + semester.semester.year + semester.semester.season + "/show"}
+                         state={{id: semester.id, isEnrolled: userInfo?.data.studiedCourses.filter(x => x.course.id === semester.id).length > 0}}>
                             <li className="m-1">
-                                • <span className="underline">{semester}</span>
+                                • <span className="underline">{semester.semester.year + "/" + semester.semester.season}</span>
                             </li>
                         </Link>
                     )}

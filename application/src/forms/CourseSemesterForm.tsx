@@ -15,6 +15,7 @@ import { CourseSemesterRequests } from '../services';
 import NotAuthorized from "../components/NotAuthorized";
 import {useRecoilValue} from "recoil";
 import {loggedUserAtom} from "../atoms/loggedUser";
+import { useState } from 'react';
 
 const schema = z.object({
   semester: z.string().nonempty('Semester is required.'),
@@ -87,6 +88,8 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
     enabled: props.isEdit,
   });
 
+  const [success, setSuccess] = useState<boolean>(false);
+
   const currentTeachers = courseSemester?.data.teachers.map(x => x.id);
 
   const users = usersQuery?.data.map(x => ({value: x.id, label: x.userName}));
@@ -103,6 +106,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
       info.teachers?.forEach(teacher => {
         addTeacher({id: teacher, courseId: courseSemester})
       })
+      setSuccess(true)
       return course
     }
   });
@@ -115,6 +119,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
     }) => {
       const course = CourseSemesterRequests.editCourseSemester(info.id, info.courseInfo)
       changeTeachers(currentTeachers === undefined ? [] : currentTeachers, info.teachers === null ? [] : info.teachers, info.id)
+      setSuccess(true)
       return course
     }
   });
@@ -174,6 +179,10 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
     }
     reset();
   };
+
+  if (success) {
+    return <Navigate to={"/courses"}/>
+  }
 
   if(users === undefined) {
     return <></>

@@ -69,10 +69,7 @@ const Courses = (props: {client: QueryClient}) => {
         queryKey: ['homePageFaculties'],
         queryFn: () => FacultyRequests.getFaculties(),
     });
-
-    console.log(coursesNoSemester);
-    console.log(coursesResponse);
-
+    
     React.useEffect(() => {
         if (filtering) {
             setFiltering(false);
