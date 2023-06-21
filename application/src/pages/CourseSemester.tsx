@@ -28,6 +28,8 @@ const CourseSemester = () => {
 
     const { state } = useLocation();
 
+    console.log(state.id)
+
     const enrolledCOurses = user?.data.studiedCourses.map(x => x.course.id);
 
     const isEnrolledBegining = enrolledCOurses?.includes(state.id);

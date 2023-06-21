@@ -112,6 +112,18 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
     },
   });
 
+  const { mutate: editSeminar } = useMutation({
+    mutationFn: async (info: {
+        id: string,
+        courseInfo: SeminarGroupModel,
+        teachers: [number] | null
+    }) => {
+      const seminar = SeminarRequests.editSeminarGroup(info.id, info.courseInfo)
+      //changeTeachers(currentTeachers === undefined ? [] : currentTeachers, info.teachers === null ? [] : info.teachers, info.id)
+      return seminar
+    }
+  });
+
   const onSubmit = async () => {
     const values = getValues();
     const hoursFrom = values.timeHourFrom?.getHours();
@@ -138,8 +150,10 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
     }
     if (!props.isEdit) {
       await addSeminar(seminarGroupData);
-      reset();
+    } else {
+      await editSeminar(seminarGroupData);
     }
+    reset()
   }
 
   if(users === undefined) {
@@ -366,7 +380,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
                 </Button>
 
             <Link to={"/courses/" + code + "/" + semester?.toLowerCase() + "/"
-                    + (props.isEdit ? ("seminars/" + group + "/") : "") + "show"} state={{id: state.id}}>
+                    + (props.isEdit ? ("seminars/" + group + "/") : "") + "show"} state={{id: state.id , courseSemesterId: state.courseSemesterId}}>
                 <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 2rem' }}>
                     {"Back to " + code + (props.isEdit ? "/"+group : "")}
                 </Button>
