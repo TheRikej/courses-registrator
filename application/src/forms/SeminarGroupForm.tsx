@@ -86,7 +86,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
     enabled: props.isEdit,
   });
 
-  const currentTeachers = seminar?.data.teachers.map(x => x.id);
+  const currentTeachers = seminar?.data.teachers.map((x: {userName: string; id: number}) => x.id);
 
   const { mutate: addTeacher } = useMutation({
     mutationFn: (info: {

@@ -90,7 +90,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
 
   const [success, setSuccess] = useState<boolean>(false);
 
-  const currentTeachers = courseSemester?.data.teachers.map(x => x.id);
+  const currentTeachers = courseSemester?.data.teachers.map((x: {userName: string; id: number}) => x.id);
 
   const users = usersQuery?.data.map(x => ({value: x.id, label: x.userName}));
 

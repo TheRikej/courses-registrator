@@ -150,3 +150,60 @@ export interface SeminarGroupModel {
         endMinute: number,
     }
   }
+
+  // Prisma models from backend
+
+  export type CourseAll = {
+    id: string;
+    description: string;
+    name: string;
+    deletedAt: Date | null;
+    guarantorId: number;
+    facultyId: string;
+    credits: number;
+} & {
+    faculty: {
+        id: string;
+        name: string;
+        deletedAt: Date | null;
+    },
+    guarantor: {userName: string},
+};
+
+export type CourseSpecific = {
+    id: string;
+    description: string;
+    name: string;
+    deletedAt: Date | null;
+    guarantorId: number;
+    facultyId: string;
+    credits: number;
+} & {
+    faculty: {
+        id: string;
+        name: string;
+        deletedAt: Date | null;
+    },
+    guarantor: {userName: string},
+    courseSemesters: ({
+        id: string;
+        registrationStart: Date;
+        registrationEnd: Date;
+        capacity: number;
+        deletedAt: Date | null;
+        courseId: string;
+        semesterId: string;
+        timeSlotId: string | null;
+        room: string | null;
+    } & {
+        semester: {
+            id: string;
+            year: number;
+            season: string;
+            semesterStart: Date;
+            semesterEnd: Date;
+            deletedAt: Date | null;
+        },
+    })[],
+    semesters: string[]
+};
