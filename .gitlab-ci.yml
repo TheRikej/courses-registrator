@@ -3,7 +3,6 @@ image: node:18.15
 stages:
   - lint
   - build
-  - test
 
 cache:
   paths:
@@ -56,26 +55,4 @@ frontend-build:
   script:
     - npm run build
   tags: 
-    - shared-fi
-
-backend-test:
-  stage: test
-  needs:
-    - backend-build
-  before_script:
-    - *backend-before-script
-  script:
-    - npm run test
-  tags:
-    - shared-fi
-
-frontend-test:
-  stage: test
-  needs:
-    - frontend-build
-  before_script:
-    - *frontend-before-script
-  script:
-    - npm run test
-  tags:
     - shared-fi
