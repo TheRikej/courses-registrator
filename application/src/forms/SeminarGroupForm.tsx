@@ -176,7 +176,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
     reset()
   }
 
-  if(users === undefined) {
+  if(users === undefined || (seminar === undefined && props.isEdit)) {
     return <></>
   }
 
@@ -205,7 +205,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
           size="small"
           helperText={errors.groupNumber?.message}
           type="number"
-          defaultValue="1"
+          defaultValue={props.isEdit ? seminar?.data.groupNumber : "1"}
           InputProps={{
             inputProps: {
               min: 0,
@@ -225,7 +225,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
           size="small"
           helperText={errors.capacity?.message}
           type="number"
-          defaultValue="30"
+          defaultValue={props.isEdit ? seminar?.data.capacity : "30"}
           InputProps={{
             inputProps: {
               min: 0,
@@ -238,7 +238,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
         <Controller
             name="registrationFrom"
             control={control}
-            defaultValue={new Date()}
+            defaultValue={props.isEdit && seminar?.data.registrationStart !== undefined ? new Date(seminar?.data.registrationStart) : new Date()}
             render={({ field }) => (
               <DateTimePicker
                   label="Registration start *"
@@ -261,7 +261,9 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
         <Controller
             name="registrationTo"
             control={control}
-            defaultValue={new Date((new Date()).setMonth((new Date().getMonth()+1)))}
+            defaultValue={props.isEdit && seminar?.data.registrationEnd !== undefined
+              ? new Date(seminar?.data.registrationEnd)
+              : new Date((new Date()).setMonth((new Date().getMonth()+1)))}
             render={({ field }) => (
                 <DateTimePicker
                     label="Registration end *"
@@ -373,7 +375,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
       <Controller
           control={control}
           name="teachers"
-          defaultValue={null}
+          defaultValue={props.isEdit && currentTeachers !== undefined ? currentTeachers as [number] : null}
           render={({ field, }) => (
               <Select
                   ref={field.ref}
