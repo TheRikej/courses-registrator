@@ -3,7 +3,7 @@ import {useForm} from 'react-hook-form';
 import {TextField, Button} from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import {Link} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import { UserLoginModel } from '../services/models';
 import { UserRequests } from '../services';
 import { useMutation } from '@tanstack/react-query';
@@ -56,7 +56,7 @@ const LoginForm = () => {
   };
 
   if (loggedUser !== null) {
-    return <Link to={"/register"}></Link>
+    return <Navigate to={"/courses"}/>
   }
 
   return (
@@ -91,9 +91,11 @@ const LoginForm = () => {
       />
 
       <div className="flex flex-col content-center justify-center mx-auto">
-        <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
-          Log in
-        </Button>
+      
+            <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
+              Log in
+            </Button>
+      
         <Link to="/register">
             <Button color="info" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem' }}>
               Register new account

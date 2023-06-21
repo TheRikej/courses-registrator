@@ -41,7 +41,7 @@ const Courses = () => {
 
 
     const { data: coursesNoSemesterResponse } = useQuery({
-        queryKey: ['HomepageCourseSemester'],
+        queryKey: ['HomepageCourse'],
         queryFn: () => CourseRequests.getCourses(),
     });
     React.useEffect(() => {
@@ -112,6 +112,10 @@ const Courses = () => {
         setEnrolledOnly(false);
         setTeachingOnly(false);
     };
+
+    if(userInfo?.data === undefined) {
+        return <></>
+    }
 
     return (
         <div className="flex flex-col flex-start m-2">
@@ -233,7 +237,7 @@ const Courses = () => {
                             className="my-1 mx-1 rounded-lg border-solid border-4 p-0.5"
                             key={course.course.code + course.semesterYear + "/" + course.semesterSeason}
                         >
-                            <CourseSemesterItem course={course}/>
+                            <CourseSemesterItem course={course} isEnrolled={userInfo?.data.studiedCourses.filter(x => x.course.id === course.id).length > 0}/>
                         </li>
                     )}
                     {coursesNoSemester?.map(course =>

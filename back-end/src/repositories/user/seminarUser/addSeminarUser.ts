@@ -63,7 +63,7 @@ const addSeminarUser = async (data: addStudentSeminarData): UserAddStudentSemina
         if (seminarGroup.registrationEnd < currentDate) {
           throw new OperationNotAllowedError('Registration for this group has already ended yet!');
         }
-        const studiedCoursesIds = user.studiedCourses.map(x => x.courseId);
+        const studiedCoursesIds = user.studiedCourses.filter(x => x.deletedAt === null).map(x => x.courseId);
         if (studiedCoursesIds.indexOf(seminarGroup.courseSemesterId) === -1){
           throw new OperationNotAllowedError('This user is not enrolled in the course for this seminar!');
         }

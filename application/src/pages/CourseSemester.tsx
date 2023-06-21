@@ -27,10 +27,7 @@ const CourseSemester = () => {
 
     const { state } = useLocation();
 
-    const enrolledCOurses = user?.data.studiedCourses.map(x => x.course.id);
-
-    const isEnrolledBegining = enrolledCOurses?.includes(state.id);
-    const [isEnrolled, setEnrolled] = useState<boolean>(isEnrolledBegining !== undefined ? isEnrolledBegining : true );
+    const [isEnrolled, setEnrolled] = useState<boolean>(state.isEnrolled);
 
     const { data: course } = useQuery({
         queryKey: ['courseSemester2'],
@@ -121,7 +118,7 @@ const CourseSemester = () => {
                                 className="my-1 mx-1 rounded-lg border-solid border-4 p-0.5"
                                 key={group.groupNumber}
                             >
-                                <SeminarGroupItem group={group} semester={semester!} code={code!} id={group.id} courseSemesterId={state.id} isEnrolled={user?.data.studiedGroups.filter(x => x.group.id === group.id).length > 1}/>
+                                <SeminarGroupItem group={group} semester={semester!} code={code!} id={group.id} courseSemesterId={state.id} isEnrolled={user?.data.studiedGroups.filter(x => x.group.id === group.id).length > 0}/>
                             </li>
                         )}
                     </ul>

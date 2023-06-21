@@ -28,10 +28,7 @@ const SeminarGroup = () => {
         queryFn: () => UserRequests.getUser(loggedUser.id.toString()),
     })
 
-    const enrolledSeminars = user?.data.studiedGroups.map(x => x.group.id);
-
-    const isEnrolledBegining = enrolledSeminars?.includes(state.id);
-    const [isEnrolled, setEnrolled] = useState<boolean>(state.isEnrolled/*isEnrolledBegining !== undefined ? isEnrolledBegining : true */);
+    const [isEnrolled, setEnrolled] = useState<boolean>(state.isEnrolled);
 
     const { data: seminar } = useQuery({
         queryKey: ['seminarGroup'],

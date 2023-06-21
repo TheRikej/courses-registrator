@@ -8,10 +8,6 @@ export default function Logout() {
 
     setLoggedUser(null)
 
-    if (loggedUser === null) {
-        return <Navigate to="/login"/>;
-    }
-
     return (
         <div className="flex flex-col items-center mx-4 max-w-2xl">
             <img src="/assets/success.png" alt="warning" width={250} className="my-4"/>

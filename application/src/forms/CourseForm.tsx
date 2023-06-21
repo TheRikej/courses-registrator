@@ -75,7 +75,7 @@ const CourseForm = (props: {isEdit: boolean}) => {
         info.courseInfo
     ),
     onSuccess: () => {
-      queryClient.invalidateQueries(['HomepageCourseSemester']);
+      queryClient.invalidateQueries(['HomepageCourse']);
   },
 });
 
@@ -86,7 +86,7 @@ const CourseForm = (props: {isEdit: boolean}) => {
         info.courseInfo
     ),
     onSuccess: () => {
-      queryClient.invalidateQueries(['HomepageCourseSemester']);
+      queryClient.invalidateQueries(['HomepageCourse']);
   },
   });
 

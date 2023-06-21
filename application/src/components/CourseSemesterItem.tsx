@@ -18,9 +18,9 @@ interface CourseSemesterProps {
     teachers: string[],
 }
 
-const CourseSemesterItemCard = (props: {course: CourseSemesterProps}) => {
+const CourseSemesterItemCard = (props: {course: CourseSemesterProps, isEnrolled: boolean}) => {
   return (
-    <Link to={"/courses/" + props.course.course.code + "/" + props.course.semesterYear + props.course.semesterSeason + "/show"} state={{id: props.course.id}}>
+    <Link to={"/courses/" + props.course.course.code + "/" + props.course.semesterYear + props.course.semesterSeason + "/show"} state={{id: props.course.id, isEnrolled: props.isEnrolled}}>
         <div className="flex flex-col m-1">
           <div className="ml-1 lg:mx-2 flex flex-col lg:flex-row">
               <p className="float-left lg:text-lg mb-1 lg:mr-8">
