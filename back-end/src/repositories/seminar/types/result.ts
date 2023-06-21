@@ -13,8 +13,10 @@ export type SeminarUpdateResult = AsyncResult<SeminarGroup & {
 
 export type ReadResult = SeminarGroup & {
     timeSlot: TimeSlot;
-    teachers: {userName: string}[];
-    students: GroupStudent[];
+    teachers: {userName: string, id: number}[];
+    students: (GroupStudent & {
+        student: {userName: string}
+    })[];
     currentCapacity: number;
 }
 

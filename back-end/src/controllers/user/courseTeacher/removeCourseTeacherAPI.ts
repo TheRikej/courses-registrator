@@ -23,7 +23,7 @@ const removeCourseTeacherAPI = async (req: Request, res: Response) => {
       const user = await removeCourseTeacher({...data, loggedInUser: req.session.user});
       
       if (user.isOk) {
-        return res.status(204).send({
+        return res.status(200).send({
           status: 'success',
         });
       }

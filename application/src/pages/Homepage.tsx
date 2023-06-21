@@ -8,9 +8,9 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import CourseItem from "../components/CourseItem";
 import CourseSemesterItem from "../components/CourseSemesterItem";
 import { useQuery } from '@tanstack/react-query';
-import { FacultyRequests, CourseSemesterRequests, CourseRequests, SemesterRequests } from '../services';
-import {useRecoilValue, useSetRecoilState} from "recoil";
-import {loggedUserAtom} from "../atoms/loggedUser";
+import { FacultyRequests, CourseSemesterRequests, CourseRequests, SemesterRequests, UserRequests } from '../services';
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { loggedUserAtom, userAtom } from "../atoms/loggedUser";
 import { coursesAtom, coursesSemesterAtom, filterDataAtom } from '../atoms/filterCourse';
 import { CoursesFilterData, defaultCoursesFilterData } from '../services/models';
 import { coursesSemesterToShowSelector, coursesToShowSelector } from '../selectors/filterCourse';
@@ -33,6 +33,12 @@ const Courses = () => {
             ...globalFilterData,
         }
     );
+
+    const { data: userInfo } = useQuery({
+        queryKey: ['HomepageUser'],
+        queryFn: () => UserRequests.getUser(loggedUser?.id === undefined ? "0" : String(loggedUser.id)),
+    });
+
 
     const { data: coursesNoSemesterResponse } = useQuery({
         queryKey: ['HomepageCourseSemester'],

@@ -79,11 +79,26 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
     queryFn: () => UserRequests.getUsers(),
   })
 
+  const { data: seminar } = useQuery({
+    queryKey: ['courseSemesterForForm'],
+    queryFn: () => SeminarRequests.getSeminar(state.id),
+    enabled: props.isEdit,
+  });
+
+  const currentTeachers = seminar?.data.teachers.map(x => x.id);
+
   const { mutate: addTeacher } = useMutation({
     mutationFn: (info: {
         id: number,
         courseId: string,
     }) => SeminarRequests.addTeacherSeminar(info.id, info.courseId)
+  });
+
+  const { mutate: removeTeacher } = useMutation({
+    mutationFn: (info: {
+        id: number,
+        courseId: string,
+    }) => SeminarRequests.removeTeacherSeminar(info.id, info.courseId)
   });
 
   const { state } = useLocation();
@@ -112,6 +127,23 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
     },
   });
 
+  const { mutate: editSeminar } = useMutation({
+    mutationFn: async (info: {
+        id: string,
+        courseInfo: SeminarGroupModel,
+        teachers: [number] | null
+    }) => {
+      const seminar = SeminarRequests.editSeminarGroup(info.id, info.courseInfo)
+      changeTeachers(currentTeachers === undefined ? [] : currentTeachers, info.teachers === null ? [] : info.teachers, info.id)
+      return seminar
+    }
+  });
+
+  const changeTeachers = (currentTeachers: number[], teachers: number[], courseSemId: string) => {
+    teachers.filter(x => !currentTeachers.includes(x)).forEach(x => addTeacher({id: x, courseId: courseSemId}));
+    currentTeachers.filter(x => !teachers.includes(x)).forEach(x => removeTeacher({id: x, courseId: courseSemId}));
+  };
+
   const onSubmit = async () => {
     const values = getValues();
     const hoursFrom = values.timeHourFrom?.getHours();
@@ -138,8 +170,10 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
     }
     if (!props.isEdit) {
       await addSeminar(seminarGroupData);
-      reset();
+    } else {
+      await editSeminar(seminarGroupData);
     }
+    reset()
   }
 
   if(users === undefined) {
@@ -263,7 +297,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
             size="small"
             helperText={errors.room?.message}
         />
-        <div className="flex flex-col lg:flex-row lg:flex-row gap-4 lg:gap-0 mt-2 mb-4 mx-4">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-0 mt-2 mb-4 mx-4">
           <div>
             <TextField
                 id="timeDay"
@@ -366,7 +400,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
                 </Button>
 
             <Link to={"/courses/" + code + "/" + semester?.toLowerCase() + "/"
-                    + (props.isEdit ? ("seminars/" + group + "/") : "") + "show"} state={{id: state.id}}>
+                    + (props.isEdit ? ("seminars/" + group + "/") : "") + "show"} state={{id: state.id , courseSemesterId: state.courseSemesterId}}>
                 <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 2rem' }}>
                     {"Back to " + code + (props.isEdit ? "/"+group : "")}
                 </Button>

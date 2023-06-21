@@ -123,14 +123,14 @@ const SeminarGroup = () => {
                 : <></>}
                 {(loggedUser.admin || loggedUser.teacher) ?
                     <div className="teachers-only">
-                        <p><b>Students</b>: {seminar.data.students === undefined ? null : seminar.data.students.map(x => x.studentId).toString()}</p>
+                        <p><b>Students</b>: {seminar.data.students === undefined ? null : seminar.data.students.map(x => x.student.userName).toString()}</p>
                         <div className="flex flex-row justify-center block mx-auto mt-2">
-                            <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/edit"} state={{id: state.id, courseSemesterId: code}}>
+                            <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/edit"} state={{id: state.id, courseSemesterId: state.courseSemesterId}}>
                                 <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                     Edit
                                 </Button>
                             </Link>
-                            <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/delete"} state={{id: state.id, courseSemesterId: code}}>
+                            <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/delete"} state={{id: state.id, courseSemesterId: state.courseSemesterId}}>
                                 <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                     Delete
                                 </Button>

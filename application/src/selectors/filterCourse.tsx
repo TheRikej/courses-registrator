@@ -2,7 +2,6 @@ import { selector } from 'recoil';
 import { coursesAtom, coursesSemesterAtom, filterDataAtom } from '../atoms/filterCourse';
 import { CourseModel, CourseSemesterModel } from '../services/models';
 import { useQuery } from '@tanstack/react-query';
-import { UserRequests } from '../services';
 import { loggedUserAtom } from '../atoms/loggedUser';
 
 export const coursesSemesterToShowSelector = selector<CourseSemesterModel[]>({
@@ -10,14 +9,6 @@ export const coursesSemesterToShowSelector = selector<CourseSemesterModel[]>({
     get: ({ get }) => {
         const courses = get(coursesSemesterAtom);
         const filterData = get(filterDataAtom);
-        const loggedUser = get(loggedUserAtom);
-        
-        const { data: userInfo } = useQuery({
-            queryKey: ['selectorUsers'],
-            queryFn: () => UserRequests.getUser(loggedUser?.id === undefined ? "0" : String(loggedUser.id)),
-        });
-
-        console.log(userInfo);
 
         const filteredSemesterCourses = courses.filter(
             (course) =>

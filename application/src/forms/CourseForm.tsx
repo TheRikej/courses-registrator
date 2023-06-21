@@ -6,7 +6,7 @@ import { z } from 'zod';
 import Select from 'react-select';
 import {Link, Navigate, useLocation, useParams} from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CourseCreateModel, CourseModel, CourseModelUndefined } from '../services/models';
+import { CourseCreateModel, CourseModelUndefined } from '../services/models';
 import { FacultyRequests, UserRequests, CourseRequests } from '../services';
 import {useRecoilValue} from "recoil";
 import {loggedUserAtom} from "../atoms/loggedUser";

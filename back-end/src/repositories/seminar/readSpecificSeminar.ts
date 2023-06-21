@@ -15,12 +15,20 @@ const readSpecificSeminar = async (data: ReadSpecificSeminar): SeminarReadSpecif
                 timeSlot: true,
                 teachers: {
                   select: {
-                    userName: true
+                    userName: true,
+                    id: true
                   }
                 },
                 students: {
                   where: {
                     deletedAt: null
+                  },
+                  include: {
+                    student: {
+                      select: {
+                        userName: true
+                      }
+                    }
                   }
                 },
             }

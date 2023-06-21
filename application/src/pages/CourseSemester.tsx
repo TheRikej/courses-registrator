@@ -3,7 +3,6 @@ import {Button} from "@mui/material";
 import {Link, Navigate, useLocation, useParams} from "react-router-dom";
 import formatTime from "../utils/timeslot";
 import SeminarGroupItem from "../components/SeminarGroupItem";
-//import formatSemester from "../utils/semester";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CourseSemesterRequests, SeminarRequests, UserRequests } from '../services';
 import {useRecoilValue} from "recoil";
@@ -90,7 +89,7 @@ const CourseSemester = () => {
     };
 
 
-    if(course?.data === undefined || groups?.data === undefined) {
+    if(course?.data === undefined || groups?.data === undefined || user?.data === undefined) {
         return <></>
     }
 
@@ -122,7 +121,7 @@ const CourseSemester = () => {
                                 className="my-1 mx-1 rounded-lg border-solid border-4 p-0.5"
                                 key={group.groupNumber}
                             >
-                                <SeminarGroupItem group={group} semester={semester!} code={code!} id={group.id} courseSemesterId={state.id}/>
+                                <SeminarGroupItem group={group} semester={semester!} code={code!} id={group.id} courseSemesterId={state.id} isEnrolled={user?.data.studiedGroups.filter(x => x.group.id === group.id).length > 1}/>
                             </li>
                         )}
                     </ul>

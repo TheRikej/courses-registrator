@@ -24,6 +24,11 @@ export const addTeacherSeminar = async (id: number, courseId: string): Promise<R
     return response.data;
 }
 
+export const removeTeacherSeminar = async (id: number, courseId: string): Promise<ResponseSingle<{id: string}>> => {
+    const response = await axiosInstance.delete(`/seminar/${courseId}/teacher/${id}`);
+    return response.data;
+}
+
 export const getSeminarStudent = async (id: string): Promise<ResponseSingle<ReadResult>> => {
     const response = await axiosInstance.get(`/seminar/${id}`);
     return response.data;

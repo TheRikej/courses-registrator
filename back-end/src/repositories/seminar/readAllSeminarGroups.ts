@@ -34,14 +34,23 @@ const readAllSeminarGroups = async (
                     timeSlot: true,
                     teachers: {
                       select: {
-                        userName: true
+                        userName: true,
+                        id: true
                       }
                     },
                     students: {
                       where: {
                         deletedAt: null
+                      },
+                      include: {
+                        student: {
+                          select: {
+                            userName: true
+                          }
+                        }
                       }
                     },
+
                 }
             })
             return semesters.map(semester => {return {...semester, currentCapacity: semester.students.length}})
