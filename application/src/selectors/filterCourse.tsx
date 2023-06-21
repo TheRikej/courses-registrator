@@ -2,7 +2,6 @@ import { selector } from 'recoil';
 import { coursesAtom, coursesSemesterAtom, filterDataAtom } from '../atoms/filterCourse';
 import { CourseModel, CourseSemesterModel } from '../services/models';
 import { useQuery } from '@tanstack/react-query';
-import { UserRequests } from '../services';
 import { loggedUserAtom } from '../atoms/loggedUser';
 
 export const coursesSemesterToShowSelector = selector<CourseSemesterModel[]>({

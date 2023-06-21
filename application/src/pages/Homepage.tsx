@@ -8,7 +8,7 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import CourseItem from "../components/CourseItem";
 import CourseSemesterItem from "../components/CourseSemesterItem";
 import { useQuery } from '@tanstack/react-query';
-import { FacultyRequests, CourseSemesterRequests, CourseRequests, SemesterRequests } from '../services';
+import { FacultyRequests, CourseSemesterRequests, CourseRequests, SemesterRequests, UserRequests } from '../services';
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { loggedUserAtom, userAtom } from "../atoms/loggedUser";
 import { coursesAtom, coursesSemesterAtom, filterDataAtom } from '../atoms/filterCourse';
