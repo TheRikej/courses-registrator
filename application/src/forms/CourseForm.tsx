@@ -6,7 +6,7 @@ import { z } from 'zod';
 import Select from 'react-select';
 import {Link, useLocation, useParams} from "react-router-dom";
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { CourseModel } from '../services/models';
+import { CourseModel, CourseModelUndefined } from '../services/models';
 import { FacultyRequests, UserRequests, CourseRequests } from '../services';
 
 const schema = z.object({
@@ -58,7 +58,7 @@ const CourseForm = (props: {isEdit: boolean}) => {
 
   const { mutate: updateCourse } = useMutation({
     mutationFn: (info: {
-        courseInfo: CourseModel,
+        courseInfo: CourseModelUndefined,
     }) => CourseRequests.updateCourse(
         info.courseInfo
     ),
@@ -89,7 +89,8 @@ const CourseForm = (props: {isEdit: boolean}) => {
     } else {
       updateCourse({
         courseInfo: {
-          id: values.code,
+          newId: values.code,
+          id: state.id,
           name: values.name,
           description: values.description,
           facultyId: values.faculty,

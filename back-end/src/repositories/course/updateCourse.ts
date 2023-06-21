@@ -29,7 +29,7 @@ const updateCourse = async (data: UpdateData): CourseUpdateResult => {
             id: data.id.toUpperCase(),
           },
           data: {
-            id: data.id.toUpperCase(),
+            ...(data.newId !== undefined ? { id: data.newId } : {}),
             ...(data.credits !== undefined ? { credits: data.credits } : {}),
             ...(data.description !== undefined ? { description: data.description } : {}),
             ...(data.name !== undefined ? { name: data.name } : {}),

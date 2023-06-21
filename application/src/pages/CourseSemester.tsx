@@ -30,6 +30,9 @@ const CourseSemester = () => {
 
     const enrolledCOurses = user?.data.studiedCourses.map(x => x.course.id);
 
+    const isEnrolledBegining = enrolledCOurses?.includes(state.id);
+    const [isEnrolled, setEnrolled] = useState<boolean>(isEnrolledBegining !== undefined ? isEnrolledBegining : true );
+
     const { data: course } = useQuery({
         queryKey: ['courseSemester2'],
         queryFn: () => CourseSemesterRequests.getCourseSemester(state.id),
@@ -65,15 +68,13 @@ const CourseSemester = () => {
             if ((await courseRet).status === 'success') {
                 setEnrolled(!isEnrolled)
             }
+            console.log((await courseRet).status)
             return courseRet
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['courseSemester2']);
         },
       });
-
-    const isEnrolledBegining = enrolledCOurses?.includes(state.id);
-    const [isEnrolled, setEnrolled] = useState<boolean>(isEnrolledBegining !== undefined ? isEnrolledBegining : true );
 
     const enrol = () => {
         if (!isEnrolled) {

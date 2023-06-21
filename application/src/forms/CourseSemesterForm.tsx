@@ -74,6 +74,8 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
     queryFn: () => UserRequests.getUsers(),
   })
 
+  //console.log(state.id)
+
   const { data: courseSemester } = useQuery({
     queryKey: ['courseSemesterForForm'],
     queryFn: () => CourseSemesterRequests.getCourseSemester(state.id),
@@ -392,7 +394,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
         <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
           Submit
         </Button>
-        <Link to={"/courses/" + code + (props.isEdit ? "/"+semester+"/show" : "/show")}>
+        <Link to={"/courses/" + code + (props.isEdit ? "/"+semester+"/show" : "/show")}  state={{id: state.id}}>
           <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 4rem' }}>
             Back to {code}
           </Button>

@@ -4,6 +4,10 @@ import addCourseUser from './src/repositories/user/courseUser/addCourseUser';
 import createUser from './src/repositories/user/createUser';
 import createSeminarGroup from './src/repositories/seminar/createSeminarGroup';
 import { Day } from '@prisma/client';
+import readAllFaculty from './src/repositories/faculty/readAllFaculty';
+import readAllCourse from './src/repositories/course/readAllCourses';
+import readSpecificCourse from './src/repositories/course/readSpecificCourse';
+import updateCourse from './src/repositories/course/updateCourse';
 
 // Here you can try prisma functions.
 
@@ -251,6 +255,11 @@ async function main() {
     }
     });
     console.log(seminar)*/
+    /*const user1 = await updateCourse({
+      id: "MA170",
+      loggedInUser: "1",
+    });
+    console.log(user1)*/
 }
 
 main()

@@ -51,3 +51,10 @@ export const removeStudentSeminar = async (id: number, seminarId: string): Promi
     const response = await axiosInstance.delete(`/seminar/${seminarId}/student/${id}`);
     return response.data;
 }
+
+export const editSeminarGroup = async (id: string, seminarData: SeminarGroupModel): Promise<ResponseSingle<{id: string}>> => {
+    const response = await axiosInstance.put(`/seminar/${id}`, {
+        ...seminarData
+     });
+    return response.data;
+}

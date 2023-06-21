@@ -164,7 +164,7 @@ const Courses = () => {
                 </ul>
             </div>
 
-            {(loggedUser.admin || loggedUser.teacher) ??
+            {(loggedUser.admin || loggedUser.teacher) ?
                 <div className="mt-2">
                     <div className="flex flex-col lg:flex-row items-center justify-center block mx-auto">
                         <Link to="/courses/create">
@@ -174,7 +174,7 @@ const Courses = () => {
                         </Link>
                     </div>
                 </div>
-            }
+            : <></>}
         </div>
     );
 };

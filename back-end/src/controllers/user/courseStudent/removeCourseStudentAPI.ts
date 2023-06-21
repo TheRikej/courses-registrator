@@ -22,8 +22,9 @@ const removeCourseStudentAPI = async (req: Request, res: Response) => {
       }
       const user = await removeCourseStudent(data);
       if (user.isOk) {
-        return res.status(204).send({
+        return res.status(200).send({
           status: 'success',
+          data: user.unwrap(),
         });
       }
   

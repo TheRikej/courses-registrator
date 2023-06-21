@@ -107,25 +107,26 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
     const minutesFrom = values.timeHourFrom?.getMinutes();
     const hoursTo = values.timeHourTo?.getHours();
     const minutesTo = values.timeHourTo?.getMinutes();
-    if (!props.isEdit) {
-      await addSeminar({
-        id: state.id,
-        courseInfo: {
-          groupNumber: values.groupNumber,
-          registrationStart: values.registrationFrom,
-          registrationEnd: values.registrationTo,
-          capacity: values.capacity,
-          room: values.room,
-          timeslot: {
-            day: values.timeDay !== null ? days[values.timeDay] : days[0],
-            startHour: hoursFrom !== undefined ? hoursFrom : 0,
-            startMinute: minutesFrom !== undefined ? minutesFrom: 0,
-            endHour: hoursTo !== undefined ? hoursTo: 0,
-            endMinute: minutesTo !== undefined ? minutesTo : 0,
-          },
+    const seminarGroupData = {
+      id: state.id,
+      courseInfo: {
+        groupNumber: values.groupNumber,
+        registrationStart: values.registrationFrom,
+        registrationEnd: values.registrationTo,
+        capacity: values.capacity,
+        room: values.room,
+        timeslot: {
+          day: values.timeDay !== null ? days[values.timeDay] : days[0],
+          startHour: hoursFrom !== undefined ? hoursFrom : 0,
+          startMinute: minutesFrom !== undefined ? minutesFrom: 0,
+          endHour: hoursTo !== undefined ? hoursTo: 0,
+          endMinute: minutesTo !== undefined ? minutesTo : 0,
         },
-        teachers: values.teachers,
-      });
+      },
+      teachers: values.teachers,
+    }
+    if (!props.isEdit) {
+      await addSeminar(seminarGroupData);
       reset();
     }
   }

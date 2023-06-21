@@ -24,6 +24,7 @@ const port = env.PORT ?? 4000;
 app.use(cors({
     origin: 'http://localhost:5173',
     //origin: 'http://127.0.0.1:5173',
+    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD', 'DELETE'],
     credentials: true,
   }));
 app.use(cookieParser());

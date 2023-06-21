@@ -49,4 +49,5 @@ export type CourseCreateData = {
     faculty?:          string,
     credits?:          number,
     guarantor?:        number,
+    newId?:        string,
   }

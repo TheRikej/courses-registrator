@@ -10,5 +10,5 @@ export interface LoggedUser {
 
 export const loggedUserAtom = atom<LoggedUser | null>({
     key: 'LoggedUser',
-    default: {id: 5, admin: true, teacher: true, student: true, name: "Jakub Judiny"},
+    default: {id: 1, admin: true, teacher: true, student: true, name: "Jakub Judiny"},
 });

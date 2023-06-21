@@ -16,7 +16,7 @@ export default function Header() {
     return (
         <AppBar position="static">
             <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-                <Link to="/" className="hidden lg:block text-sm lg:text-xl mx-1 lg:my-auto lg:mx-4">
+                <Link to="/courses/" className="hidden lg:block text-sm lg:text-xl mx-1 lg:my-auto lg:mx-4">
                     Course registrator
                 </Link>
                 {loggedUser !== null ?

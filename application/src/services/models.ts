@@ -61,6 +61,7 @@ export interface CourseModel {
 }
 
 export interface CourseModelUndefined {
+    newId: string | undefined,
     id: string | undefined,
     credits: number | undefined,
     description: string | undefined,
