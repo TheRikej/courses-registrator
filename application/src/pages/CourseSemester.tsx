@@ -3,7 +3,7 @@ import {Button} from "@mui/material";
 import {Link, Navigate, useLocation, useParams} from "react-router-dom";
 import formatTime from "../utils/timeslot";
 import SeminarGroupItem from "../components/SeminarGroupItem";
-import formatSemester from "../utils/semester";
+//import formatSemester from "../utils/semester";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CourseSemesterRequests, SeminarRequests, UserRequests } from '../services';
 import {useRecoilValue} from "recoil";
@@ -88,6 +88,7 @@ const CourseSemester = () => {
             });
         }
     };
+
 
     if(course?.data === undefined || groups?.data === undefined) {
         return <></>

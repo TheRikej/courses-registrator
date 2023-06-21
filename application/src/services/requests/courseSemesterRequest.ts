@@ -45,8 +45,7 @@ export const deleteCourse = async (id: string): Promise<ResponseSingle<CourseSem
 }
 
 export const editCourseSemester = async ( id: string, data: AddSemesterCourseData ): Promise<ResponseSingle<CourseSemesterModel>> => {
-    console.log(data)
-    const response = await axiosInstance.post(`/courseSemester/${id}`, {
+    const response = await axiosInstance.put(`/courseSemester/${id}`, {
         ...data
      });
     return response.data;

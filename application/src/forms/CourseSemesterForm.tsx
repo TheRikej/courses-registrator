@@ -71,8 +71,6 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
   });
   const { code, semester } = useParams();
 
-  const queryClient = useQueryClient();
-
   const { state } = useLocation();
 
   const { data: semesters } = useQuery({
@@ -84,8 +82,6 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
     queryKey: ['courseUsers'],
     queryFn: () => UserRequests.getUsers(),
   })
-
-  //console.log(state.id)
 
   const { data: courseSemester } = useQuery({
     queryKey: ['courseSemesterForForm'],
@@ -120,7 +116,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
         teachers: [number] | null
     }) => {
       const course = CourseSemesterRequests.editCourseSemester(info.id, info.courseInfo)
-      changeTeachers(info.teachers === null ? [] : info.teachers, currentTeachers === undefined ? [] : currentTeachers, info.id)
+      changeTeachers(currentTeachers === undefined ? [] : currentTeachers, info.teachers === null ? [] : info.teachers, info.id)
       return course
     }
   });
@@ -148,7 +144,6 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
 
   const onSubmit = async () => {
     const values = getValues();
-    console.log(values);
     const hoursFrom = values.timeHourFrom?.getHours();
     const minutesFrom = values.timeHourFrom?.getMinutes();
     const hoursTo = values.timeHourTo?.getHours();
@@ -163,7 +158,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
         capacity: values.capacity,
         room: values.room,
         timeslot: hasTimeslot || values.timeDay === null ? undefined : {
-          day: days[values.timeDay],
+          day: days[values.timeDay - 1],
           startHour: hoursFrom,
           startMinute: minutesFrom,
           endHour: hoursTo,
@@ -176,6 +171,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
       await addSemCOurse(courseData);
       reset();
     } else {
+      courseData.id = state.id,
       await editSemCourse(courseData);
     }
     reset();
@@ -206,7 +202,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
             select
             fullWidth
             size="small"
-            defaultValue = ""
+            defaultValue = {props.isEdit ? courseSemester?.data.semesterId : ""}
             inputProps={register('semester')}
             error={errors.semester !== undefined}
             helperText={errors.semester?.message}
@@ -233,7 +229,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
           size="small"
           helperText={errors.capacity?.message}
           type="number"
-          defaultValue="1000"
+          defaultValue = {props.isEdit ? courseSemester?.data.capacity: "1000"}
           InputProps={{
             inputProps: {
               min: 0,
@@ -246,7 +242,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
         <Controller
             name="registrationFrom"
             control={control}
-            defaultValue={new Date()}
+            defaultValue = {props.isEdit && courseSemester?.data.registrationStart !== undefined ? new Date(courseSemester?.data.registrationStart) : new Date()}
             render={({ field }) => (
               <DateTimePicker
                   label="Registration start *"
@@ -269,7 +265,9 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
         <Controller
             name="registrationTo"
             control={control}
-            defaultValue={new Date((new Date()).setMonth((new Date().getMonth()+1)))}
+            defaultValue = {props.isEdit && courseSemester?.data.registrationEnd !== undefined
+               ? new Date(courseSemester?.data.registrationEnd)
+               : new Date((new Date()).setMonth((new Date().getMonth()+1)))}
             render={({ field }) => (
                 <DateTimePicker
                     label="Registration end *"
@@ -299,6 +297,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
             label="Room"
             variant="outlined"
             className="w-60"
+            defaultValue = {props.isEdit ? courseSemester?.data.room : ""}
             sx={{ margin: '0 1rem 0.5rem' }}
             {...register('room')}
             error={errors.room !== undefined}
@@ -381,7 +380,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
       <Controller
           control={control}
           name="teachers"
-          defaultValue={null}
+          defaultValue={props.isEdit && currentTeachers !== undefined ? currentTeachers as [number] : null}
           render={({ field, }) => (
               <Select
                   ref={field.ref}
