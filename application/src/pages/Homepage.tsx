@@ -45,8 +45,11 @@ const Courses = (props: {client: QueryClient}) => {
         queryFn: () => CourseRequests.getCourses(),
     });
     React.useEffect(() => {
-        setCourses(coursesNoSemesterResponse?.data === undefined ? [] : coursesNoSemesterResponse.data);
-    }, []);
+
+        if (coursesNoSemesterResponse?.data !== undefined){
+            setCourses(coursesNoSemesterResponse.data);
+        }
+    });
     const coursesNoSemester = useRecoilValue(coursesToShowSelector);
 
 
@@ -55,8 +58,10 @@ const Courses = (props: {client: QueryClient}) => {
         queryFn: () => CourseSemesterRequests.getCourseSemesters(),
     });
     React.useEffect(() => {
-        setCoursesSemester(coursesResponse?.data === undefined ? [] : coursesResponse.data);
-    }, []);
+        if (coursesResponse?.data !== undefined){
+            setCoursesSemester(coursesResponse?.data === undefined ? [] : coursesResponse.data);
+        }
+    });
     const courses = useRecoilValue(coursesSemesterToShowSelector);
 
 
