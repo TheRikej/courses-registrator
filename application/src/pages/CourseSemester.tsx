@@ -118,7 +118,8 @@ const CourseSemester = () => {
                                 className="my-1 mx-1 rounded-lg border-solid border-4 p-0.5"
                                 key={group.groupNumber}
                             >
-                                <SeminarGroupItem group={group} semester={semester!} code={code!} id={group.id} courseSemesterId={state.id} isEnrolled={user?.data.studiedGroups.filter(x => x.group.id === group.id).length > 0}/>
+                                <SeminarGroupItem isEnrolledSemester={isEnrolled} group={group} semester={semester!}
+                                code={code!} id={group.id} courseSemesterId={state.id} isEnrolled={user?.data.studiedGroups.filter(x => x.group.id === group.id).length > 0}/>
                             </li>
                         )}
                     </ul>
@@ -137,17 +138,17 @@ const CourseSemester = () => {
                 {(loggedUser.admin || loggedUser.teacher) ?
                     <div className="teachers-only mt-2">
                         <div className="flex flex-col lg:flex-row items-center justify-center block mx-auto">
-                            <Link to={"/courses/" + code + "/" + semester + "/seminars/create"} state={{id: state.id}}>
+                            <Link to={"/courses/" + code + "/" + semester + "/seminars/create"} state={{id: state.id, isEnrolled: isEnrolled, courseSemesterId: state.id}}>
                                 <Button color="info" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                     Create seminar group
                                 </Button>
                             </Link>
-                            <Link to={"/courses/" + code + "/" + semester + "/edit"} state={{id: course.data.id}}>
+                            <Link to={"/courses/" + code + "/" + semester + "/edit"} state={{id: course.data.id, isEnrolled: isEnrolled}}>
                                 <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                     Edit
                                 </Button>
                             </Link>
-                            <Link to={"/courses/" + code + "/" + semester + "/delete"} state={{id: course.data.id}} >
+                            <Link to={"/courses/" + code + "/" + semester + "/delete"} state={{id: course.data.id, isEnrolled: isEnrolled}} >
                                 <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                     Delete
                                 </Button>

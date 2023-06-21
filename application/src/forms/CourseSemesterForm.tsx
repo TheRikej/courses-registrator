@@ -106,7 +106,9 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
       info.teachers?.forEach(teacher => {
         addTeacher({id: teacher, courseId: courseSemester})
       })
-      setSuccess(true)
+      if ((await course).status === 'success') {
+        setSuccess(true)
+      }
       return course
     }
   });
@@ -119,7 +121,9 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
     }) => {
       const course = CourseSemesterRequests.editCourseSemester(info.id, info.courseInfo)
       changeTeachers(currentTeachers === undefined ? [] : currentTeachers, info.teachers === null ? [] : info.teachers, info.id)
-      setSuccess(true)
+      if ((await course).status === 'success') {
+        setSuccess(true)
+      }
       return course
     }
   });
@@ -411,7 +415,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
         <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
           Submit
         </Button>
-        <Link to={"/courses/" + code + (props.isEdit ? "/"+semester+"/show" : "/show")}  state={{id: state.id}}>
+        <Link to={"/courses/" + code + (props.isEdit ? "/"+semester+"/show" : "/show")}  state={{id: state.id, isEnrolled: state.isEnrolled}}>
           <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 4rem' }}>
             Back to {code}
           </Button>

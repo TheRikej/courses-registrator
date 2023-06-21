@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import React  from 'react';
+import React, { useState }  from 'react';
 import {Link, Navigate, useParams} from 'react-router-dom';
 import Warning from "../components/Warning";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -9,6 +9,7 @@ import {useRecoilValue} from "recoil";
 import {loggedUserAtom} from "../atoms/loggedUser";
 
 export default function DeleteCourse() {
+    const [success, setSuccess] = useState<boolean>(false);
     const loggedUser = useRecoilValue(loggedUserAtom);
     if (loggedUser === null) {
         return <Navigate to="/login"/>;
@@ -24,11 +25,19 @@ export default function DeleteCourse() {
     const { mutate: remove } = useMutation({
         mutationFn: (info: {
             id: string,
-        }) => CourseRequests.deleteCourse( info.id ),
+        }) => {
+            const courseResult = CourseRequests.deleteCourse( info.id );
+            setSuccess(true)
+            return courseResult
+        },
         onSuccess: () => {
             queryClient.invalidateQueries(['faculties']);
         },
     });
+
+    if (success) {
+        return <Navigate to={"/courses"}/>
+    }
 
     return (
         <div className="flex flex-col mx-auto max-w-2xl">

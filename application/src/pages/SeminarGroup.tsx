@@ -28,7 +28,7 @@ const SeminarGroup = () => {
         queryFn: () => UserRequests.getUser(loggedUser.id.toString()),
     })
 
-    const [isEnrolled, setEnrolled] = useState<boolean>(state.isEnrolled);
+    const [isEnrolled, setEnrolled] = useState<boolean>(state.isEnrolledSeminar);
 
     const { data: seminar } = useQuery({
         queryKey: ['seminarGroup'],
@@ -122,12 +122,14 @@ const SeminarGroup = () => {
                     <div className="teachers-only">
                         <p><b>Students</b>: {seminar.data.students === undefined ? null : seminar.data.students.map(x => x.student.userName).toString()}</p>
                         <div className="flex flex-row justify-center block mx-auto mt-2">
-                            <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/edit"} state={{id: state.id, courseSemesterId: state.courseSemesterId}}>
+                            <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/edit"} state={{id: state.id, 
+                                courseSemesterId: state.courseSemesterId, isEnrolled: state.isEnrolledSeminar, isEnrolledSeminar: state.isEnrolledSeminar, isEnrolledSemester: state.isEnrolledSemester}}>
                                 <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                     Edit
                                 </Button>
                             </Link>
-                            <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/delete"} state={{id: state.id, courseSemesterId: state.courseSemesterId}}>
+                            <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/delete"} state={{id: state.id, 
+                                courseSemesterId: state.courseSemesterId, isEnrolled: state.isEnrolledSeminar, isEnrolledSeminar: state.isEnrolledSeminar, isEnrolledSemester: state.isEnrolledSemester}}>
                                 <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                     Delete
                                 </Button>
@@ -137,7 +139,7 @@ const SeminarGroup = () => {
                 : <></>}
             </div>
             <div className="block mx-auto">
-                <Link to={"/courses/" + code + "/" + semester + "/show"} state={{id: state.courseSemesterId}}>
+                <Link to={"/courses/" + code + "/" + semester + "/show"} state={{id: state.courseSemesterId, isEnrolled: state.isEnrolledSemester, isEnrolledSeminar: state.isEnrolledSeminar}}>
                     <Button type="button" variant="outlined" sx={{ margin: '1.5rem 2rem 1rem' }}>
                         Back to {code?.toUpperCase()}
                     </Button>

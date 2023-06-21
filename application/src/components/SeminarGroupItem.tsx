@@ -19,10 +19,10 @@ interface SeminarGroupProps {
     teachers: {userName: string, id: number}[]
 }
 
-const SeminarGroupItemCard = (props: {group: SeminarGroupProps, code: string, semester: string, id: string, courseSemesterId: string, isEnrolled: boolean}) => {
+const SeminarGroupItemCard = (props: {isEnrolledSemester: boolean, group: SeminarGroupProps, code: string, semester: string, id: string, courseSemesterId: string, isEnrolled: boolean}) => {
   const usernames = props.group.teachers.map((teacher) => teacher.userName).toString();
   return (
-    <Link to={"/courses/" + props.code + "/" + props.semester + "/seminars/" + props.group.groupNumber + "/show"} state={{id: props.id, courseSemesterId: props.courseSemesterId, isEnrolled: props.isEnrolled}}>
+    <Link to={"/courses/" + props.code + "/" + props.semester + "/seminars/" + props.group.groupNumber + "/show"} state={{id: props.id, courseSemesterId: props.courseSemesterId, isEnrolledSeminar: props.isEnrolled, isEnrolledSemester: props.isEnrolledSemester}}>
         <div className="flex flex-col lg:flex-row items-center w-full">
           <p className="m-0 lg:ml-2 float-left">
               <b>Group {props.group.groupNumber}</b> ({props.group.room}, {formatTime(props.group.timeSlot)}):

@@ -24,6 +24,18 @@ const removeCourseUser = async (data: removeStudentCourseData): UserRemoveStuden
               where: {
                 courseId: data.enrollCourseId,
               },
+            },
+            studiedGroups: {
+              where: {
+                deletedAt: null
+              },
+              include: {
+                group: {
+                  include: {
+                    courseSemester: true,
+                  }
+                }
+              }
             }
         }
         });
@@ -53,6 +65,10 @@ const removeCourseUser = async (data: removeStudentCourseData): UserRemoveStuden
         }
         if (course.registrationEnd < currentDate) {
           throw new OperationNotAllowedError('Registration for this subject has already ended!');
+        }
+        const studiedgroups = user.studiedGroups.map(x => x.group.courseSemesterId)
+        if (studiedgroups.includes(data.enrollCourseId)) {
+          throw new OperationNotAllowedError('This user is enrolled in seminar group of this course!');
         }
         const courseStudent = await transaction.courseStudent.updateMany({
           where: {

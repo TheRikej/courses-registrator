@@ -14,6 +14,7 @@ import { SeminarGroupModel } from '../services/models';
 import {useRecoilValue} from "recoil";
 import {loggedUserAtom} from "../atoms/loggedUser";
 import NotAuthorized from "../components/NotAuthorized";
+import { useState } from 'react';
 
 const schema = z.object({
   groupNumber: z.number().min(1, "Group number must be greater than 0.")
@@ -52,8 +53,8 @@ interface SeminarGroupForm {
   teachers: [number] | null,
 }
 
-//TODO: default Values when editing ("defaultValue={...}")
 const SeminarGroupForm = (props: {isEdit: boolean}) => {
+  const [success, setSuccess] = useState<boolean>(false);
   const loggedUser = useRecoilValue(loggedUserAtom);
   if (loggedUser === null) {
     return <Navigate to="/login"/>;
@@ -120,6 +121,9 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
       info.teachers?.forEach(teacher => {
         addTeacher({id: teacher, courseId: courseSemester})
       })
+      if ((await seminar).status === 'success') {
+        setSuccess(true)
+      }
       return seminar
     },
     onSuccess: () => {
@@ -135,6 +139,9 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
     }) => {
       const seminar = SeminarRequests.editSeminarGroup(info.id, info.courseInfo)
       changeTeachers(currentTeachers === undefined ? [] : currentTeachers, info.teachers === null ? [] : info.teachers, info.id)
+      if ((await seminar).status === 'success') {
+        setSuccess(true)
+      }
       return seminar
     }
   });
@@ -174,6 +181,10 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
       await editSeminar(seminarGroupData);
     }
     reset()
+  }
+
+  if (success) {
+    return <Navigate to={"/courses/" + code + "/" + semester + "/show"} state={{id: state.courseSemesterId, isEnrolled: state.isEnrolledSemester}}/>
   }
 
   if(users === undefined || (seminar === undefined && props.isEdit)) {
@@ -401,8 +412,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
                   {props.isEdit ? "Submit" : "Create"}
                 </Button>
 
-            <Link to={"/courses/" + code + "/" + semester?.toLowerCase() + "/"
-                    + (props.isEdit ? ("seminars/" + group + "/") : "") + "show"} state={{id: state.id , courseSemesterId: state.courseSemesterId}}>
+            <Link to={"/courses/" + code + "/" + semester + "/show"} state={{id: state.courseSemesterId, isEnrolled: state.isEnrolledSemester}}>
                 <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 2rem' }}>
                     {"Back to " + code + (props.isEdit ? "/"+group : "")}
                 </Button>

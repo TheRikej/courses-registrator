@@ -27,7 +27,7 @@ const removeCourseStudentAPI = async (req: Request, res: Response) => {
           data: user.unwrap(),
         });
       }
-  
+      console.log(user.error)
       throw user.error;
     } catch (e) {
         if (e instanceof z.ZodError) {

@@ -55,6 +55,7 @@ const updateSeminarAPI = async (req: Request, res: Response) => {
         throw seminar.error;
       } catch (e) {
         if (e instanceof z.ZodError) {
+            console.log(e.message)
             return res.status(400).send({
                 status: 'error',
                 error: e.errors,
