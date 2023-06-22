@@ -2,7 +2,6 @@ import * as React from 'react';
 import SemesterItem from "../components/SemesterItem";
 import {Button} from "@mui/material";
 import {Link, Navigate} from "react-router-dom";
-import formatSemester from "../utils/semester";
 import { useQuery } from "@tanstack/react-query";
 import { UserRequests } from '../services';
 import {useRecoilValue} from "recoil";
@@ -22,8 +21,6 @@ const Users = () => {
         queryKey: ['users'],
         queryFn: () => UserRequests.getUsers(),
     })
-
-    console.log(users)
 
     if(users?.data === undefined) {
         return <></>

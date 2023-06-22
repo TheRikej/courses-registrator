@@ -101,7 +101,6 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
         teachers: [number] | null
     }) => {
       const course = CourseRequests.addCourseSemester(info.id, info.courseInfo)
-      console.log((await course).data.id)
       const courseSemester = (await course).data.id
       info.teachers?.forEach(teacher => {
         addTeacher({id: teacher, courseId: courseSemester})

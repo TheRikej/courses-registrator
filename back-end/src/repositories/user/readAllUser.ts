@@ -15,7 +15,7 @@ const readAllUser = async (): UserReadAllResult => {
             deletedAt: null,
         },
         orderBy: {
-            userName: "desc"
+            id: "asc"
         },
       });
       return Result.ok(user);

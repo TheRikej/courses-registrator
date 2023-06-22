@@ -64,7 +64,6 @@ const Faculties = () => {
 
     const create = () => {
         const name = getValues().name;
-        console.log(name);
         createFaculty({name})
         reset();
     }

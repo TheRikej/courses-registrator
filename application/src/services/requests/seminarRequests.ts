@@ -8,7 +8,6 @@ export const getSeminars = async (id: string): Promise<ResponseMulti<ReadResult>
 }
 
 export const createCourse = async (id: string, courseData: SeminarGroupModel): Promise<ResponseSingle<{id: string}>> => {
-    console.log(courseData)
     const response = await axiosInstance.post(`/courseSemester/${id}/seminar`, {
         ...courseData
      });

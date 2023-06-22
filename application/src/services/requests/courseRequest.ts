@@ -27,7 +27,6 @@ export const getCourse = async (id: string): Promise<ResponseSingle<CourseSpecif
 }
 
 export const addCourseSemester = async ( id: string, data: AddSemesterCourseData ): Promise<ResponseSingle<CourseModel>> => {
-    console.log(data)
     const response = await axiosInstance.post(`/course/${id}/courseSemester`, {
         ...data
      });
