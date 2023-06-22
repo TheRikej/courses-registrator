@@ -108,7 +108,7 @@ export interface CourseModelUndefined {
     id: string | undefined,
     credits: number | undefined,
     description: string | undefined,
-    guarantorId: number | undefined,
+    guarantor: number | undefined,
     name: string | undefined,
     facultyId: string | undefined,
 }

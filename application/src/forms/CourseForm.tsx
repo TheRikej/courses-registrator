@@ -121,7 +121,7 @@ const CourseForm = (props: {isEdit: boolean, client: QueryClient}) => {
           description: values.description,
           facultyId: values.faculty,
           credits: values.credits,
-          guarantorId: values.guarantor,
+          guarantor: values.guarantor,
         }
       });
     }
