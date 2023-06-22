@@ -13,7 +13,7 @@ export const coursesSemesterToShowSelector = selector<CourseSemesterModel[]>({
         const filteredSemesterCourses = courses.filter(
             (course) =>
                 (filterData.nameCode === "" || course.course.code.includes(filterData.nameCode.toUpperCase()) ||
-                course.course.name.toLowerCase().includes(filterData.nameCode.toUpperCase())) &&
+                course.course.name.toLowerCase().includes(filterData.nameCode.toLowerCase())) &&
                 (filterData.faculty === "_All_" || filterData.faculty === course.course.faculty) &&
                 (filterData.semester === "_Any_" || filterData.semester === course.semesterSeason.toLowerCase() + String(course.semesterYear))
         );
