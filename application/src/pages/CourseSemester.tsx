@@ -138,7 +138,7 @@ const CourseSemester = () => {
                 {(loggedUser.admin || loggedUser.teacher) ?
                     <div className="teachers-only mt-2">
                         <div className="flex flex-col lg:flex-row items-center justify-center block mx-auto">
-                            <Link to={"/courses/" + code + "/" + semester + "/seminars/create"} state={{id: state.id, isEnrolled: isEnrolled, courseSemesterId: state.id}}>
+                            <Link to={"/courses/" + code + "/" + semester + "/seminars/create"} state={{id: state.id, isEnrolled: isEnrolled, courseSemesterId: state.id, isEnrolledSemester: isEnrolled}}>
                                 <Button color="info" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
                                     Create seminar group
                                 </Button>

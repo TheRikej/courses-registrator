@@ -20,7 +20,11 @@ const addSeminarUser = async (data: addStudentSeminarData): UserAddStudentSemina
             id: data.id,
           },
           include: {
-            studiedCourses: true,
+            studiedCourses: {
+              where: {
+                deletedAt: null
+              }
+            },
             studiedGroups: {
               include: {
                     group: {

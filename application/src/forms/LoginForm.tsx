@@ -46,7 +46,6 @@ const LoginForm = () => {
 
   const onSubmit = () => {
     const values = getValues();
-    console.log(values);
     loginUser({
       userInfo: {
         email: values.email,

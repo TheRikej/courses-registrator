@@ -96,13 +96,21 @@ const User = () => {
                     </div>
                 </div>
             </div>
+            {(loggedUser.admin) ?
             <div className="block mx-auto admin-only">
                 <Link to={"/users/"}>
                     <Button type="button" variant="outlined" sx={{ margin: '1.5rem 2rem 1rem' }}>
                         Back to users
                     </Button>
                 </Link>
-            </div>
+            </div> : 
+            <div className="block mx-auto admin-only">
+                <Link to={"/courses/"}>
+                    <Button type="button" variant="outlined" sx={{ margin: '1.5rem 2rem 1rem' }}>
+                        Back to courses
+                    </Button>
+                </Link>
+            </div>}
         </div>
     );
 };
