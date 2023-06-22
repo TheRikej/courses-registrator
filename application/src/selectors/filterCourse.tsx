@@ -12,7 +12,8 @@ export const coursesSemesterToShowSelector = selector<CourseSemesterModel[]>({
 
         const filteredSemesterCourses = courses.filter(
             (course) =>
-                (filterData.nameCode === "" || course.course.code.toLowerCase().includes(filterData.nameCode) || course.course.name.toLowerCase().includes(filterData.nameCode)) &&
+                (filterData.nameCode === "" || course.course.code.includes(filterData.nameCode.toUpperCase()) ||
+                course.course.name.toLowerCase().includes(filterData.nameCode.toUpperCase())) &&
                 (filterData.faculty === "_All_" || filterData.faculty === course.course.faculty) &&
                 (filterData.semester === "_Any_" || filterData.semester === course.semesterSeason.toLowerCase() + String(course.semesterYear))
         );
@@ -30,9 +31,9 @@ export const coursesToShowSelector = selector<CourseModel[]>({
         const filteredCourses = courses.filter(
             (course) =>
                 filterData.semester === "_None_" &&
-                (filterData.nameCode === "" || course.name.toLowerCase().includes(filterData.nameCode.toLowerCase()))
-                || course.id.includes(filterData.nameCode.toUpperCase()) 
-                && (filterData.faculty === "_All_" || filterData.faculty === course.faculty.name)
+                (filterData.nameCode === "" || course.name.toLowerCase().includes(filterData.nameCode.toLowerCase()) ||
+                course.id.includes(filterData.nameCode.toUpperCase())) && 
+                (filterData.faculty === "_All_" || filterData.faculty === course.faculty.name)
         );
         return filteredCourses;
     },
