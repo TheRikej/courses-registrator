@@ -30,8 +30,9 @@ export const coursesToShowSelector = selector<CourseModel[]>({
         const filteredCourses = courses.filter(
             (course) =>
                 filterData.semester === "_None_" &&
-                (filterData.nameCode === "" || course.name.toLowerCase().includes(filterData.nameCode)) &&
-                (filterData.faculty === "_All_" || filterData.faculty === course.faculty.name)
+                (filterData.nameCode === "" || course.name.toLowerCase().includes(filterData.nameCode.toLowerCase()))
+                || course.id.includes(filterData.nameCode.toUpperCase()) 
+                && (filterData.faculty === "_All_" || filterData.faculty === course.faculty.name)
         );
         return filteredCourses;
     },
