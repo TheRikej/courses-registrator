@@ -414,7 +414,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
 
             <Link to={"/courses/" + code + "/" + semester + "/show"} state={{id: state.courseSemesterId, isEnrolled: state.isEnrolledSemester}}>
                 <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 2rem' }}>
-                    {"Back to " + code + (props.isEdit ? "/"+group : "")}
+                    {"Back to " + code + (props.isEdit ? "/"+ group : "")}
                 </Button>
             </Link>
         </div>
