@@ -8,7 +8,7 @@ interface Roles {
 
 const auth = (role: Roles) => (req: Request, res: Response, next: NextFunction) => {
     if (!req.session?.user) {
-        res.status(401).json({ message: 'Unauthorized' });
+        res.status(401).json({ status: "error", message: 'Unauthorized' });
         return;
     }
 
@@ -16,7 +16,7 @@ const auth = (role: Roles) => (req: Request, res: Response, next: NextFunction) 
         || (role.teacher && !req.session.user.teacher)
         || (role.admin && !req.session.user.admin)
     ) {
-        res.status(403).json({ message: 'Forbidden' });
+        res.status(403).json({ status: "error", message: 'Forbidden' });
         return;
     }
     next();
