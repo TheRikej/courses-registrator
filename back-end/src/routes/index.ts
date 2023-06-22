@@ -14,7 +14,7 @@ return res.status(200).send({
 
 router.get("/", home);
 
-router.get("/user", auth({admin: true}), API.user.readUserAll)
+router.get("/user", auth({teacher: true}), API.user.readUserAll)
 router.post("/user", API.user.createUser)
 router.get("/user/:id", auth({}), API.user.readUserSpecific)
 router.delete("/user/:id", auth({admin: true}), API.user.deleteUser)

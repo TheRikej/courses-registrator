@@ -23,6 +23,8 @@ const Users = () => {
         queryFn: () => UserRequests.getUsers(),
     })
 
+    console.log(users)
+
     if(users?.data === undefined) {
         return <></>
     }

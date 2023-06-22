@@ -37,9 +37,6 @@ const CourseForm = (props: {isEdit: boolean, client: QueryClient}) => {
   if (loggedUser === null) {
     return <Navigate to="/login"/>;
   }
-  if (!loggedUser.admin && !loggedUser.teacher) {
-    return <NotAuthorized/>;
-  }
 
   const {
     register,
@@ -61,8 +58,6 @@ const CourseForm = (props: {isEdit: boolean, client: QueryClient}) => {
     queryKey: ['courseFaculties'],
     queryFn: () => FacultyRequests.getFaculties(),
   });
-
-  //const queryClient = useQueryClient();
 
   const { data: usersQuery } = useQuery({
     queryKey: ['courseUsers'],
@@ -132,6 +127,10 @@ const CourseForm = (props: {isEdit: boolean, client: QueryClient}) => {
     }
     reset();
   };
+
+  if (!loggedUser.admin && !loggedUser.teacher) {
+    return <NotAuthorized/>;
+  }
 
   if (success) {
     return <Navigate to={"/courses"}/>

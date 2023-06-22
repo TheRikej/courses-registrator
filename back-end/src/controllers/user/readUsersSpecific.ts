@@ -17,6 +17,7 @@ const readUserSpecificAPI = async (req: Request, res: Response) => {
       const id: number = +data.id
       const user = await readSpecificUser({id});
       if (user.isOk) {
+        user.value.hashedPassword = null
         return res.status(200).send({
           status: 'success',
           data: user.unwrap(),

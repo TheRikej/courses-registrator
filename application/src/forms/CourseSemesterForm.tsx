@@ -324,6 +324,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
                 select
                 size="small"
                 inputProps={register('timeDay')}
+                defaultValue={1}
                 error={errors.timeDay !== undefined}
                 helperText={errors.timeDay?.message}
             >

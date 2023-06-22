@@ -42,6 +42,7 @@ const RegisterForm = () => {
     register,
     handleSubmit,
     getValues,
+    reset,
     formState: { errors },
   } = useForm<RegisterForm>({
     resolver: zodResolver(schema),
@@ -65,6 +66,7 @@ const RegisterForm = () => {
         password: values.password,
       }
     });
+    reset()
   };
 
   return (

@@ -305,6 +305,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
             variant="outlined"
             className="w-60"
             sx={{ margin: '0 1rem 0.5rem' }}
+            defaultValue={props.isEdit ? seminar?.data.room : ""}
             {...register('room')}
             error={errors.room !== undefined}
             size="small"
@@ -318,6 +319,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
                 className="w-32"
                 select
                 size="small"
+                defaultValue={1}
                 inputProps={register('timeDay')}
                 error={errors.timeDay !== undefined}
                 helperText={errors.timeDay?.message}
