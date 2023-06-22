@@ -29,7 +29,11 @@ const readSpecific = async (
               deletedAt: null,
             },
             include: {
-              course: true,
+              course: {
+                include: {
+                    course: true
+                }
+              }
             }
           },
           studiedGroups: {
@@ -43,6 +47,9 @@ const readSpecific = async (
           taughtCourses:{
             where: {
               deletedAt: null,
+            },
+            include: {
+                course: true,
             }
           },
           taughtGroups: {

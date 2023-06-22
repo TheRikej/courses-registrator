@@ -25,7 +25,10 @@ export interface UserModel {
     studiedCourses: {
         id: string,
         course: {
-            id: string
+            id: string,
+            course: {
+                id: string
+            }
         }
     }[],
     studiedGroups: {
@@ -33,7 +36,16 @@ export interface UserModel {
         group: {
             id: string
         }
-    }[]
+    }[],
+    taughtCourses: {
+        id: string,
+        course: {
+            id: string
+        }
+    }[],
+    taughtGroups: {
+        id: string,
+    }[],
 }
 
 export interface UserCreateModel {

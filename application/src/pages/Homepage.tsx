@@ -9,7 +9,7 @@ import CourseItem from "../components/CourseItem";
 import CourseSemesterItem from "../components/CourseSemesterItem";
 import { QueryClient, useQuery } from '@tanstack/react-query';
 import { FacultyRequests, CourseSemesterRequests, CourseRequests, SemesterRequests, UserRequests } from '../services';
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { loggedUserAtom, userAtom } from "../atoms/loggedUser";
 import { coursesAtom, coursesSemesterAtom, filterDataAtom } from '../atoms/filterCourse';
 import { CoursesFilterData, defaultCoursesFilterData } from '../services/models';
@@ -20,6 +20,8 @@ const Courses = (props: {client: QueryClient}) => {
     if (loggedUser === null) {
         return <Navigate to="/login"/>;
     }
+
+    const [userData, setUserData] = useRecoilState(userAtom);
 
     const [enrolledOnly, setEnrolledOnly] = useState<boolean>(false);
     const [teachingOnly, setTeachingOnly] = useState<boolean>(false);
@@ -37,6 +39,11 @@ const Courses = (props: {client: QueryClient}) => {
     const { data: userInfo } = useQuery({
         queryKey: ['HomepageUser'],
         queryFn: () => UserRequests.getUser(loggedUser?.id === undefined ? "0" : String(loggedUser.id)),
+    });
+    React.useEffect(() => {
+        if (userInfo?.data !== undefined){
+            setUserData(userInfo.data);
+        }
     });
 
 
