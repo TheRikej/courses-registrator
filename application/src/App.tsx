@@ -23,25 +23,30 @@ import DeleteUser from "./forms/DeleteUser";
 import RegisterForm from "./forms/RegisterForm";
 import LoginForm from "./forms/LoginForm";
 import Logout from "./components/Logout";
+import { useQueryClient } from '@tanstack/react-query';
+
+//<Route path="/" element={<Homepage/>}/>
 
 function App() {
+    const queryClient = useQueryClient();
+  
   return (
       <>
           <Header/>
           <div className="flex justify-center m-auto h-screen">
               <Routes>
-                  <Route path="/" element={<Homepage/>}/>
-                  <Route path="/courses/" element={<Homepage/>}/>
+                  <Route path="/" element={<Homepage client={queryClient}/>}/>
+                  <Route path="/courses/" element={<Homepage client={queryClient}/> }/>
 
                   <Route path="/courses/:code/list" element={<CourseSemesterForm isEdit={false}/>} />
                   <Route path="/courses/:code/:semester/show" element={<CourseSemester/>} />
                   <Route path="/courses/:code/:semester/delete" element={<DeleteCourseSemester/>} />
                   <Route path="/courses/:code/:semester/edit" element={<CourseSemesterForm isEdit={true}/>} />
 
-                  <Route path="/courses/create" element={<CourseForm isEdit={false}/>} />
+                  <Route path="/courses/create" element={<CourseForm isEdit={false} client={queryClient}/>} />
                   <Route path="/courses/:code/show" element={<Course/>} />
                   <Route path="/courses/:code/delete" element={<DeleteCourse/>} />
-                  <Route path="/courses/:code/edit" element={<CourseForm isEdit={true}/>} />
+                  <Route path="/courses/:code/edit" element={<CourseForm isEdit={true} client={queryClient}/>} />
 
                   <Route path="/courses/:code/:semester/seminars/create" element={<SeminarGroupForm isEdit={false}/>} />
                   <Route path="/courses/:code/:semester/seminars/:group/show" element={<SeminarGroup/>} />

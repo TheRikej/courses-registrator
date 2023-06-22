@@ -1,11 +1,17 @@
 import * as React from 'react';
 import {Button} from "@mui/material";
-import {Link, useParams} from "react-router-dom";
-import formatTime from "../utils/timeslot";
-import { CourseRequests } from '../services';
+import {Link, Navigate, useParams} from "react-router-dom";
+import { CourseRequests, UserRequests } from '../services';
 import { useQuery } from '@tanstack/react-query';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
 
 const Course = () => {
+    const loggedUser = useRecoilValue(loggedUserAtom);
+    if (loggedUser === null) {
+        return <Navigate to="/login"/>;
+    }
+
     const { code } = useParams();
 
     const { data: course } = useQuery({
@@ -13,7 +19,12 @@ const Course = () => {
         queryFn: () => CourseRequests.getCourse(code !== undefined ? code: ""),
     });
 
-    if(course?.data === undefined) {
+    const { data: userInfo } = useQuery({
+        queryKey: ['CourseUser'],
+        queryFn: () => UserRequests.getUser(loggedUser?.id === undefined ? "0" : String(loggedUser.id)),
+    });
+
+    if(course?.data === undefined || userInfo?.data === undefined) {
         return <></>
     }
 
@@ -32,33 +43,36 @@ const Course = () => {
                 <p><b>Credits</b>: {course.data.credits}</p>
                 <p className="mt-2"><b>Listed in semesters</b>:</p>
                 <ul className="border-solid border-2 overflow-y-scroll max-h-44 lg:max-h-36">
-                    {course.data.semesters.map(semester =>
-                        <Link key={semester} to={"/courses/" + code + "/" + semester + "/show"}>
+                    {course.data.courseSemesters.map(semester =>
+                        <Link key={semester.id} to={"/courses/" + code + "/" + semester.semester.year + semester.semester.season + "/show"}
+                         state={{id: semester.id, isEnrolled: userInfo?.data.studiedCourses.filter(x => x.course.id === semester.id).length > 0}}>
                             <li className="m-1">
-                                • <span className="underline">{semester}</span>
+                                • <span className="underline">{semester.semester.year + "/" + semester.semester.season}</span>
                             </li>
                         </Link>
                     )}
                 </ul>
-                <div className="teachers-only">
-                    <div className="flex flex-row justify-center block mx-auto">
-                        <Link to={"/courses/" + code + "/list"}>
-                            <Button color="info" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
-                                List
-                            </Button>
-                        </Link>
-                        <Link to={"/courses/" + code + "/edit"}>
-                            <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
-                                Edit
-                            </Button>
-                        </Link>
-                        <Link to={"/courses/" + code + "/delete"}>
-                            <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
-                                Delete
-                            </Button>
-                        </Link>
+                {(loggedUser.admin || loggedUser.teacher) ?
+                    <div>
+                        <div className="flex flex-row justify-center block mx-auto">
+                            <Link to={"/courses/" + code + "/list"} state={{id: code, course: course.data}}>
+                                <Button color="info" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
+                                    List
+                                </Button>
+                            </Link>
+                            <Link to={"/courses/" + code + "/edit"} state={{id: code, course: course.data}}>
+                                <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
+                                    Edit
+                                </Button>
+                            </Link>
+                            <Link to={"/courses/" + code + "/delete"}>
+                                <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
+                                    Delete
+                                </Button>
+                            </Link>
+                        </div>
                     </div>
-                </div>
+                : <></>}
             </div>
             <div className="block mx-auto">
                 <Link to={"/"}>

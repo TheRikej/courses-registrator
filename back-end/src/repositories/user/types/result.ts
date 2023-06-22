@@ -13,12 +13,32 @@ export type UserDeleteResult = AsyncResult<User & {
 export type UserReadSpecificType = AsyncResult<User & {
     taughtCourses: CourseSemester[];
     taughtGroups: SeminarGroup[];
-    studiedCourses: CourseStudent[];
-    studiedGroups: GroupStudent[];
+    studiedCourses: (CourseStudent & {course: CourseSemester})[];
+    studiedGroups: (GroupStudent & {group: SeminarGroup})[];
     guarantedCourses: Course[];
 }>;
 
-export type UserReadAllResult = AsyncResult<Required<User[]>>;
+export type UserReadSpecificProtectedType = AsyncResult<UserWithoutPassword & {
+    taughtCourses: CourseSemester[];
+    taughtGroups: SeminarGroup[];
+    studiedCourses: (CourseStudent & {course: CourseSemester})[];
+    studiedGroups: (GroupStudent & {group: SeminarGroup})[];
+    guarantedCourses: Course[];
+}>;
+
+export type UserWithoutPassword = {
+    id: number;
+    userName: string;
+    email: string;
+    createdAt: Date;
+    hashedPassword: string | null;
+    administrator: boolean;
+    teacher: boolean;
+    student: boolean;
+    deletedAt: Date | null;
+}
+
+export type UserReadAllResult = AsyncResult<Required<UserWithoutPassword[]>>;
 
 export type LoginResult = AsyncResult<User>;
 

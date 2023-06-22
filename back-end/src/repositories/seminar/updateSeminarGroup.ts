@@ -1,10 +1,11 @@
 import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { UpdateData } from './types/data';
-import type { CourseUpdateResult } from './types/result';
+import type { SeminarUpdateResult } from './types/result';
 import { AuthorizationFailedError, DeletedRecordError, DuplicateRecordError, NonexistentRecordError } from '../errors';
 
-const updateSeminar = async (data: UpdateData): CourseUpdateResult => {
+
+const updateSeminar = async (data: UpdateData): SeminarUpdateResult => {
   try {
     return Result.ok(
       await prisma.$transaction(async (transaction) => {

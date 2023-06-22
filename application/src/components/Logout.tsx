@@ -1,8 +1,15 @@
 import React  from 'react';
+import {useRecoilState} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
+import {Navigate} from "react-router-dom";
+import { UserRequests } from '../services';
 
-// Image source:
 export default function Logout() {
-    //TODO: logout user
+    const [loggedUser, setLoggedUser] = useRecoilState(loggedUserAtom);
+
+    UserRequests.logout();
+    React.useEffect(() => {
+        setLoggedUser(null)})
 
     return (
         <div className="flex flex-col items-center mx-4 max-w-2xl">

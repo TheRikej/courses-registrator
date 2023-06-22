@@ -16,6 +16,7 @@ const readAllCourse = async (
       const course = await prisma.course.findMany({
         where: {
             ...(data?.facultyId !== undefined ? { facultyId: data.facultyId} : {}),
+            deletedAt: null,
         },
         include: {
           faculty: true,

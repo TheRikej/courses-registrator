@@ -1,11 +1,22 @@
 import { Button } from '@mui/material';
 import React  from 'react';
-import {Link, useParams} from 'react-router-dom';
+import {Link, Navigate, useParams} from 'react-router-dom';
 import Warning from "../components/Warning";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { UserRequests } from '../services';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
+import NotAuthorized from "../components/NotAuthorized";
 
 export default function DeleteUser() {
+    const loggedUser = useRecoilValue(loggedUserAtom);
+    if (loggedUser === null) {
+        return <Navigate to="/login"/>;
+    }
+    if (!loggedUser.admin) {
+        return <NotAuthorized/>;
+    }
+
     const { id } = useParams();
 
     const fullId = id !== undefined ? id : "0";

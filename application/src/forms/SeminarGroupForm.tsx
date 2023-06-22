@@ -5,10 +5,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {DateTimePicker, TimePicker} from "@mui/x-date-pickers";
 import workDays from "../utils/days";
-import {Link, useParams} from "react-router-dom";
+import {Link, Navigate, useLocation, useParams} from "react-router-dom";
 import Select from "react-select";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { UserRequests } from '../services';
+import { SeminarRequests } from '../services';
+import { SeminarGroupModel } from '../services/models';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
+import NotAuthorized from "../components/NotAuthorized";
+import { useState } from 'react';
 
 const schema = z.object({
+  groupNumber: z.number().min(1, "Group number must be greater than 0.")
+      .max(1000, "Group number cannot be greater than 200."),
   capacity: z.number().min(1, "Capacity must be greater than 0.")
       .max(200, "Capacity cannot be greater than 200."),
   registrationFrom: z.date(),
@@ -32,6 +42,7 @@ const schema = z.object({
 });
 
 interface SeminarGroupForm {
+  groupNumber: number,
   registrationFrom: Date,
   registrationTo: Date,
   capacity: number,
@@ -42,36 +53,145 @@ interface SeminarGroupForm {
   teachers: [number] | null,
 }
 
-//TODO: default Values when editing ("defaultValue={...}")
 const SeminarGroupForm = (props: {isEdit: boolean}) => {
+  const [success, setSuccess] = useState<boolean>(false);
+  const loggedUser = useRecoilValue(loggedUserAtom);
+  if (loggedUser === null) {
+    return <Navigate to="/login"/>;
+  }
+  if (!loggedUser.admin && !loggedUser.teacher) {
+    return <NotAuthorized/>;
+  }
+
   const {
     register,
     handleSubmit,
     control,
     getValues,
     formState: { errors },
+    reset,
   } = useForm<SeminarGroupForm>({
     resolver: zodResolver(schema),
   });
   const { code, semester, group } = useParams();
 
-  //TODO: fetch users and set the logged in user as the default value in guarantor input
-  const users = [
-    { value: 1523, label: 'Jakub Judiny' },
-    { value: 835, label: 'David Kajan' },
-    { value: 3494, label: 'Michal Drobný' },
-    { value: 7671, label: 'Dalibor Švonavec' },
-  ]
+  const { data: usersQuery } = useQuery({
+    queryKey: ['seminarUsers'],
+    queryFn: () => UserRequests.getUsers(),
+  })
 
-  const onSubmit = () => {
+  const { data: seminar } = useQuery({
+    queryKey: ['courseSemesterForForm'],
+    queryFn: () => SeminarRequests.getSeminar(state.id),
+    enabled: props.isEdit,
+  });
+
+  const currentTeachers = seminar?.data.teachers.map((x: {userName: string; id: number}) => x.id);
+
+  const { mutate: addTeacher } = useMutation({
+    mutationFn: (info: {
+        id: number,
+        courseId: string,
+    }) => SeminarRequests.addTeacherSeminar(info.id, info.courseId)
+  });
+
+  const { mutate: removeTeacher } = useMutation({
+    mutationFn: (info: {
+        id: number,
+        courseId: string,
+    }) => SeminarRequests.removeTeacherSeminar(info.id, info.courseId)
+  });
+
+  const { state } = useLocation();
+
+  const users = usersQuery?.data.map(x => ({value: x.id, label: x.userName}));
+
+  const queryClient = useQueryClient();
+
+  const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
+
+  const { mutate: addSeminar } = useMutation({
+    mutationFn: async (info: {
+        id: string,
+        courseInfo: SeminarGroupModel,
+        teachers: [number] | null
+    }) => {
+      const seminar = SeminarRequests.createCourse(info.id, info.courseInfo)
+      const courseSemester = (await seminar).data.id
+      info.teachers?.forEach(teacher => {
+        addTeacher({id: teacher, courseId: courseSemester})
+      })
+      if ((await seminar).status === 'success') {
+        setSuccess(true)
+      }
+      return seminar
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['seminarGroups']);
+    },
+  });
+
+  const { mutate: editSeminar } = useMutation({
+    mutationFn: async (info: {
+        id: string,
+        courseInfo: SeminarGroupModel,
+        teachers: [number] | null
+    }) => {
+      const seminar = SeminarRequests.editSeminarGroup(info.id, info.courseInfo)
+      changeTeachers(currentTeachers === undefined ? [] : currentTeachers, info.teachers === null ? [] : info.teachers, info.id)
+      if ((await seminar).status === 'success') {
+        setSuccess(true)
+      }
+      return seminar
+    }
+  });
+
+  const changeTeachers = (currentTeachers: number[], teachers: number[], courseSemId: string) => {
+    teachers.filter(x => !currentTeachers.includes(x)).forEach(x => addTeacher({id: x, courseId: courseSemId}));
+    currentTeachers.filter(x => !teachers.includes(x)).forEach(x => removeTeacher({id: x, courseId: courseSemId}));
+  };
+
+  const onSubmit = async () => {
     const values = getValues();
-    console.log(values);
     const hoursFrom = values.timeHourFrom?.getHours();
     const minutesFrom = values.timeHourFrom?.getMinutes();
     const hoursTo = values.timeHourTo?.getHours();
     const minutesTo = values.timeHourTo?.getMinutes();
-    //TODO: send data (but beware difference between create/edit)
-  };
+    const seminarGroupData = {
+      id: state.id,
+      courseInfo: {
+        groupNumber: values.groupNumber,
+        registrationStart: values.registrationFrom,
+        registrationEnd: values.registrationTo,
+        capacity: values.capacity,
+        room: values.room,
+        timeslot: {
+          day: values.timeDay !== null ? days[values.timeDay] : days[0],
+          startHour: hoursFrom !== undefined ? hoursFrom : 0,
+          startMinute: minutesFrom !== undefined ? minutesFrom: 0,
+          endHour: hoursTo !== undefined ? hoursTo: 0,
+          endMinute: minutesTo !== undefined ? minutesTo : 0,
+        },
+      },
+      teachers: values.teachers,
+    }
+    if (!props.isEdit) {
+      await addSeminar(seminarGroupData);
+    } else {
+      await editSeminar(seminarGroupData);
+    }
+    reset()
+  }
+
+  if (success) {
+    return <Navigate to={"/courses/" + code + "/" + semester + "/show"} state={{id: state.courseSemesterId, isEnrolled: state.isEnrolledSemester}}/>
+  }
+
+  if(users === undefined || (seminar === undefined && props.isEdit)) {
+    return <></>
+  }
+
+  if (!users) return <>Loading...</>;
 
   return (
     <form
@@ -86,6 +206,26 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
       </h1>
 
       <TextField
+          id="groupNumber"
+          className="w-64"
+          label="Group number *"
+          variant="outlined"
+          sx={{ margin: '1rem 1rem 0' }}
+          {...register('groupNumber', { valueAsNumber: true })}
+          error={errors.groupNumber !== undefined}
+          size="small"
+          helperText={errors.groupNumber?.message}
+          type="number"
+          defaultValue={props.isEdit ? seminar?.data.groupNumber : "1"}
+          InputProps={{
+            inputProps: {
+              min: 0,
+              max: 1000,
+            },
+          }}
+      />
+
+      <TextField
           id="capacity"
           className="w-64"
           label="Maximum capacity *"
@@ -96,7 +236,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
           size="small"
           helperText={errors.capacity?.message}
           type="number"
-          defaultValue="30"
+          defaultValue={props.isEdit ? seminar?.data.capacity : "30"}
           InputProps={{
             inputProps: {
               min: 0,
@@ -109,7 +249,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
         <Controller
             name="registrationFrom"
             control={control}
-            defaultValue={new Date()}
+            defaultValue={props.isEdit && seminar?.data.registrationStart !== undefined ? new Date(seminar?.data.registrationStart) : new Date()}
             render={({ field }) => (
               <DateTimePicker
                   label="Registration start *"
@@ -132,7 +272,9 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
         <Controller
             name="registrationTo"
             control={control}
-            defaultValue={new Date((new Date()).setMonth((new Date().getMonth()+1)))}
+            defaultValue={props.isEdit && seminar?.data.registrationEnd !== undefined
+              ? new Date(seminar?.data.registrationEnd)
+              : new Date((new Date()).setMonth((new Date().getMonth()+1)))}
             render={({ field }) => (
                 <DateTimePicker
                     label="Registration end *"
@@ -163,12 +305,13 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
             variant="outlined"
             className="w-60"
             sx={{ margin: '0 1rem 0.5rem' }}
+            defaultValue={props.isEdit ? seminar?.data.room : ""}
             {...register('room')}
             error={errors.room !== undefined}
             size="small"
             helperText={errors.room?.message}
         />
-        <div className="flex flex-col lg:flex-row lg:flex-row gap-4 lg:gap-0 mt-2 mb-4 mx-4">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-0 mt-2 mb-4 mx-4">
           <div>
             <TextField
                 id="timeDay"
@@ -176,6 +319,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
                 className="w-32"
                 select
                 size="small"
+                defaultValue={1}
                 inputProps={register('timeDay')}
                 error={errors.timeDay !== undefined}
                 helperText={errors.timeDay?.message}
@@ -244,7 +388,7 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
       <Controller
           control={control}
           name="teachers"
-          defaultValue={null}
+          defaultValue={props.isEdit && currentTeachers !== undefined ? currentTeachers as [number] : null}
           render={({ field, }) => (
               <Select
                   ref={field.ref}
@@ -265,13 +409,14 @@ const SeminarGroupForm = (props: {isEdit: boolean}) => {
       </FormHelperText>
 
         <div className="flex flex-col content-center justify-center m-auto">
-            <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
-                {props.isEdit ? "Submit" : "Create"}
-            </Button>
-            <Link to={"/courses/" + code + "/" + semester?.toLowerCase() + "/"
-                    + (props.isEdit ? ("seminars/" + group + "/") : "") + "show"}>
+
+                <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
+                  {props.isEdit ? "Submit" : "Create"}
+                </Button>
+
+            <Link to={"/courses/" + code + "/" + semester + "/show"} state={{id: state.courseSemesterId, isEnrolled: state.isEnrolledSemester}}>
                 <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 2rem' }}>
-                    {"Back to " + code + (props.isEdit ? "/"+group : "")}
+                    {"Back to " + code + (props.isEdit ? "/"+ group : "")}
                 </Button>
             </Link>
         </div>

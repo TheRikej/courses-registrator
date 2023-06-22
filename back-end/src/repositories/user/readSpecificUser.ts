@@ -1,7 +1,7 @@
 import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { UserReadSpecificData } from './types/data';
-import type { UserReadSpecificType } from './types/result';
+import type { UserReadSpecificProtectedType, UserReadSpecificType } from './types/result';
 import { DeletedRecordError } from '../errors';
 
 /**
@@ -12,7 +12,7 @@ import { DeletedRecordError } from '../errors';
  */
 const readSpecific = async (
     data: UserReadSpecificData,
-  ): UserReadSpecificType => {
+  ): UserReadSpecificProtectedType => {
     try {
       const user = await prisma.user.findFirstOrThrow({
         where: {
@@ -22,21 +22,34 @@ const readSpecific = async (
           guarantedCourses: {
             where: {
               deletedAt: null,
-            }
+            },
           },
           studiedCourses: {
             where: {
               deletedAt: null,
+            },
+            include: {
+              course: {
+                include: {
+                    course: true
+                }
+              }
             }
           },
           studiedGroups: {
             where: {
               deletedAt: null,
+            },
+            include: {
+              group: true
             }
           },
           taughtCourses:{
             where: {
               deletedAt: null,
+            },
+            include: {
+                course: true,
             }
           },
           taughtGroups: {

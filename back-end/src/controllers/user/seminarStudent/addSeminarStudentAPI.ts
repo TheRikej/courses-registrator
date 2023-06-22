@@ -49,6 +49,7 @@ const addSeminarStudentAPI = async (req: Request, res: Response) => {
                 });
             }
             if (e instanceof OperationNotAllowedError) {
+              console.log(e.message)
                 return res.status(409).send({
                     status: 'error',
                     error: e.message,

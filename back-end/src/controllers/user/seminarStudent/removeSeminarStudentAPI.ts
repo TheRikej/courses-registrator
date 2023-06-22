@@ -22,7 +22,7 @@ const removeSeminarStudentAPI = async (req: Request, res: Response) => {
       }
       const user = await removeSeminarStudent(data);
       if (user.isOk) {
-        return res.status(204).send({
+        return res.status(200).send({
           status: 'success',
         });
       }
@@ -30,7 +30,8 @@ const removeSeminarStudentAPI = async (req: Request, res: Response) => {
       throw user.error;
     } catch (e) {
         if (e instanceof z.ZodError) {
-            return res.status(404).send({
+          console.log(e.message)
+            return res.status(400).send({
                 status: 'error',
                 error: e.errors,
             });

@@ -54,7 +54,8 @@ const addCourseSemester = async (data: AddCreateSemesterData): AddCourseSemester
         const query = await transaction.courseSemester.findFirst({
             where: {
                 courseId: data.id,
-                semesterId: data.semesterId
+                semesterId: data.semesterId,
+                deletedAt: null
             }
         })
         if (query !== null) {

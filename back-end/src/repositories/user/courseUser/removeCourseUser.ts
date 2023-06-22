@@ -2,7 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../../client';
 import type { removeStudentCourseData } from '../types/data';
 import type { UserRemoveStudentCourseResult } from '../types/result';
-import { DeletedRecordError, NonexistentRecordError } from '../../errors';
+import { DeletedRecordError, NonexistentRecordError, OperationNotAllowedError } from '../../errors';
 
 /**
  * Removes existing student from course that he/she is enrolled in.
@@ -24,6 +24,18 @@ const removeCourseUser = async (data: removeStudentCourseData): UserRemoveStuden
               where: {
                 courseId: data.enrollCourseId,
               },
+            },
+            studiedGroups: {
+              where: {
+                deletedAt: null
+              },
+              include: {
+                group: {
+                  include: {
+                    courseSemester: true,
+                  }
+                }
+              }
             }
         }
         });
@@ -46,6 +58,17 @@ const removeCourseUser = async (data: removeStudentCourseData): UserRemoveStuden
         }
         if (course?.deletedAt !== null) {
           throw new DeletedRecordError('The CourseSemester has already been deleted!');
+        }
+        const currentDate = new Date();
+        if (course.registrationStart > currentDate) {
+          throw new OperationNotAllowedError('Registration for this subject has not begun yet!');
+        }
+        if (course.registrationEnd < currentDate) {
+          throw new OperationNotAllowedError('Registration for this subject has already ended!');
+        }
+        const studiedgroups = user.studiedGroups.map(x => x.group.courseSemesterId)
+        if (studiedgroups.includes(data.enrollCourseId)) {
+          throw new OperationNotAllowedError('This user is enrolled in seminar group of this course!');
         }
         const courseStudent = await transaction.courseStudent.updateMany({
           where: {

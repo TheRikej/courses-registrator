@@ -13,7 +13,13 @@ describe('course.create test suite', () => {
         semesterId: 'ba0839d3-eee0-494e-b271-2fac92497d73',
         registrationStart: new Date(),
         registrationEnd: new Date(),
-        capacity: 100
+        capacity: 100,
+        loggedInUser: {
+            id: 1, 
+            admin: true,
+            teacher: true,
+            student: true,
+        }
     });
 
     if (actual.isErr) {
@@ -23,6 +29,12 @@ describe('course.create test suite', () => {
 
     await deleteSemesterCourse({
       id: actual.value.id,
+      loggedInUser: {
+        id: 1, 
+        admin: true,
+        teacher: true,
+        student: true,
+    }
   });
 
     expect(actual.value.capacity).toStrictEqual(100);

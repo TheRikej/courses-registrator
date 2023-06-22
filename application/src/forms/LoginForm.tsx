@@ -3,19 +3,26 @@ import {useForm} from 'react-hook-form';
 import {TextField, Button} from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import {Link} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
+import { UserLoginModel } from '../services/models';
+import { UserRequests } from '../services';
+import { useMutation } from '@tanstack/react-query';
+import {useRecoilState} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
 
 const schema = z.object({
-  userName: z.string().nonempty("Please enter a name or email."),
+  email: z.string().nonempty("Please enter email."),
   password: z.string(),
 });
 
 interface LoginForm {
-    userNameEmail: string,
+    email: string,
     password: string,
 }
 
 const LoginForm = () => {
+  const [loggedUser, setLoggedUser] = useRecoilState(loggedUserAtom);
+
   const {
     register,
     handleSubmit,
@@ -25,11 +32,31 @@ const LoginForm = () => {
     resolver: zodResolver(schema),
   });
 
+  const { mutate: loginUser } = useMutation({
+    mutationFn: async (info: {
+        userInfo: UserLoginModel,
+    }) => {
+      const loggedUserData = UserRequests.loginUser(info.userInfo);
+      const arrivedData = (await loggedUserData).data;
+      setLoggedUser({ id: arrivedData.id, admin: arrivedData.administrator, 
+        teacher: arrivedData.teacher, student: arrivedData.student, name: arrivedData.userName });
+      return loggedUserData;
+    }
+  });
+
   const onSubmit = () => {
     const values = getValues();
-    console.log(values);
-    //TODO: login user
+    loginUser({
+      userInfo: {
+        email: values.email,
+        password: values.password,
+      }
+    });
   };
+
+  if (loggedUser !== null) {
+    return <Navigate to={"/courses"}/>
+  }
 
   return (
     <form
@@ -41,14 +68,14 @@ const LoginForm = () => {
       </h1>
 
       <TextField
-          id="name"
-          label="Username or email"
+          id="email"
+          label="Email"
           variant="outlined"
           sx={{ margin: '0.5rem 2rem' }}
-          {...register('userNameEmail')}
-          error={errors.userNameEmail !== undefined}
+          {...register('email')}
+          error={errors.email !== undefined}
           size="small"
-          helperText={errors.userNameEmail?.message}
+          helperText={errors.email?.message}
       />
       <TextField
           id="name"
@@ -63,9 +90,11 @@ const LoginForm = () => {
       />
 
       <div className="flex flex-col content-center justify-center mx-auto">
-        <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
-          Log in
-        </Button>
+      
+            <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
+              Log in
+            </Button>
+      
         <Link to="/register">
             <Button color="info" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem' }}>
               Register new account

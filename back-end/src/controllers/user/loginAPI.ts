@@ -31,6 +31,7 @@ const loginAPI = async (req: Request, res: Response) => {
         }
         return res.status(200).send({
           status: 'success',
+          data: data,
           message: "Logged in",
         });
       }

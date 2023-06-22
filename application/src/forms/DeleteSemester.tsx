@@ -1,11 +1,22 @@
 import { Button } from '@mui/material';
 import React  from 'react';
-import {Link, useLocation, useParams} from 'react-router-dom';
+import {Link, Navigate, useLocation, useParams} from 'react-router-dom';
 import Warning from "../components/Warning";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { SemesterRequests } from '../services';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
+import NotAuthorized from "../components/NotAuthorized";
 
 export default function DeleteSemester() {
+    const loggedUser = useRecoilValue(loggedUserAtom);
+    if (loggedUser === null) {
+        return <Navigate to="/login"/>;
+    }
+    if (!loggedUser.admin) {
+        return <NotAuthorized/>;
+    }
+
     const { semester } = useParams();
 
     const queryClient = useQueryClient();

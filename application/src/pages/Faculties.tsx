@@ -6,6 +6,10 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { FacultyRequests } from '../services';
+import {Navigate} from "react-router-dom";
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
+import NotAuthorized from "../components/NotAuthorized";
 
 const schema = z.object({
     name: z.string().nonempty("Faculty name cannot be empty.")
@@ -13,6 +17,13 @@ const schema = z.object({
 });
 
 const Faculties = () => {
+    const loggedUser = useRecoilValue(loggedUserAtom);
+    if (loggedUser === null) {
+        return <Navigate to="/login"/>;
+    }
+    if (!loggedUser.admin) {
+        return <NotAuthorized/>;
+    }
 
     const queryClient = useQueryClient();
 
@@ -53,7 +64,6 @@ const Faculties = () => {
 
     const create = () => {
         const name = getValues().name;
-        console.log(name);
         createFaculty({name})
         reset();
     }

@@ -4,11 +4,11 @@ import formatTime from "../utils/timeslot";
 
 interface SeminarGroupProps {
     groupNumber: number,
+    currentCapacity: number,
     capacity: number,
-    maxCapacity: number,
-    registrationEnd: string,
-    registrationStart: string,
-    timeslot: {
+    registrationEnd: Date,
+    registrationStart: Date,
+    timeSlot: {
         day: string,
         startHour: number,
         startMinute: number,
@@ -16,19 +16,20 @@ interface SeminarGroupProps {
         endMinute: number,
     },
     room: string,
-    teachers: string[],
+    teachers: {userName: string, id: number}[]
 }
 
-const SeminarGroupItemCard = (props: {group: SeminarGroupProps, code: string, semester: string}) => {
+const SeminarGroupItemCard = (props: {isEnrolledSemester: boolean, group: SeminarGroupProps, code: string, semester: string, id: string, courseSemesterId: string, isEnrolled: boolean}) => {
+  const usernames = props.group.teachers.map((teacher) => teacher.userName).toString();
   return (
-    <Link to={"/courses/" + props.code + "/" + props.semester + "/seminars/" + props.group.groupNumber + "/show"}>
+    <Link to={"/courses/" + props.code + "/" + props.semester + "/seminars/" + props.group.groupNumber + "/show"} state={{id: props.id, courseSemesterId: props.courseSemesterId, isEnrolledSeminar: props.isEnrolled, isEnrolledSemester: props.isEnrolledSemester}}>
         <div className="flex flex-col lg:flex-row items-center w-full">
           <p className="m-0 lg:ml-2 float-left">
-              <b>Group {props.group.groupNumber}</b> ({props.group.room}, {formatTime(props.group.timeslot)}):
-              {" " + props.group.teachers.join(", ")}
+              <b>Group {props.group.groupNumber}</b> ({props.group.room}, {formatTime(props.group.timeSlot)}):
+              {" " + usernames}
           </p>
           <div className="lg:ml-auto mr-4">
-              <p>{props.group.capacity}/{props.group.maxCapacity}</p>
+              <p>{props.group.currentCapacity}/{props.group.capacity}</p>
           </div>
         </div>
     </Link>

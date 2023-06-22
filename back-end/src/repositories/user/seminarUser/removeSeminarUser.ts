@@ -2,7 +2,7 @@ import { Result } from '@badrap/result';
 import prisma from '../../client';
 import type { removeStudentSeminarData } from '../types/data';
 import type { UserRemoveSeminarResult } from '../types/result';
-import { DeletedRecordError, NonexistentRecordError } from '../../errors';
+import { DeletedRecordError, NonexistentRecordError, OperationNotAllowedError } from '../../errors';
 
 /**
  * Enrolls existing student to existing seminar, that he is not already enrolled in.
@@ -46,6 +46,13 @@ const removeSeminarUser = async (data: removeStudentSeminarData): UserRemoveSemi
           }
           if (seminar?.deletedAt !== null) {
             throw new DeletedRecordError('The seminar has already been deleted!');
+          }
+          const currentDate = new Date();
+          if (seminar.registrationStart > currentDate) {
+            throw new OperationNotAllowedError('Registration for this group has not begun yet!');
+          }
+          if (seminar.registrationEnd < currentDate) {
+            throw new OperationNotAllowedError('Registration for this group has already ended yet!');
           }
           const groupStudent = await transaction.groupStudent.updateMany({
             where: {

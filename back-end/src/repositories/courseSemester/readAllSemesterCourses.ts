@@ -27,6 +27,7 @@ const readAllSemesterCourses = async (
               ...(data?.courseId !== undefined ? { courseId: data.courseId} : {}),
               ...(data?.semesterId !== undefined ? { semesterId: data.semesterId} : {}),
               courseId: { in: courseIds },
+              deletedAt: null,
             },
             include: {
               semester: true,
@@ -35,8 +36,16 @@ const readAllSemesterCourses = async (
                   faculty: true,
                 }
               },
-              teachers: true,
-              students: true,
+              teachers: {
+                where: {
+                  deletedAt: null
+                }
+              },
+              students: {
+                where: {
+                  deletedAt: null
+                }
+              },
             }
           });
           const coursesWithCapacity = course.map(x => ({

@@ -20,11 +20,12 @@ const addSeminarUser = async (data: addStudentSeminarData): UserAddStudentSemina
             id: data.id,
           },
           include: {
-            studiedCourses: true,
-            studiedGroups: {
+            studiedCourses: {
               where: {
                 deletedAt: null
-              },
+              }
+            },
+            studiedGroups: {
               include: {
                     group: {
                         select: {
@@ -66,13 +67,31 @@ const addSeminarUser = async (data: addStudentSeminarData): UserAddStudentSemina
         if (seminarGroup.registrationEnd < currentDate) {
           throw new OperationNotAllowedError('Registration for this group has already ended yet!');
         }
-        const studiedCoursesIds = user.studiedCourses.map(x => x.courseId);
+        const studiedCoursesIds = user.studiedCourses.filter(x => x.deletedAt === null).map(x => x.courseId);
         if (studiedCoursesIds.indexOf(seminarGroup.courseSemesterId) === -1){
           throw new OperationNotAllowedError('This user is not enrolled in the course for this seminar!');
         }
-        const studiedCoursesSeminarIds = user.studiedGroups.map(x => x.group.courseSemesterId);
-        if (studiedCoursesSeminarIds.indexOf(seminarGroup.courseSemesterId) !== -1){
+        const studiedCoursesSeminarIds = user.studiedGroups.filter(x => x.groupId === data.enrollSeminarId).map(x => x.id);
+        const studiedCoursesSeminarIdsFiltered = user.studiedGroups.filter(x => x.deletedAt === null).map(x => x.group.courseSemesterId);
+        const index = studiedCoursesSeminarIds.length;
+        const indexFiltered = studiedCoursesSeminarIdsFiltered.indexOf(seminarGroup.courseSemesterId);
+        if (indexFiltered !== -1){
           throw new OperationNotAllowedError('This user is already enrolled in another seminar group of this course!');
+        }
+        if (index > 0){
+          const seminarStudent = await transaction.groupStudent.update({
+            where: {
+              id: studiedCoursesSeminarIds[0]
+            },
+            data: {
+              deletedAt: null
+            },
+            include: {
+              student: true,
+              group: true
+            }
+          });
+          return seminarStudent;
         }
         const seminarStudent = await transaction.groupStudent.create({
           data: {

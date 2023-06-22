@@ -4,10 +4,14 @@ import {TextField, Button, MenuItem, FormHelperText} from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Select from 'react-select';
-import {Link, useParams} from "react-router-dom";
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { CourseModel } from '../services/models';
+import {Link, Navigate, useLocation, useParams} from "react-router-dom";
+import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import { CourseCreateModel, CourseModelUndefined } from '../services/models';
 import { FacultyRequests, UserRequests, CourseRequests } from '../services';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
+import NotAuthorized from "../components/NotAuthorized";
+import { useState } from 'react';
 
 const schema = z.object({
   name: z.string().nonempty('Name is required.').max(40, "Name cannot be longer than 40 characters."),
@@ -28,8 +32,12 @@ interface CourseForm {
   guarantor: number,
 }
 
-//TODO: default Values when editing ("defaultValue={...}")
-const CourseForm = (props: {isEdit: boolean}) => {
+const CourseForm = (props: {isEdit: boolean, client: QueryClient}) => {
+  const loggedUser = useRecoilValue(loggedUserAtom);
+  if (loggedUser === null) {
+    return <Navigate to="/login"/>;
+  }
+
   const {
     register,
     handleSubmit,
@@ -42,12 +50,15 @@ const CourseForm = (props: {isEdit: boolean}) => {
   });
   const { code } = useParams();
 
+  const { state } = useLocation();
+
+  const [success, setSuccess] = useState<boolean>(false);
+
   const { data: faculties } = useQuery({
     queryKey: ['courseFaculties'],
     queryFn: () => FacultyRequests.getFaculties(),
   });
- 
-  //TODO: set the logged in user as the default value in guarantor input
+
   const { data: usersQuery } = useQuery({
     queryKey: ['courseUsers'],
     queryFn: () => UserRequests.getUsers(),
@@ -55,13 +66,37 @@ const CourseForm = (props: {isEdit: boolean}) => {
 
   const users = usersQuery?.data.map(x => ({value: x.id, label: x.userName}));
 
-  const { mutate: createCourse } = useMutation({
-    mutationFn: (info: {
-        courseInfo: CourseModel,
-    }) => CourseRequests.createCourse(
-        info.courseInfo
-    ),
+  const { mutate: updateCourse } = useMutation({
+    mutationFn: async (info: {
+        courseInfo: CourseModelUndefined,
+    }) => {
+      const courseResult = CourseRequests.updateCourse(info.courseInfo)
+      if ((await courseResult).status === 'success') {
+        setSuccess(true)
+      }
+      return courseResult
+    
+    },
+    onSuccess: () => {
+      props.client.invalidateQueries({queryKey: ['HomepageCourse']});
+  },
 });
+
+  const { mutate: createCourse } = useMutation({
+    mutationFn: async (info: {
+        courseInfo: CourseCreateModel,
+    }) => {
+      const courseResult = CourseRequests.createCourse(info.courseInfo)
+      if ((await courseResult).status === 'success') {
+        setSuccess(true)
+      }
+      return courseResult
+    
+    },
+    onSuccess: () => {
+      props.client.invalidateQueries({queryKey: ['HomepageCourse']});
+  },
+  });
 
 
   const onSubmit = () => {
@@ -77,9 +112,29 @@ const CourseForm = (props: {isEdit: boolean}) => {
           guarantorId: values.guarantor,
         }
       });
-      reset();
+    } else {
+      updateCourse({
+        courseInfo: {
+          newId: values.code,
+          id: state.id,
+          name: values.name,
+          description: values.description,
+          facultyId: values.faculty,
+          credits: values.credits,
+          guarantorId: values.guarantor,
+        }
+      });
     }
+    reset();
   };
+
+  if (!loggedUser.admin && !loggedUser.teacher) {
+    return <NotAuthorized/>;
+  }
+
+  if (success) {
+    return <Navigate to={"/courses"}/>
+  }
 
   if(users === undefined) {
     return <></>
@@ -105,6 +160,7 @@ const CourseForm = (props: {isEdit: boolean}) => {
             {...register('code')}
             error={errors.code !== undefined}
             size="small"
+            defaultValue = {props.isEdit ? state.id : null}
             helperText={errors.code?.message}
         />
         <TextField
@@ -115,6 +171,7 @@ const CourseForm = (props: {isEdit: boolean}) => {
             {...register('name')}
             error={errors.name !== undefined}
             size="small"
+            defaultValue = {props.isEdit ? state.course.name : null}
             multiline
             helperText={errors.name?.message}
         />
@@ -128,6 +185,7 @@ const CourseForm = (props: {isEdit: boolean}) => {
             {...register('description')}
             error={errors.description !== undefined}
             size="small"
+            defaultValue = {props.isEdit ? state.course.description : null}
             helperText={errors.description?.message}
         />
 
@@ -165,7 +223,7 @@ const CourseForm = (props: {isEdit: boolean}) => {
             size="small"
             helperText={errors.credits?.message}
             type="number"
-            defaultValue={5}
+            defaultValue = {props.isEdit ? state.course.credits : 5}
             InputProps={{
               inputProps: {
                 min: 0,
@@ -178,6 +236,7 @@ const CourseForm = (props: {isEdit: boolean}) => {
         <Controller
             control={control}
             name="guarantor"
+            defaultValue={loggedUser.id}
             render={({ field, }) => (
                 <Select
                     ref={field.ref}

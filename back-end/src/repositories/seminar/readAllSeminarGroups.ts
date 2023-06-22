@@ -1,7 +1,7 @@
 import { Result } from '@badrap/result';
 import prisma from '../client';
 import type { ReadAllSeminar } from './types/data';
-import type { CourseReadAllResult } from './types/result';
+import type { SeminarReadAllResult } from './types/result';
 import { NonexistentRecordError } from '../errors';
 
 /**
@@ -12,13 +12,14 @@ import { NonexistentRecordError } from '../errors';
  */
 const readAllSeminarGroups = async (
     data: ReadAllSeminar,
-  ): CourseReadAllResult => {
+  ): SeminarReadAllResult => {
     try {
       return Result.ok(
         await prisma.$transaction(async (transaction) => {
             const course = await transaction.courseSemester.findFirst({
               where: {
                 id: data.id,
+                deletedAt: null
               },
             });
             if (course === null) {
@@ -26,26 +27,35 @@ const readAllSeminarGroups = async (
             }
             const semesters =  await prisma.seminarGroup.findMany({
                 where: {
-                    courseSemesterId: data.id
+                    courseSemesterId: data.id,
+                    deletedAt: null
                 },
                 include: {
+                    timeSlot: true,
                     teachers: {
-                        where: {
-                            deletedAt: null,
-                        },
-                      },
-                    students: {
-                        where: {
-                            deletedAt: null,
-                        },
+                      select: {
+                        userName: true,
+                        id: true
+                      }
                     },
+                    students: {
+                      where: {
+                        deletedAt: null
+                      },
+                      include: {
+                        student: {
+                          select: {
+                            userName: true
+                          }
+                        }
+                      }
+                    },
+
                 }
             })
             return semesters.map(semester => {return {...semester, currentCapacity: semester.students.length}})
         })
       );
-      
-      //return Result.ok(course);
     } catch (e) {
       return Result.err(e as Error);
     }

@@ -3,7 +3,13 @@ import {useForm} from 'react-hook-form';
 import {TextField, Button} from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import {Link} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
+import { useMutation } from '@tanstack/react-query';
+import { UserCreateModel } from '../services/models';
+import { UserRequests } from '../services';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
+import { useState } from 'react';
 
 const schema = z.object({
   userName: z.string().nonempty("Name is required."),
@@ -28,20 +34,49 @@ interface RegisterForm {
 }
 
 const RegisterForm = () => {
+  const [success, setSuccess] = useState<boolean>(false);
+  const loggedUser = useRecoilValue(loggedUserAtom);
+  if (loggedUser !== null) {
+    return <h1>Please log out first.</h1>;
+  }
+
   const {
     register,
     handleSubmit,
     getValues,
+    reset,
     formState: { errors },
   } = useForm<RegisterForm>({
     resolver: zodResolver(schema),
   });
 
+  const { mutate: createUser } = useMutation({
+    mutationFn: async (info: {
+        userInfo: UserCreateModel,
+    }) => {
+      const userResult = UserRequests.createUser(info.userInfo);
+      if ((await userResult).status === 'success') {
+        setSuccess(true)
+      }
+      return userResult;
+    }
+  });
+
   const onSubmit = () => {
     const values = getValues();
-    console.log(values);
-    //TODO: register user
+    createUser({
+      userInfo: {
+        email: values.email,
+        userName: values.userName,
+        password: values.password,
+      }
+    });
+    reset()
   };
+
+  if (success) {
+    return <Navigate to={"/courses"}/>
+  }
 
   return (
     <form

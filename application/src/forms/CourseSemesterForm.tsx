@@ -6,11 +6,16 @@ import { z } from 'zod';
 import formatSemester from "../utils/semester";
 import {DateTimePicker, TimePicker} from "@mui/x-date-pickers";
 import workDays from "../utils/days";
-import {Link, useLocation, useParams} from "react-router-dom";
+import {Link, Navigate, useLocation, useParams} from "react-router-dom";
 import Select from "react-select";
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { CourseRequests, SemesterRequests, UserRequests } from '../services';
 import { AddSemesterCourseData } from '../services/models';
+import { CourseSemesterRequests } from '../services';
+import NotAuthorized from "../components/NotAuthorized";
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
+import { useState } from 'react';
 
 const schema = z.object({
   semester: z.string().nonempty('Semester is required.'),
@@ -44,8 +49,15 @@ interface CourseSemesterForm {
   teachers: [number] | null,
 }
 
-//TODO: default Values when editing ("defaultValue={...}")
 const CourseSemesterForm = (props: {isEdit: boolean}) => {
+  const loggedUser = useRecoilValue(loggedUserAtom);
+  if (loggedUser === null) {
+    return <Navigate to="/login"/>;
+  }
+  if (!loggedUser.admin && !loggedUser.teacher) {
+    return <NotAuthorized/>;
+  }
+
   const {
     register,
     handleSubmit,
@@ -58,6 +70,8 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
   });
   const { code, semester } = useParams();
 
+  const { state } = useLocation();
+
   const { data: semesters } = useQuery({
     queryKey: ['semestersCreateCourse'],
     queryFn: () => SemesterRequests.getSemesters(),
@@ -68,48 +82,110 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
     queryFn: () => UserRequests.getUsers(),
   })
 
+  const { data: courseSemester } = useQuery({
+    queryKey: ['courseSemesterForForm'],
+    queryFn: () => CourseSemesterRequests.getCourseSemester(state.id),
+    enabled: props.isEdit,
+  });
+
+  const [success, setSuccess] = useState<boolean>(false);
+
+  const currentTeachers = courseSemester?.data.teachers.map((x: {userName: string; id: number}) => x.id);
+
   const users = usersQuery?.data.map(x => ({value: x.id, label: x.userName}));
 
   const { mutate: addSemCOurse } = useMutation({
-    mutationFn: (info: {
+    mutationFn: async (info: {
         id: string,
         courseInfo: AddSemesterCourseData,
-    }) => CourseRequests.addCourseSemester(
-        info.id, info.courseInfo
-    ),
+        teachers: [number] | null
+    }) => {
+      const course = CourseRequests.addCourseSemester(info.id, info.courseInfo)
+      const courseSemester = (await course).data.id
+      info.teachers?.forEach(teacher => {
+        addTeacher({id: teacher, courseId: courseSemester})
+      })
+      if ((await course).status === 'success') {
+        setSuccess(true)
+      }
+      return course
+    }
   });
+
+  const { mutate: editSemCourse } = useMutation({
+    mutationFn: async (info: {
+        id: string,
+        courseInfo: AddSemesterCourseData,
+        teachers: [number] | null
+    }) => {
+      const course = CourseSemesterRequests.editCourseSemester(info.id, info.courseInfo)
+      changeTeachers(currentTeachers === undefined ? [] : currentTeachers, info.teachers === null ? [] : info.teachers, info.id)
+      if ((await course).status === 'success') {
+        setSuccess(true)
+      }
+      return course
+    }
+  });
+
+  const { mutate: addTeacher } = useMutation({
+    mutationFn: (info: {
+        id: number,
+        courseId: string,
+    }) => CourseSemesterRequests.addTeacherCourse(info.id, info.courseId)
+  });
+
+  const { mutate: removeTeacher } = useMutation({
+    mutationFn: (info: {
+        id: number,
+        courseId: string,
+    }) => CourseSemesterRequests.removeTeacherCourse(info.id, info.courseId)
+  });
+
+  const changeTeachers = (currentTeachers: number[], teachers: number[], courseSemId: string) => {
+    teachers.filter(x => !currentTeachers.includes(x)).forEach(x => addTeacher({id: x, courseId: courseSemId}));
+    currentTeachers.filter(x => !teachers.includes(x)).forEach(x => removeTeacher({id: x, courseId: courseSemId}));
+  };
 
   const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     const values = getValues();
-    console.log(values);
     const hoursFrom = values.timeHourFrom?.getHours();
     const minutesFrom = values.timeHourFrom?.getMinutes();
     const hoursTo = values.timeHourTo?.getHours();
     const minutesTo = values.timeHourTo?.getMinutes();
     const hasTimeslot = hoursFrom === undefined || minutesFrom === undefined || hoursTo === undefined || minutesTo === undefined || values.timeDay === null
-    if (!props.isEdit) {
-      addSemCOurse({
-        id: code !== undefined ? code : "",
-        courseInfo: {
-          semesterId: values.semester,
-          registrationStart: values.registrationFrom,
-          registrationEnd: values.registrationTo,
-          capacity: values.capacity,
-          room: values.room,
-          timeslot: hasTimeslot || values.timeDay === null ? undefined : {
-            day: days[values.timeDay],
-            startHour: hoursFrom,
-            startMinute: minutesFrom,
-            endHour: hoursTo,
-            endMinute: minutesTo,
-          },
-        }
-      });
-      reset();
+    const courseData = {
+      id: code !== undefined ? code : "",
+      courseInfo: {
+        semesterId: values.semester,
+        registrationStart: values.registrationFrom,
+        registrationEnd: values.registrationTo,
+        capacity: values.capacity,
+        room: values.room,
+        timeslot: hasTimeslot || values.timeDay === null ? undefined : {
+          day: days[values.timeDay - 1],
+          startHour: hoursFrom,
+          startMinute: minutesFrom,
+          endHour: hoursTo,
+          endMinute: minutesTo,
+        },
+      },
+      teachers: values.teachers,
     }
+    if (!props.isEdit) {
+      await addSemCOurse(courseData);
+      reset();
+    } else {
+      courseData.id = state.id,
+      await editSemCourse(courseData);
+    }
+    reset();
   };
+
+  if (success) {
+    return <Navigate to={"/courses"}/>
+  }
 
   if(users === undefined) {
     return <></>
@@ -136,7 +212,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
             select
             fullWidth
             size="small"
-            defaultValue = ""
+            defaultValue = {props.isEdit ? courseSemester?.data.semesterId : ""}
             inputProps={register('semester')}
             error={errors.semester !== undefined}
             helperText={errors.semester?.message}
@@ -163,7 +239,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
           size="small"
           helperText={errors.capacity?.message}
           type="number"
-          defaultValue="1000"
+          defaultValue = {props.isEdit ? courseSemester?.data.capacity: "1000"}
           InputProps={{
             inputProps: {
               min: 0,
@@ -176,7 +252,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
         <Controller
             name="registrationFrom"
             control={control}
-            defaultValue={new Date()}
+            defaultValue = {props.isEdit && courseSemester?.data.registrationStart !== undefined ? new Date(courseSemester?.data.registrationStart) : new Date()}
             render={({ field }) => (
               <DateTimePicker
                   label="Registration start *"
@@ -199,7 +275,9 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
         <Controller
             name="registrationTo"
             control={control}
-            defaultValue={new Date((new Date()).setMonth((new Date().getMonth()+1)))}
+            defaultValue = {props.isEdit && courseSemester?.data.registrationEnd !== undefined
+               ? new Date(courseSemester?.data.registrationEnd)
+               : new Date((new Date()).setMonth((new Date().getMonth()+1)))}
             render={({ field }) => (
                 <DateTimePicker
                     label="Registration end *"
@@ -229,13 +307,14 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
             label="Room"
             variant="outlined"
             className="w-60"
+            defaultValue = {props.isEdit ? courseSemester?.data.room : ""}
             sx={{ margin: '0 1rem 0.5rem' }}
             {...register('room')}
             error={errors.room !== undefined}
             size="small"
             helperText={errors.room?.message}
         />
-        <div className="flex flex-col lg:flex-row lg:flex-row gap-4 lg:gap-0 mt-2 mb-4 mx-4">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-0 mt-2 mb-4 mx-4">
           <div>
             <TextField
                 id="timeDay"
@@ -244,6 +323,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
                 select
                 size="small"
                 inputProps={register('timeDay')}
+                defaultValue={1}
                 error={errors.timeDay !== undefined}
                 helperText={errors.timeDay?.message}
             >
@@ -311,7 +391,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
       <Controller
           control={control}
           name="teachers"
-          defaultValue={null}
+          defaultValue={props.isEdit && currentTeachers !== undefined ? currentTeachers as [number] : null}
           render={({ field, }) => (
               <Select
                   ref={field.ref}
@@ -335,7 +415,7 @@ const CourseSemesterForm = (props: {isEdit: boolean}) => {
         <Button color="success" className="w-52" type="submit" variant="outlined" sx={{ margin: '1rem 2rem' }}>
           Submit
         </Button>
-        <Link to={"/courses/" + code + (props.isEdit ? "/"+semester+"/show" : "/show")}>
+        <Link to={"/courses/" + code + (props.isEdit ? "/"+semester+"/show" : "/show")}  state={{id: state.id, isEnrolled: state.isEnrolled}}>
           <Button color="error" className="w-52" type="submit" variant="outlined" sx={{ margin: '0 2rem 4rem' }}>
             Back to {code}
           </Button>

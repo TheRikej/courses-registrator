@@ -63,6 +63,9 @@ const addCourseTeacher = async (data: addTeacherCourseData): UserAddTeacherCours
                 taughtCourses: {
                     connect: [{ id: data.enrollCourseId }],
                 }
+            },
+            include: {
+              taughtCourses: true
             }
           });
           await transaction.courseSemester.update({

@@ -1,81 +1,145 @@
 import * as React from 'react';
 import SemesterItem from "../components/SemesterItem";
 import {Button} from "@mui/material";
-import {Link, useParams} from "react-router-dom";
+import {Link, Navigate, useLocation, useParams} from "react-router-dom";
 import formatSemester from "../utils/semester";
 import formatTime from "../utils/timeslot";
+import NotAuthorized from "../components/NotAuthorized";
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { SeminarRequests, UserRequests } from '../services';
+import { useState } from 'react';
 
 const SeminarGroup = () => {
     const { code, semester, group } = useParams();
-    //TODO: fetch for the given user
-    const isEnrolled = false;
 
-    //TODO: fetch seminar group API
-    const seminar = {
-        groupNumber: 2,
-        capacity: 129,
-        maxCapacity: 150,
-        registrationEnd: "Wed Jun 14 2023 00:00",
-        registrationStart: "Fri Jun 25 2023 00:00",
-        timeslot: {
-            day: "MONDAY",
-            startHour: 13,
-            startMinute: 0,
-            endHour: 14,
-            endMinute: 50,
+    const { state } = useLocation();
+
+    const queryClient = useQueryClient()
+
+    const loggedUser = useRecoilValue(loggedUserAtom);
+    if (loggedUser === null) {
+        return <Navigate to="/login"/>;
+    }
+
+    const { data: user } = useQuery({
+        queryKey: ['userForSeminar'],
+        queryFn: () => UserRequests.getUser(loggedUser.id.toString()),
+    })
+
+    const [isEnrolled, setEnrolled] = useState<boolean>(state.isEnrolledSeminar);
+
+    const { data: seminar } = useQuery({
+        queryKey: ['seminarGroup'],
+        queryFn: () => {
+            if (loggedUser.teacher) {
+                return SeminarRequests.getSeminar(state.id)
+            }
+            return SeminarRequests.getSeminarStudent(state.id)
         },
-        room: "B116",
-        teachers: ["Jakub Judiny", "Petr Švenda"],
-    };
-    const students = ["Tomáš Pekný", "Ivan Škaredý", "Janko Hraško", "Marienka Stará",
-            "Albrecht Hrozný", "Ferdinand Slabý", "Augustín Silný",
-            "Anežka Nemecká", "Hilbert Krátky", "Janko Nehraško"];
+    });
+
+    const { mutate: addStudent } = useMutation({
+        mutationFn: async (info: {
+            id: number,
+            seminarId: string,
+        }) => { 
+            const seminarRet = SeminarRequests.addStudentSeminar(info.id, info.seminarId);
+            if ((await seminarRet).status === 'success') {
+                setEnrolled(!isEnrolled)
+            }
+            return seminarRet
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['seminarGroup']);
+        },
+      });
+
+      const { mutate: removeStudent } = useMutation({
+        mutationFn: async (info: {
+            id: number,
+            seminarId: string,
+        }) => { 
+            const seminarRet = SeminarRequests.removeStudentSeminar(info.id, info.seminarId);
+            if ((await seminarRet).status === 'success') {
+                setEnrolled(!isEnrolled)
+            }
+            return seminarRet
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['seminarGroup']);
+        },
+      });
 
     const enrol = () => {
-        //TODO: enrol student (API call)
+        if (!isEnrolled) {
+            addStudent({
+                id: loggedUser.id,
+                seminarId: state.id,
+            });
+        } else {
+            removeStudent({
+                id: loggedUser.id,
+                seminarId: state.id,
+            });
+        }
     };
 
+    if(seminar?.data === undefined) {
+        return <></>
+    }
+
+    if (!seminar) return <>Loading...</>;
 
     return (
         <div className="flex flex-col flex-start m-2">
             <h1 className="font-poppins text-2xl mx-6 my-3 font-bold text-blue-950">
-                Seminar group {seminar.groupNumber}
+                Seminar group {seminar.data.groupNumber}
             </h1>
             <div className="flex flex-col rounded-lg border-solid border-2 mx-2 max-w-3xl gap-2 p-4">
                 <p><b>Course</b>: {code?.toUpperCase()} ({semester?.toLowerCase()})</p>
-                <p><b>Teachers</b>: {seminar.teachers.join(", ")}</p>
-                <p><b>Room & Time</b>: {seminar.room}, {formatTime(seminar.timeslot)}</p>
-                <p><b>Capacity</b>: {seminar.capacity}/{seminar.maxCapacity}</p>
-                <p><b>Registration</b>: {seminar.registrationStart} – {seminar.registrationEnd}</p>
-                <p className="students-only hidden"><b>Status</b>:
-                    {isEnrolled ? " Enrolled" : " Not enrolled"}
-                </p>
-                <div className="mx-auto students-only hidden">
-                    <Button color={isEnrolled ? "error" : "success"} className="w-52"
-                            type="submit" variant="outlined" sx={{ margin: '1rem' }}
-                            onClick={enrol}
-                    >
-                        {!isEnrolled ? "Enrol in the group" : "Leave group"}
-                    </Button>
-                </div>
-                <div className="teachers-only">
-                    <p><b>Students</b>: {students.join(", ")}</p>
-                    <div className="flex flex-row justify-center block mx-auto mt-2">
-                        <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/edit"}>
-                            <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
-                                Edit
-                            </Button>
-                        </Link>
-                        <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/delete"}>
-                            <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
-                                Delete
-                            </Button>
-                        </Link>
+                <p><b>Teachers</b>: {seminar.data.teachers.map(x => x.userName).toString()}</p>
+                <p><b>Room & Time</b>: {seminar.data.room}, {formatTime(seminar.data.timeSlot)}</p>
+                <p><b>Capacity</b>: {seminar.data.currentCapacity}/{seminar.data.capacity}</p>
+                <p><b>Registration</b>: {(new Date(seminar.data.registrationStart)).toDateString()} – {(new Date(seminar.data.registrationEnd)).toDateString()}</p>
+                {loggedUser.student ??
+                    <p className="students-only"><b>Status</b>:
+                        {isEnrolled ? " Enrolled" : " Not enrolled"}
+                    </p>
+                }
+                {loggedUser.student ?
+                    <div className="mx-auto students-only">
+                        <Button color={isEnrolled ? "error" : "success"} className="w-52"
+                                type="submit" variant="outlined" sx={{ margin: '1rem' }}
+                                onClick={enrol}
+                        >
+                            {!isEnrolled ? "Enrol in the group" : "Leave group"}
+                        </Button>
                     </div>
-                </div>
+                : <></>}
+                {(loggedUser.admin || loggedUser.teacher) ?
+                    <div className="teachers-only">
+                        <p><b>Students</b>: {seminar.data.students === undefined ? null : seminar.data.students.map(x => x.student.userName).toString()}</p>
+                        <div className="flex flex-row justify-center block mx-auto mt-2">
+                            <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/edit"} state={{id: state.id, 
+                                courseSemesterId: state.courseSemesterId, isEnrolled: state.isEnrolledSeminar, isEnrolledSeminar: isEnrolled, isEnrolledSemester: state.isEnrolledSemester}}>
+                                <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
+                                    Edit
+                                </Button>
+                            </Link>
+                            <Link to={"/courses/" + code + "/" + semester + "/seminars/" + group + "/delete"} state={{id: state.id, 
+                                courseSemesterId: state.courseSemesterId, isEnrolled: state.isEnrolledSeminar, isEnrolledSeminar: isEnrolled, isEnrolledSemester: state.isEnrolledSemester}}>
+                                <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
+                                    Delete
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
+                : <></>}
             </div>
             <div className="block mx-auto">
-                <Link to={"/courses/" + code + "/" + semester + "/show"}>
+                <Link to={"/courses/" + code + "/" + semester + "/show"} state={{id: state.courseSemesterId, isEnrolled: state.isEnrolledSemester, isEnrolledSeminar: isEnrolled}}>
                     <Button type="button" variant="outlined" sx={{ margin: '1.5rem 2rem 1rem' }}>
                         Back to {code?.toUpperCase()}
                     </Button>

@@ -1,145 +1,92 @@
 import * as React from 'react';
 import {Button} from "@mui/material";
-import {Link, useLocation, useParams} from "react-router-dom";
+import {Link, Navigate, useLocation, useParams} from "react-router-dom";
 import formatTime from "../utils/timeslot";
 import SeminarGroupItem from "../components/SeminarGroupItem";
-import formatSemester from "../utils/semester";
-import { useQuery } from '@tanstack/react-query';
-import { CourseSemesterRequests } from '../services';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { CourseSemesterRequests, SeminarRequests, UserRequests } from '../services';
+import {useRecoilValue} from "recoil";
+import {loggedUserAtom} from "../atoms/loggedUser";
+import { useState } from 'react';
 
 
 const CourseSemester = () => {
+    const loggedUser = useRecoilValue(loggedUserAtom);
+    if (loggedUser === null) {
+        return <Navigate to="/login"/>;
+    }
+
+    const { data: user } = useQuery({
+        queryKey: ['userForCourse'],
+        queryFn: () => UserRequests.getUser(loggedUser.id.toString()),
+    })
+
+    const queryClient = useQueryClient();
+
     const { code, semester } = useParams();
 
-    let isEnrolled = false;
-
     const { state } = useLocation();
+
+    const [isEnrolled, setEnrolled] = useState<boolean>(state.isEnrolled);
 
     const { data: course } = useQuery({
         queryKey: ['courseSemester2'],
         queryFn: () => CourseSemesterRequests.getCourseSemester(state.id),
     });
-    const groups = [
-        {
-            groupNumber: 2,
-            capacity: 12,
-            maxCapacity: 15,
-            registrationEnd: "Wed Jun 14 2023 00:00",
-            registrationStart: "Fri Jun 25 2023 00:00",
-            timeslot: {
-                day: "MONDAY",
-                startHour: 13,
-                startMinute: 0,
-                endHour: 14,
-                endMinute: 50,
-            },
-            room: "B116",
-            teachers: ["Random Teacher"],
+
+    const { data: groups } = useQuery({
+        queryKey: ['seminarGroups'],
+        queryFn: () => SeminarRequests.getSeminars(state.id),
+    });
+
+    const { mutate: addStudent } = useMutation({
+        mutationFn: async (info: {
+            id: number,
+            courseId: string,
+        }) => { 
+            const courseRet = CourseSemesterRequests.addStudentCourse(info.id, info.courseId);
+            if ((await courseRet).status === 'success') {
+                setEnrolled(!isEnrolled)
+            }
+            return courseRet
         },
-        {
-            groupNumber: 4,
-            capacity: 14,
-            maxCapacity: 15,
-            registrationEnd: "Wed Jun 14 2023 00:00",
-            registrationStart: "Fri Jun 25 2023 00:00",
-            timeslot: {
-                day: "TUESDAY",
-                startHour: 13,
-                startMinute: 0,
-                endHour: 14,
-                endMinute: 50,
-            },
-            room: "B130",
-            teachers: ["Petr Švenda"],
+        onSuccess: () => {
+            queryClient.invalidateQueries(['courseSemester2']);
         },
-        {
-            groupNumber: 6,
-            capacity: 14,
-            maxCapacity: 15,
-            registrationEnd: "Wed Jun 14 2023 00:00",
-            registrationStart: "Fri Jun 25 2023 00:00",
-            timeslot: {
-                day: "WEDNESDAY",
-                startHour: 13,
-                startMinute: 0,
-                endHour: 14,
-                endMinute: 50,
-            },
-            room: "B130",
-            teachers: ["Lukáš Ručka"],
+      });
+
+      const { mutate: removeStudent } = useMutation({
+        mutationFn: async (info: {
+            id: number,
+            courseId: string,
+        }) => { 
+            const courseRet = CourseSemesterRequests.removeStudentCourse(info.id, info.courseId);
+            if ((await courseRet).status === 'success') {
+                setEnrolled(!isEnrolled)
+            }
+            return courseRet
         },
-        {
-            groupNumber: 11,
-            capacity: 14,
-            maxCapacity: 15,
-            registrationEnd: "Wed Jun 14 2023 00:00",
-            registrationStart: "Fri Jun 25 2023 00:00",
-            timeslot: {
-                day: "WEDNESDAY",
-                startHour: 16,
-                startMinute: 0,
-                endHour: 17,
-                endMinute: 50,
-            },
-            room: "B130",
-            teachers: ["Lukáš Ručka"],
+        onSuccess: () => {
+            queryClient.invalidateQueries(['courseSemester2']);
         },
-        {
-            groupNumber: 5,
-            capacity: 1,
-            maxCapacity: 15,
-            registrationEnd: "Wed Jun 14 2023 00:00",
-            registrationStart: "Fri Jun 25 2023 00:00",
-            timeslot: {
-                day: "THURSDAY",
-                startHour: 13,
-                startMinute: 0,
-                endHour: 14,
-                endMinute: 50,
-            },
-            room: "B116",
-            teachers: ["Roman Lacko"],
-        },
-        {
-            groupNumber: 8,
-            capacity: 9,
-            maxCapacity: 15,
-            registrationEnd: "Wed Jun 14 2023 00:00",
-            registrationStart: "Fri Jun 25 2023 00:00",
-            timeslot: {
-                day: "FRIDAY",
-                startHour: 13,
-                startMinute: 0,
-                endHour: 14,
-                endMinute: 50,
-            },
-            room: "B117",
-            teachers: ["Luděk Bártek"],
-        },
-        {
-            groupNumber: 8,
-            capacity: 9,
-            maxCapacity: 15,
-            registrationEnd: "Wed Jun 14 2023 00:00",
-            registrationStart: "Fri Jun 25 2023 00:00",
-            timeslot: {
-                day: "FRIDAY",
-                startHour: 15,
-                startMinute: 0,
-                endHour: 16,
-                endMinute: 50,
-            },
-            room: "B116",
-            teachers: ["Luděk Bártek"],
-        },
-    ];
+      });
 
     const enrol = () => {
-        isEnrolled = !isEnrolled;
-        //TODO: enrol student (API call)
+        if (!isEnrolled) {
+            addStudent({
+                id: loggedUser.id,
+                courseId: state.id,
+            });
+        } else {
+            removeStudent({
+                id: loggedUser.id,
+                courseId: state.id,
+            });
+        }
     };
 
-    if(course?.data === undefined) {
+
+    if(course?.data === undefined || groups?.data === undefined || user?.data === undefined) {
         return <></>
     }
 
@@ -155,7 +102,7 @@ const CourseSemester = () => {
                 <p><b>Faculty</b>: {course.data.course.faculty.name}</p>
                 <p><b>Description</b>: {course.data.course.description}</p>
                 <p><b>Credits</b>: {course.data.course.credits}</p>
-                <p><b>Teachers</b>: {course.data.teachers.join(", ")}</p>
+                <p><b>Teachers</b>: {course.data.teachers.map((teacher) => teacher.userName).toString()}</p>
                 <p><b>Guarantor</b>: {course.data.course.guarantor.userName}</p>
                 <p><b>Lectures</b>: {course.data.room}, {course.data.timeSlot !== undefined &&  course.data.timeSlot !== null ? formatTime(course?.data.timeSlot) : "No lectures held"}</p>
                 <p><b>Capacity</b>: {course.data.currentCapacity}/{course.data.capacity}</p>
@@ -166,44 +113,49 @@ const CourseSemester = () => {
                 <p className="mt-4 text-blue-950 text-xl"><b>Seminar groups</b></p>
                 <div className="rounded-lg border-solid border-2">
                     <ul className="overflow-y-scroll max-h-64 lg:max-h-60">
-                        {groups.map(group =>
+                        {groups.data.map((group) =>
                             <li
                                 className="my-1 mx-1 rounded-lg border-solid border-4 p-0.5"
                                 key={group.groupNumber}
                             >
-                                <SeminarGroupItem group={group} semester={semester!} code={code!}/>
+                                <SeminarGroupItem isEnrolledSemester={isEnrolled} group={group} semester={semester!}
+                                code={code!} id={group.id} courseSemesterId={state.id} isEnrolled={user?.data.studiedGroups.filter(x => x.group.id === group.id).length > 0}/>
                             </li>
                         )}
                     </ul>
                 </div>
 
-                <div className="mx-auto students-only hidden mt-2">
-                    <Button color={isEnrolled ? "error" : "success"} className="w-52"
-                            type="submit" variant="outlined" sx={{ margin: '1rem' }}
-                            onClick={enrol}
-                    >
-                        {!isEnrolled ? "Enrol" : "Leave course"}
-                    </Button>
-                </div>
-                <div className="teachers-only mt-2">
-                    <div className="flex flex-col lg:flex-row items-center justify-center block mx-auto">
-                        <Link to={"/courses/" + code + "/" + semester + "/seminars/create"}>
-                            <Button color="info" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
-                                Create seminar group
-                            </Button>
-                        </Link>
-                        <Link to={"/courses/" + code + "/" + semester + "/edit"}>
-                            <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
-                                Edit
-                            </Button>
-                        </Link>
-                        <Link to={"/courses/" + code + "/" + semester + "/delete"}>
-                            <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
-                                Delete
-                            </Button>
-                        </Link>
+                {(loggedUser.student) ?
+                    <div className="mx-auto students-only mt-2">
+                        <Button color={isEnrolled ? "error" : "success"} className="w-52"
+                                type="submit" variant="outlined" sx={{ margin: '1rem' }}
+                                onClick={enrol}
+                        >
+                            {!isEnrolled ? "Enrol" : "Leave course"}
+                        </Button>
                     </div>
-                </div>
+                : <></>}
+                {(loggedUser.admin || loggedUser.teacher) ?
+                    <div className="teachers-only mt-2">
+                        <div className="flex flex-col lg:flex-row items-center justify-center block mx-auto">
+                            <Link to={"/courses/" + code + "/" + semester + "/seminars/create"} state={{id: state.id, isEnrolled: isEnrolled, courseSemesterId: state.id, isEnrolledSemester: isEnrolled}}>
+                                <Button color="info" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
+                                    Create seminar group
+                                </Button>
+                            </Link>
+                            <Link to={"/courses/" + code + "/" + semester + "/edit"} state={{id: course.data.id, isEnrolled: isEnrolled}}>
+                                <Button color="success" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
+                                    Edit
+                                </Button>
+                            </Link>
+                            <Link to={"/courses/" + code + "/" + semester + "/delete"} state={{id: course.data.id, isEnrolled: isEnrolled}} >
+                                <Button color="error" type="button" variant="outlined" sx={{ margin: '1rem 1rem 0.5rem' }}>
+                                    Delete
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
+                : <></>}
             </div>
             <div className="block mx-auto">
                 <Link to={"/"}>

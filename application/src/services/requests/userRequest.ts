@@ -1,6 +1,7 @@
-import { UserModel } from "../models";
+import { UserModel, UserCreateModel, UserLoginModel } from "../models";
 import axiosInstance from "../base";
 import { ResponseMulti, ResponseSingle } from "../responses";
+import { LoggedUser } from "../../atoms/loggedUser";
 
 export const getUsers = async (): Promise<ResponseMulti<UserModel>> => {
     const response = await axiosInstance.get('/user');
@@ -25,5 +26,29 @@ export const deleteUser = async (id: string): Promise<ResponseSingle<UserModel>>
         student,
         administrator,
      });
+    return response.data;
+}
+
+export const createUser = async (userData: UserCreateModel): Promise<ResponseSingle<UserModel>> => {
+    const response = await axiosInstance.post(`/user`, {
+        ...userData
+     });
+    return response.data;
+}
+
+export const loginUser = async (userData: UserLoginModel): Promise<ResponseSingle<UserModel>> => {
+    const response = await axiosInstance.post(`/login`, {
+        ...userData
+     });
+    return response.data;
+}
+
+export const authUser = async (): Promise<ResponseSingle<LoggedUser>> => {
+    const response = await axiosInstance.get(`/auth`,);
+    return response.data;
+}
+
+export const logout = async (): Promise<ResponseSingle<null>> => {
+    const response = await axiosInstance.post(`/logout`);
     return response.data;
 }

@@ -14,7 +14,7 @@ return res.status(200).send({
 
 router.get("/", home);
 
-router.get("/user", auth({admin: true}), API.user.readUserAll)
+router.get("/user", auth({teacher: true}), API.user.readUserAll)
 router.post("/user", API.user.createUser)
 router.get("/user/:id", auth({}), API.user.readUserSpecific)
 router.delete("/user/:id", auth({admin: true}), API.user.deleteUser)
@@ -48,6 +48,8 @@ router.put("/semester/:id", auth({admin: true}), API.semester.updateSemesterAPI)
 router.post("/courseSemester/:id/seminar", auth({teacher: true}), API.seminar.createSeminar)
 router.get("/courseSemester/:id/seminar/teacher", auth({teacher: true}), API.seminar.readAllSeminar.readSeminarAllAPI)
 router.get("/courseSemester/:id/seminar", auth({student: true}), API.seminar.readAllSeminar.studentReadSeminarAllAPI)
+router.get("/seminar/:id", auth({student: true}), API.seminar.readSpecificSeminar.studentReadSeminarSpecificAPI)
+router.get("/seminar/:id/teacher", auth({teacher: true}), API.seminar.readSpecificSeminar.readSeminarSpecificAPI)
 router.delete("/seminar/:id", auth({teacher: true}), API.seminar.deleteSeminar)
 router.put("/seminar/:id", auth({teacher: true}), API.seminar.updateSeminar)
 
@@ -63,6 +65,21 @@ router.delete("/seminar/:seminarId/teacher/:id", auth({teacher: true}), API.user
 router.put("/seminar/:enrollSeminarId/student/:id", auth({student: true}), API.user.addSeminarStudent)
 router.delete("/seminar/:seminarId/student/:id", auth({student: true}), API.user.removeSeminarStudent)
 
-router.get("/login", API.user.login)
+router.post("/login", API.user.login)
+//router.get("/logout", API.user.login)
+
+router.post("/logout", async (req, res) => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    req.session.destroy(() => {});
+    res.json({ message: 'Logged out' });
+})
+
+router.get("/auth", auth({}), async (req, res) => {
+    return res.status(200).send({
+        status: 'success',
+        data: req.session.user,
+        message: "Logged in",
+      });
+})
 
 export default router;

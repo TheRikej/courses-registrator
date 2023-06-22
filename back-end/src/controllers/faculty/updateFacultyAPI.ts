@@ -21,7 +21,6 @@ const UserUpdateSchema = z.object({
 const updateFacultyAPI = async (req: Request, res: Response) => {
     try {
         const id = await idSchema.parseAsync(req.params)
-        console.log({...id})
         const userData = await UserUpdateSchema.parseAsync(req.body)
         const user = await updateFaculty({
             ...id,
